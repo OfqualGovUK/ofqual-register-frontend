@@ -1,3 +1,3 @@
-# ofqual-register-api
+# ofqual-register-frontend
 
-An API for accessing the Register of qualifications, built using Azure Functions.
+The front-end project for the Ofqual Register API
