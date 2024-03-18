@@ -60,24 +60,24 @@ stages:
               tags: |
                 $(Build.BuildId)
                 latest
-          - task: Docker@2
-            displayName: 'Login to Azure Container Registry'
-            inputs:
-              command: 'login'
-              containerRegistry: 'ofqual-register-api-frontend-service-connection-bola-acr'  # ACR connection name      
-          - task: Docker@2
-            displayName: 'Pull Docker image from ACR'
-            inputs:
-              command: 'pull'
-              repository: 'bolaacr.azurecr.io'
-              tags: 'latest'
+          # - task: Docker@2
+          #   displayName: 'Login to Azure Container Registry'
+          #   inputs:
+          #     command: 'login'
+          #     containerRegistry: 'ofqual-register-api-frontend-service-connection-bola-acr'  # ACR connection name      
+          # - task: Docker@2
+          #   displayName: 'Pull Docker image from ACR'
+          #   inputs:
+          #     command: 'pull'
+          #     repository: 'bolaacr.azurecr.io'
+          #     tags: 'latest'
 
-          - task: AzureRmWebAppDeployment@4
-            displayName: 'Deploy to Azure App Service'
-            inputs:
-              ConnectionType: 'AzureRM'
-              azureSubscription: 'ofqual-service-connection-bola'  #  Azure subscription connection name
-              appType: 'webApp'
-              WebAppName: 'ofqual-register-frontend'
-              DockerImageName: 'ofqual-register-api'
-              DockerImageTag: 'latest'
+          # - task: AzureRmWebAppDeployment@4
+          #   displayName: 'Deploy to Azure App Service'
+          #   inputs:
+          #     ConnectionType: 'AzureRM'
+          #     azureSubscription: 'ofqual-service-connection-bola'  #  Azure subscription connection name
+          #     appType: 'webApp'
+          #     WebAppName: 'ofqual-register-frontend'
+          #     DockerImageName: 'ofqual-register-api'
+          #     DockerImageTag: 'latest'
