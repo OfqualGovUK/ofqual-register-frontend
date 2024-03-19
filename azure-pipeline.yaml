@@ -45,7 +45,7 @@ stages:
             displayName: 'Login to ACR'
             inputs:
               command: 'login'
-              containerRegistry: 'bolaacr'  # ACR name
+              containerRegistry: 'ofqual-register-api-frontend-service-connection-bola-acr'  # ACR name
               containerRegistryType: 'Microsoft.ContainerRegistry/registries'
               azureSubscription: '0383ca92-da54-4a28-a345-8f975107a9e0'  # Azure subscription
 
