@@ -46,7 +46,7 @@ stages:
             inputs:
               command: 'login'
               containerRegistry: 'bolaacr'  # ACR name
-              containerRegistryType: 'Azure Container Registry'
+              containerRegistryType: 'Microsoft.ContainerRegistry/registries'
               azureSubscription: '0383ca92-da54-4a28-a345-8f975107a9e0'  # Azure subscription
 
           # Build and push Docker image to ACR
