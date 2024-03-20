@@ -39,27 +39,26 @@ stages:
           vmImage: 'windows-2019'
         steps:
           - checkout: self  # Checkout the repository
-
-          # Log in to Azure Container Registry (ACR)
-          - task: Docker@2
-            displayName: 'Login to ACR'
-            inputs:
-              command: 'login'
-              containerRegistry: 'bolaacr.azurecr.io'  # ACR name
-              containerRegistryType: 'Microsoft.Container.Registry/Registries'
-              azureSubscription: 'acr-connection'  # Azure subscription
-
           # Build and push Docker image to ACR
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
             inputs:
               command: 'buildAndPush'
-              repository: 'bolaacr.azurecr.io/your-image-name'  # ACR and image name
+              repository: 'bolaacr.azurecr.io/frontend-image'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
               containerRegistry: 'acr-connection-service'  # ACR name
               tags: |
                 $(Build.BuildId)
                 latest
+          # Log in to Azure Container Registry (ACR)
+          - task: Docker@2
+            displayName: 'Login to ACR'
+            inputs:
+              command: 'login'
+              containerRegistry: 'acr-connection-service'  # ACR name
+              containerRegistryType: 'Microsoft.Container.Registry/Registries'
+              azureSubscription: 'acr-connection'  # Azure subscription
+
           # - task: Docker@2
           #   displayName: 'Login to Azure Container Registry'
           #   inputs:
