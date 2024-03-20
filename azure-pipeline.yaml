@@ -45,7 +45,7 @@ stages:
             displayName: 'Login to ACR'
             inputs:
               command: 'login'
-              containerRegistry: 'bolaacr'  # ACR name
+              containerRegistry: 'bolaacr.azurecr.io'  # ACR name
               containerRegistryType: 'Microsoft.Container.Registry/Registries'
               azureSubscription: 'acr-connection'  # Azure subscription
 
@@ -56,7 +56,7 @@ stages:
               command: 'buildAndPush'
               repository: 'bolaacr.azurecr.io/your-image-name'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-              containerRegistry: 'bolaacr'  # ACR name
+              containerRegistry: 'acr-connection-service'  # ACR name
               tags: |
                 $(Build.BuildId)
                 latest
