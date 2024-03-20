@@ -40,14 +40,14 @@ stages:
         steps:
           - checkout: self  # Checkout the repository
 
-          # # Log in to Azure Container Registry (ACR)
-          # - task: Docker@2
-          #   displayName: 'Login to ACR'
-          #   inputs:
-          #     command: 'login'
-          #     containerRegistry: 'ofqual-register-api-frontend-service-connection-bola-acr'  # ACR name
-          #     containerRegistryType: 'Microsoft.ContainerRegistry/registries'
-          #     azureSubscription: '0383ca92-da54-4a28-a345-8f975107a9e0'  # Azure subscription
+          # Log in to Azure Container Registry (ACR)
+          - task: Docker@2
+            displayName: 'Login to ACR'
+            inputs:
+              command: 'login'
+              containerRegistry: 'bolaacr'  # ACR name
+              containerRegistryType: 'Microsoft.ContainerRegistry/registries'
+              azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
 
           # # Build and push Docker image to ACR
           # - task: Docker@2
