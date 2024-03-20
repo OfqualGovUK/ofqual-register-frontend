@@ -37,6 +37,14 @@ stages:
           vmImage: 'windows-2019'
         steps:
           - checkout: self  # Checkout the repository
+          # Log in to Azure Container Registry (ACR)
+          - task: Docker@2
+            displayName: 'Login to ACR'
+            inputs:
+              command: 'login'
+              containerRegistry: 'acr-connection'  # ACR name
+              containerRegistryType: 'Microsoft.Container.Registry/Registries'
+              azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
           # Build and push Docker image to ACR
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
@@ -48,14 +56,14 @@ stages:
               tags: |
                 $(Build.BuildId)
                 latest
-          # Log in to Azure Container Registry (ACR)
-          - task: Docker@2
-            displayName: 'Login to ACR'
-            inputs:
-              command: 'login'
-              containerRegistry: 'acr-connection'  # ACR name
-              containerRegistryType: 'Microsoft.Container.Registry/Registries'
-              azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
+          # # Log in to Azure Container Registry (ACR)
+          # - task: Docker@2
+          #   displayName: 'Login to ACR'
+          #   inputs:
+          #     command: 'login'
+          #     containerRegistry: 'acr-connection'  # ACR name
+          #     containerRegistryType: 'Microsoft.Container.Registry/Registries'
+          #     azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
 
           # - task: Docker@2
           #   displayName: 'Login to Azure Container Registry'
