@@ -47,7 +47,7 @@ stages:
               command: 'login'
               containerRegistry: 'bolaacr'  # ACR name
               containerRegistryType: 'Microsoft.Container.Registry/Registries'
-              azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
+              azureSubscription: 'acr-connection'  # Azure subscription
 
           # Build and push Docker image to ACR
           - task: Docker@2
