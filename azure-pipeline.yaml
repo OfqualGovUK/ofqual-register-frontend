@@ -10,7 +10,7 @@ stages:
         pool:
           vmImage: 'windows-2019'
         steps:
-          # - checkout: self  # Checkout the repository
+          - checkout: self  # Checkout the repository
 
           # Use .NET Core SDK version 8.x
           - task: UseDotNet@2
@@ -55,7 +55,7 @@ stages:
               command: 'login'
               containerRegistry: 'acr-connection-service'  # ACR name
               containerRegistryType: 'Microsoft.Container.Registry/Registries'
-              azureSubscription: 'acr-connection'  # Azure subscription
+              azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
 
           # - task: Docker@2
           #   displayName: 'Login to Azure Container Registry'
