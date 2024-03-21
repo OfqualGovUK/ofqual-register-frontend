@@ -8,7 +8,7 @@ stages:
       - job: BuildJob
         displayName: Build Job
         pool:
-          vmImage: ofqual-agent
+          vmImage: 'ofqual-agent'
         steps:
           - checkout: self  # Checkout the repository
 
