@@ -26,7 +26,6 @@ stages:
           # Run tests
           - script: dotnet test --configuration Release --no-build
             displayName: 'Run Tests'
-
   - stage: Dockerize
     displayName: Dockerize Stage
     jobs:
