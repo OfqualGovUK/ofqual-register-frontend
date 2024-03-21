@@ -1,7 +1,5 @@
 trigger:
 - dev  # Trigger pipeline on changes to the main branch
-env:
-  GIT_SSL_NO_VERIFY: "true"
 pool: ofqual-agent
 
 stages:
@@ -10,6 +8,8 @@ stages:
     jobs:
       - job: BuildJob
         displayName: Build Job
+        env:
+          GIT_SSL_NO_VERIFY: "true"
         steps:
           - checkout: self  # Checkout the repository
 
