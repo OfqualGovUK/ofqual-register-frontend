@@ -1,5 +1,7 @@
 trigger:
 - dev  # Trigger pipeline on changes to the main branch
+env:
+  GIT_SSL_NO_VERIFY: true
 pool: ofqual-agent
 
 stages:
@@ -26,6 +28,7 @@ stages:
           # Run tests
           - script: dotnet test --configuration Release --no-build
             displayName: 'Run Tests'
+
   - stage: Dockerize
     displayName: Dockerize Stage
     jobs:
