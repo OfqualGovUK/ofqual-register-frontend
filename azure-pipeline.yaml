@@ -44,7 +44,7 @@ stages:
             displayName: 'Login to ACR'
             inputs:
               command: 'login'
-              containerRegistry: 'acr-connection'  # ACR name
+              containerRegistry: 'cgi-acr-connection'  # ACR name
               containerRegistryType: 'Microsoft.Container.Registry/Registries'
               azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
           # Build and push Docker image to ACR
@@ -54,7 +54,7 @@ stages:
               command: 'buildAndPush'
               repository: 'bolaacr.azurecr.io/frontend-image'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-              containerRegistry: 'acr-connection'  # ACR name
+              containerRegistry: 'cgi-acr-connection'  # ACR name
               tags: |
                 $(Build.BuildId)
                 latest
