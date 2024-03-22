@@ -1,7 +1,6 @@
 trigger:
-  branches:
-    include:
-      - main  # Trigger pipeline on changes to the main branch
+- dev  # Trigger pipeline on changes to the main branch
+pool: ofqual-agent
 
 stages:
   - stage: Build
@@ -9,8 +8,6 @@ stages:
     jobs:
       - job: BuildJob
         displayName: Build Job
-        pool:
-          vmImage: 'windows-2019'
         steps:
           - checkout: self  # Checkout the repository
 
@@ -35,31 +32,38 @@ stages:
     jobs:
       - job: DockerizeJob
         displayName: Dockerize Job
-        pool:
-          vmImage: 'windows-2019'
+        # pool:
+        #   vmImage: 'windows-2019'
         steps:
           - checkout: self  # Checkout the repository
-
           # Log in to Azure Container Registry (ACR)
           - task: Docker@2
             displayName: 'Login to ACR'
             inputs:
               command: 'login'
-              containerRegistry: 'bolaacr'  # ACR name
-              containerRegistryType: 'Microsoft.ContainerRegistry/registries'
+              containerRegistry: 'acr-connection'  # ACR name
+              containerRegistryType: 'Microsoft.Container.Registry/Registries'
               azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
-
-          # # Build and push Docker image to ACR
+          # Build and push Docker image to ACR
+          - task: Docker@2
+            displayName: 'Build and Push Docker Image'
+            inputs:
+              command: 'buildAndPush'
+              repository: 'bolaacr.azurecr.io/frontend-image'  # ACR and image name
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
+              containerRegistry: 'acr-connection'  # ACR name
+              tags: |
+                $(Build.BuildId)
+                latest
+          # # Log in to Azure Container Registry (ACR)
           # - task: Docker@2
-          #   displayName: 'Build and Push Docker Image'
+          #   displayName: 'Login to ACR'
           #   inputs:
-          #     command: 'buildAndPush'
-          #     repository: 'bolaacr.azurecr.io/image-name'  # ACR and image name
-          #     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-          #     containerRegistry: 'bolaacr'  # ACR name
-          #     tags: |
-          #       $(Build.BuildId)
-          #       latest
+          #     command: 'login'
+          #     containerRegistry: 'acr-connection'  # ACR name
+          #     containerRegistryType: 'Microsoft.Container.Registry/Registries'
+          #     azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
+
           # - task: Docker@2
           #   displayName: 'Login to Azure Container Registry'
           #   inputs:
