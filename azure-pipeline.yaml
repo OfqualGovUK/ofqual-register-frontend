@@ -58,39 +58,40 @@ stages:
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
             inputs:
-              command: 'buildAndPush'
+              command: 'build'
+              #command: 'buildAndPush'
              
-              repository: 'bolaacr.azurecr.io/frontend-image:latest'  # ACR and image name
+              # repository: 'bolaacr.azurecr.io/frontend-image'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-              containerRegistry: 'cgi-acr-connection'  # ACR name
+              # containerRegistry: 'cgi-acr-connection'  # ACR name
               tags: |
                 $(Build.BuildId)
                 latest
 
-  # - stage: PushToACR
-  #   displayName: Push to ACR Stage
-  #   jobs:
-  #     - job: PushToACRJob
-  #       displayName: Push to ACR Job
-  #       steps:
-  #         - checkout: self  # Checkout the repository
+  - stage: PushToACR
+    displayName: Push to ACR Stage
+    jobs:
+      - job: PushToACRJob
+        displayName: Push to ACR Job
+        steps:
+          - checkout: self  # Checkout the repository
 
-  #         # Docker login to Azure Container Registry
-  #         - script: |
-  #             docker login -u $(ACRUSER) -p $(ACRPASS) $(ACRSERVER)
-  #           displayName: 'Docker login to Azure Container Registry'
+          # Docker login to Azure Container Registry
+          - script: |
+              docker login -u $(ACRUSER) -p $(ACRPASS) $(ACRSERVER)
+            displayName: 'Docker login to Azure Container Registry'
 
-  #         # Push Docker image to ACR
-  #         - task: Docker@2
-  #           displayName: 'Push Docker image to ACR'
-  #           inputs:
-  #             command: 'buildAndPush'
-  #             repository: 'bolaacr.azurecr.io/frontend-image'  # Replace with your repository name
-  #             dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-  #             containerRegistry: 'cgi-acr-connection'
-  #             tags: |
-  #               $(Build.BuildId)
-  #               latest
+          # Push Docker image to ACR
+          - task: Docker@2
+            displayName: 'Push Docker image to ACR'
+            inputs:
+              command: 'Push'
+              repository: 'bolaacr.azurecr.io/frontend-image'  # Replace with your repository name
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
+              containerRegistry: 'cgi-acr-connection'
+              tags: |
+                $(Build.BuildId)
+                latest
           # # Log in to Azure Container Registry (ACR)
           # - task: Docker@2
           #   displayName: 'Login to ACR'
