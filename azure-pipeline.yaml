@@ -15,10 +15,9 @@ stages:
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK'
             inputs:
-                packageType: 'sdk'
-                version: '8.0.x'
-                instalationPath: $(Agent.ToolsDirectory)/dotnet
-                      
+              version: '8.x'
+            env:
+            DOTNET_SKIP_FIRST_TIME_EXPERIENCE: "true"
 
           # Restore dependencies and build the application
           - script: |
