@@ -77,7 +77,7 @@ stages:
 
           # Docker login to Azure Container Registry
           - script: |
-              docker login -u $(ACRUSER) -p $(ACRPASS) 'cgi-acr-connection'
+              docker login -u $(ACRUSER) -p $(ACRPASS) $(ACRSERVER)
             displayName: 'Docker login to Azure Container Registry'
 
           # Push Docker image to ACR
