@@ -13,6 +13,7 @@ stages:
           # Set environment variable for .NET Core SDK task
           - script: echo "##vso[task.setvariable variable=DOTNET_SKIP_FIRST_TIME_EXPERIENCE]true"
           - script: echo "##vso[task.setvariable variable=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT]true"
+          - script: echo "##vso[task.setvariable variable=DOTNET_CLI_TELEMETRY_OPTOUT]true"
           # Use .NET Core SDK version 8.x
           - task: UseDotNet@2
             displayName: 'Use .NET Core SDK'
