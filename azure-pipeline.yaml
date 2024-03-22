@@ -1,5 +1,7 @@
 trigger:
 - dev  # Trigger pipeline on changes to the main branch
+- name: DOCKER_BUILDKIT
+  value: 1
 pool: ofqual-agent
 
 stages:
