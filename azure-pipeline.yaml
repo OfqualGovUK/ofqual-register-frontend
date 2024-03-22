@@ -48,13 +48,13 @@ stages:
               containerRegistryType: 'Azure Container Registry'
               azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription
           # Build and push Docker image to ACR
-          # - task: Docker@1
-          #   displayName: Push Docker image
-          #   inputs:
-          #     command: Push an image
-          #     containerRegistryType: Azure Container Registry
-          #     azureContainerRegistry: 'cgi-acr-connection'
-          #     imageName: $(imageName)
+          - task: Docker@1
+            displayName: Push Docker image
+            inputs:
+              command: Push an image
+              containerRegistryType: Azure Container Registry
+              azureContainerRegistry: 'cgi-acr-connection'
+              imageName: 'frontend-image'
           - task: Docker@2
             displayName: 'Build and Push Docker Image'
             inputs:
