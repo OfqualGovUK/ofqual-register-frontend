@@ -135,7 +135,8 @@ stages:
         inputs:
           command: 'pull'
           repository: 'bolaacr.azurecr.io/frontend'
-          tags: 'latest'
+          tags: |
+            $(Build.BuildId)
 
       - task: AzureRmWebAppDeployment@4
         displayName: 'Deploy to Azure App Service'
