@@ -3,13 +3,13 @@ trigger:
 pool: ofqual-agent
 
 stages:
-  - stage: Build
-    displayName: Build Stage
-    jobs:
-      - job: BuildJob
-        displayName: Build Job
-        steps:
-          - checkout: self  # Checkout the repository
+  # - stage: Build
+  #   displayName: Build Stage
+  #   jobs:
+  #     - job: BuildJob
+  #       displayName: Build Job
+  #       steps:
+  #         - checkout: self  # Checkout the repository
           # Set environment variable for .NET Core SDK task
           # - script: echo "##vso[task.setvariable variable=DOTNET_SKIP_FIRST_TIME_EXPERIENCE]true"
           # - script: echo "##vso[task.setvariable variable=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT]true"
