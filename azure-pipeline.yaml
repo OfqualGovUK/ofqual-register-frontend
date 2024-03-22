@@ -17,8 +17,6 @@ stages:
             displayName: 'Use .NET Core SDK'
             inputs:
               version: '8.x'
-            env:
-            DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
           # Restore dependencies and build the application
           - script: |
