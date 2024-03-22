@@ -62,10 +62,10 @@ stages:
              
               # repository: 'bolaacr.azurecr.io/frontend-image'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
-              # containerRegistry: 'cgi-acr-connection'  # ACR name
-              # tags: |
-              #   $(Build.BuildId)
-              #   latest
+              containerRegistry: 'cgi-acr-connection'  # ACR name
+              tags: |
+                $(Build.BuildId)
+                latest
 
   - stage: PushToACR
     displayName: Push to ACR Stage
