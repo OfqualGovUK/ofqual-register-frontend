@@ -1,6 +1,6 @@
 trigger:
 - dev  # Trigger pipeline on changes to the main branch
-#pool: ofqual-agent
+pool: ofqual-agent
 
 stages:
   # - stage: Build
