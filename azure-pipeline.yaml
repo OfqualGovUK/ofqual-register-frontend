@@ -133,7 +133,7 @@ stages:
       - task: Docker@2
         displayName: 'Pull Docker image from ACR'
         inputs:
-          command: 'pull'
+          command: 'pull $(Build.BuildId)'
           containerRegistry: 'cgi-acr-connection'  # From ACR name
           tags: |
             $(Build.BuildId)
