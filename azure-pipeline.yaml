@@ -135,7 +135,7 @@ stages:
         inputs:
           command: 'pull'
           #repository: 'bolaacr.azurecr.io/frontend'  # ACR and image name
-          arguments: bolaacr.azurecr.io/bolaacr.azurecr.io/frontend:92
+          arguments: bolaacr.azurecr.io/bolaacr.azurecr.io/frontend:$(Build.BuildId)
           containerRegistry: 'cgi-acr-connection'  # From ACR name
           tags: 'latest'
 
