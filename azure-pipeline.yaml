@@ -134,8 +134,8 @@ stages:
         displayName: 'Pull Docker image from ACR'
         inputs:
           command: 'pull'
-          repository: 'bolaacr.azurecr.io'  # ACR and image name
-          arguments: bolaacr.azurecr.io/frontend:92
+          #repository: 'bolaacr.azurecr.io/frontend'  # ACR and image name
+          arguments: bolaacr.azurecr.io/bolaacr.azurecr.io/frontend:92
           containerRegistry: 'cgi-acr-connection'  # From ACR name
           tags: 'latest'
 
