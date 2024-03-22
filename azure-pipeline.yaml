@@ -34,8 +34,8 @@ stages:
     jobs:  
     - job: Build
       displayName: Build job
-      pool:
-        vmImage: 'windows-2019'
+      # pool:
+      #   vmImage: 'windows-2019'
       steps:
       - checkout: self  # Checkout the repository
       - task: Docker@2
