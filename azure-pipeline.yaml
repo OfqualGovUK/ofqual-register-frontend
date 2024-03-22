@@ -64,6 +64,7 @@ stages:
               repository: 'bolaacr.azurecr.io/frontend'  # ACR and image name
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
               containerRegistry: 'cgi-acr-connection'  # ACR name
+              azureSubscription: 'ofqual-service-connection-bola'
               tags: '$(Build.BuildId)'
                
 
@@ -85,9 +86,10 @@ stages:
             displayName: 'Push Docker image to ACR'
             inputs:
               command: 'Push'
-              repository: 'bolaacr.azurecr.io/frontend'  # Replace with your repository name
+              repository: 'bolaacr.azurecr.io/frontend'  # Replace with repository name
               #dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
               containerRegistry: 'cgi-acr-connection'
+              azureSubscription: 'ofqual-service-connection-bola'
               tags: '$(Build.BuildId)'
                
           # # Log in to Azure Container Registry (ACR)
