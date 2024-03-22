@@ -86,7 +86,7 @@ stages:
             inputs:
               command: 'Push'
               repository: 'bolaacr.azurecr.io/frontend'  # Replace with your repository name
-              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
+              #dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
               containerRegistry: 'cgi-acr-connection'
               tags: '$(Build.BuildId)'
                
