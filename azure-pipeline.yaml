@@ -45,7 +45,7 @@ stages:
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'  # Path to Dockerfile
           containerRegistry: 'cgi-acr-connection'  # ACR name
           tags: |
-            $(tag)
+            $(Build.BuildId)
   # - stage: Dockerize
   #   displayName: Dockerize Stage
   #   jobs:
