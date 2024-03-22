@@ -133,7 +133,8 @@ stages:
       - task: Docker@2
         displayName: 'Pull Docker image from ACR'
         inputs:
-          command: 'pull $(Build.BuildId)'
+          command: 'pull'
+          repository: 'bolaacr.azurecr.io/frontend'  # ACR and image name
           containerRegistry: 'cgi-acr-connection'  # From ACR name
           tags: |
             $(Build.BuildId)
