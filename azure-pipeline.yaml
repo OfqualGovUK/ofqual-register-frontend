@@ -86,7 +86,7 @@ stages:
             inputs:
               command: 'push'
               repository: 'bolaacr.azurecr.io/frontend-image'  # Replace with your repository name
-              containerRegistry: 'bolaacr.azurecr.io'
+              containerRegistry: 'cgi-acr-connection'
               tags: |
                 $(Build.BuildId)
                 latest
