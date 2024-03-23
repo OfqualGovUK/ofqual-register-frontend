@@ -144,7 +144,7 @@ stages:
       - task: AzureWebAppContainer@1
         displayName: 'Deploy to Azure App Service'
         inputs:
-          azureSubscription: 'ofqual-service-connection-bola'  # Azure subscription connection name
+          azureSubscription: 'ofqual-service-connection-bola1'  # Azure subscription connection name
           appName: 'ofqual-register-frontend'  # Name of your Azure Web App
           containers: |
             bolaacr.azurecr.io/frontend:latest  
