@@ -141,6 +141,7 @@ stages:
           arguments: bolaacr.azurecr.io/bolaacr.azurecr.io/frontend:$(Build.BuildId)
           containerRegistry: 'cgi-acr-connection'  # From ACR name
           tags: 'latest'
+          
       - task: AzureWebAppContainer@1
         displayName: 'Deploy to Azure App Service'
         inputs:
