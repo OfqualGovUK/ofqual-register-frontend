@@ -3,8 +3,8 @@ trigger:
 variables:
 - name: DOCKER_BUILDKIT
   value: 1
-containerRegistry: 'cgi-acr-connection'
-imageRepository: 'bolaacr.azurecr.io/frontend'
+# containerRegistry: 'cgi-acr-connection'
+# imageRepository: 'bolaacr.azurecr.io/frontend'
 
 pool: ofqual-agent
 
