@@ -1,0 +1,1519 @@
+﻿@model string;
+@{
+    ViewData["Title"] = "Find a regulated qualification";
+}
+<div class="govuk-grid-row">
+    <div class="govuk-width-container">
+        <h1 class="govuk-heading-l">Qualification search</h1>
+        <p class="govuk-body">Select all the qualifications you want to compare.</p>
+
+        <div class="app-search govuk-!-margin-bottom-4">
+            <form action="Search" method="get" novalidate="">
+                <div class="govuk-form-group">
+                    <label class="govuk-label app-search__label govuk-label--s" for="selected-qualification">
+                        Search for a qualification
+                    </label>
+                    <input class="govuk-input app-search__input " id="selected-qualification" name="selected-qualification" type="search" value="@Model">
+                </div>
+                <button class="govuk-button app-search__button" data-module="govuk-button">
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break">
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <div class="app-filter__header">
+            <div class="app-filter__header-title">
+                <h2 class="govuk-heading-m">Filter</h2>
+            </div>
+            <div class="app-filter__header-action">
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem is-open">
+                <h3 class="accordionTitle is-open" id="availability">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Availability</button>
+                    @* <div class="selected-counter"><span id="selected">1</span> selected</div> *@
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-availability" name="filter-availability" type="checkbox" value="available">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-availability">
+                                        Available (936)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-availability-2" name="filter-availability" type="checkbox" value="not-awarded">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-availability-2">
+                                        No longer awarded (3,610)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-availability-3" name="filter-availability" type="checkbox" value="not-available">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-availability-3">
+                                        Not available to new learners (3,877)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-availability-4" name="filter-availability" type="checkbox" value="not-available-yet">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-availability-4">
+                                        Not yet available (42)
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="qual-type">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Qualification type</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type" name="filter-qual-type" type="checkbox" value="aea">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type">
+                                        Advanced extension award (3)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-2" name="filter-qual-type" type="checkbox" value="a level">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-2">
+                                        A level (5)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-3" name="filter-qual-type" type="checkbox" value="as level">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-3">
+                                        AS level (5)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-4" name="filter-qual-type" type="checkbox" value="apprenticeship">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-4">
+                                        Apprenticeship end-point assessment (132)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-5" name="filter-qual-type" type="checkbox" value="basic skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-5">
+                                        Basic skills (1)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-6" name="filter-qual-type" type="checkbox" value="digital functional skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-6">
+                                        Digital functional skills (2)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-7" name="filter-qual-type" type="checkbox" value="entry">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-7">
+                                        Entry level (2)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-8" name="filter-qual-type" type="checkbox" value="esol">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-8">
+                                        ESOL (English for speakers of other languages) (1)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-9" name="filter-qual-type" type="checkbox" value="essential digital skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-9">
+                                        Essential digital skills (2)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-10" name="filter-qual-type" type="checkbox" value="essential skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-10">
+                                        Essential skills (3)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-11" name="filter-qual-type" type="checkbox" value="free standing maths">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-11">
+                                        Free-standing mathematics (1)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-12" name="filter-qual-type" type="checkbox" value="functional skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-12">
+                                        Functional skills (2)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-13" name="filter-qual-type" type="checkbox" value="functional skills QCF">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-13">
+                                        Functional skills (QCF) (4)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-14" name="filter-qual-type" type="checkbox" value="gcse 9-1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-14">
+                                        GCSE (9 to 1) (7)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-15" name="filter-qual-type" type="checkbox" value="gcse a-g">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-15">
+                                        GCSE (A* to G) (4)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-16" name="filter-qual-type" type="checkbox" value="gnvq">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-16">
+                                        GNVQ (14)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-17" name="filter-qual-type" type="checkbox" value="higher level">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-17">
+                                        Higher level (12)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-18" name="filter-qual-type" type="checkbox" value="key skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-18">
+                                        Key skills (2)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-19" name="filter-qual-type" type="checkbox" value="nvq">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-19">
+                                        NVQ (national vocational qualification) (10)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-20" name="filter-qual-type" type="checkbox" value="occupational">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-20">
+                                        Occupational Qualification (32)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-21" name="filter-qual-type" type="checkbox" value="other general">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-21">
+                                        Other general qualification (4)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-22" name="filter-qual-type" type="checkbox" value="life skills">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-22">
+                                        Other life skills (1)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-23" name="filter-qual-type" type="checkbox" value="other vocational">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-23">
+                                        Other vocational (27)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-24" name="filter-qual-type" type="checkbox" value="performing arts">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-24">
+                                        Performing arts graded exam (1)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-25" name="filter-qual-type" type="checkbox" value="principal learning">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-25">
+                                        Principal learning (4)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-26" name="filter-qual-type" type="checkbox" value="project">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-26">
+                                        Project (5)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-27" name="filter-qual-type" type="checkbox" value="qcf">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-27">
+                                        QCF (6)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-28" name="filter-qual-type" type="checkbox" value="technical">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-28">
+                                        Technical qualification (T Levels) (7)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-29" name="filter-qual-type" type="checkbox" value="vce">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-29">
+                                        Vocational certificate of education (6)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-30" name="filter-qual-type" type="checkbox" value="vrq">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-30">
+                                        Vocationally-related qualification (9)
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-type-31" name="filter-qual-type" type="checkbox" value="other">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-type-31">
+                                        Other (3)
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="qualification-level">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Qualification level</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level" name="filter-qual-level" type="checkbox" value="Entry 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level">
+                                        Entry 1 (1,368)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-2" name="filter-qual-level" type="checkbox" value="Entry 2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-2">
+                                        Entry 2 (636)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-3" name="filter-qual-level" type="checkbox" value="Entry 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-3">
+                                        Entry 3 (863)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-4" name="filter-qual-level" type="checkbox" value="Entry 23">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-4">
+                                        Entry 2,3 (46)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-5" name="filter-qual-level" type="checkbox" value="Entry 123">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-5">
+                                        Entry 1,2,3 (41)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-6" name="filter-qual-level" type="checkbox" value="Level 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-6">
+                                        Level 1 (6,012)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-7" name="filter-qual-level" type="checkbox" value="Level 1/2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-7">
+                                        Level 1/2 (1,550)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-8" name="filter-qual-level" type="checkbox" value="Level 2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-8">
+                                        Level 2 (14,152)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-9" name="filter-qual-level" type="checkbox" value="Level 3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-9">
+                                        Level 3 (15,309)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-10" name="filter-qual-level" type="checkbox" value="Level 4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-10">
+                                        Level 4 (3,708)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-11" name="filter-qual-level" type="checkbox" value="Level 5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-11">
+                                        Level 5 (1,846)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-12" name="filter-qual-level" type="checkbox" value="Level 6">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-12">
+                                        Level 6 (678)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-13" name="filter-qual-level" type="checkbox" value="Level 7">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-13">
+                                        Level 7 (528)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-14" name="filter-qual-level" type="checkbox" value="Level 8">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-14">
+                                        Level 8 (12)
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="qualification-level">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Qualification level</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level" name="filter-qual-level" type="checkbox" value="Entry 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level">
+                                        Entry 1 (1,368)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-2" name="filter-qual-level" type="checkbox" value="Entry 2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-2">
+                                        Entry 2 (636)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-3" name="filter-qual-level" type="checkbox" value="Entry 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-3">
+                                        Entry 3 (863)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-4" name="filter-qual-level" type="checkbox" value="Entry 23">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-4">
+                                        Entry 2,3 (46)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-5" name="filter-qual-level" type="checkbox" value="Entry 123">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-5">
+                                        Entry 1,2,3 (41)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-6" name="filter-qual-level" type="checkbox" value="Level 1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-6">
+                                        Level 1 (6,012)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-7" name="filter-qual-level" type="checkbox" value="Level 1/2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-7">
+                                        Level 1/2 (1,550)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-8" name="filter-qual-level" type="checkbox" value="Level 2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-8">
+                                        Level 2 (14,152)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-9" name="filter-qual-level" type="checkbox" value="Level 3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-9">
+                                        Level 3 (15,309)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-10" name="filter-qual-level" type="checkbox" value="Level 4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-10">
+                                        Level 4 (3,708)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-11" name="filter-qual-level" type="checkbox" value="Level 5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-11">
+                                        Level 5 (1,846)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-12" name="filter-qual-level" type="checkbox" value="Level 6">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-12">
+                                        Level 6 (678)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-13" name="filter-qual-level" type="checkbox" value="Level 7">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-13">
+                                        Level 7 (528)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-qual-level-14" name="filter-qual-level" type="checkbox" value="Level 8">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-qual-level-14">
+                                        Level 8 (12)
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="sector subject area">
+                    <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Sector subject area</button>
+                    <div class="selected-counter"><span id="selected">1</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa" name="filter-ssa" type="checkbox" value="1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa">
+                                        1 - Health, Public Services and Care
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-2" name="filter-ssa" type="checkbox" value="1.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-2">
+                                        1.1 - Medicine and dentistry
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-3" name="filter-ssa" type="checkbox" value="1.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-3">
+                                        1.2 - Nursing, and subjects and vocations allied to medicine
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-4" name="filter-ssa" type="checkbox" value="1.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-4">
+                                        1.3 - Health and social care
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-5" name="filter-ssa" type="checkbox" value="1.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-5">
+                                        1.4 - Public services
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-6" name="filter-ssa" type="checkbox" value="1.5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-6">
+                                        1.5 - Child development and well being
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-7" name="filter-ssa" type="checkbox" value="2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-7">
+                                        2 - Science and Mathematics
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-8" name="filter-ssa" type="checkbox" value="2.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-8">
+                                        2.1 - Science
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-9" name="filter-ssa" type="checkbox" value="2.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-9">
+                                        2.2 - Mathematics and statistics
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-10" name="filter-ssa" type="checkbox" value="3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-10">
+                                        3 - Agriculture, Horticulture and Animal Care
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-11" name="filter-ssa" type="checkbox" value="3.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-11">
+                                        3.1 - Agriculture
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-12" name="filter-ssa" type="checkbox" value="3.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-12">
+                                        3.2 - Horticulture and forestry
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-13" name="filter-ssa" type="checkbox" value="3.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-13">
+                                        3.3 - Animal care and veterinary science
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-14" name="filter-ssa" type="checkbox" value="3.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-14">
+                                        3.4 - Environmental conservation
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-15" name="filter-ssa" type="checkbox" value="4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-15">
+                                        4 - Engineering and Manufacturing Technologies
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-16" name="filter-ssa" type="checkbox" value="4.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-16">
+                                        4.1 - Engineering
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-17" name="filter-ssa" type="checkbox" value="4.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-17">
+                                        4.2 - Manufacturing technologies
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-18" name="filter-ssa" type="checkbox" value="4.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-18">
+                                        4.3 - Transportation operations and maintenance
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-19" name="filter-ssa" type="checkbox" value="5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-19">
+                                        5 - Construction, Planning and the Built Environment
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-20" name="filter-ssa" type="checkbox" value="5.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-20">
+                                        5.1 - Architecture
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-21" name="filter-ssa" type="checkbox" value="5.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-21">
+                                        5.2 - Building and construction
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-22" name="filter-ssa" type="checkbox" value="5.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-22">
+                                        5.3 - Urban, rural and regional planning
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-23" name="filter-ssa" type="checkbox" value="6">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-23">
+                                        6 - Information and Communication Technology (ICT)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-24" name="filter-ssa" type="checkbox" value="6.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-24">
+                                        6.1 - ICT practitioners
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-25" name="filter-ssa" type="checkbox" value="6.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-25">
+                                        6.2 - ICT for users
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-26" name="filter-ssa" type="checkbox" value="7">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-26">
+                                        7 - Retail and Commercial Enterprise
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-27" name="filter-ssa" type="checkbox" value="7.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-27">
+                                        7.1 - Retailing and wholesaling
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-28" name="filter-ssa" type="checkbox" value="7.2" checked="">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-28">
+                                        7.2 - Warehousing and distribution
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-29" name="filter-ssa" type="checkbox" value="7.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-29">
+                                        7.3 - Service enterprises
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-30" name="filter-ssa" type="checkbox" value="7.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-30">
+                                        7.4 - Hospitality and catering
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-31" name="filter-ssa" type="checkbox" value="8">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-31">
+                                        8 - Leisure, Travel and Tourism
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-32" name="filter-ssa" type="checkbox" value="8.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-32">
+                                        8.1 - Sport, leisure and recreation
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-33" name="filter-ssa" type="checkbox" value="8.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-33">
+                                        8.2 - Travel and tourism
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-34" name="filter-ssa" type="checkbox" value="9">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-34">
+                                        9 - Arts, Media and Publishing
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-35" name="filter-ssa" type="checkbox" value="9.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-35">
+                                        9.1 - Performing arts
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-36" name="filter-ssa" type="checkbox" value="9.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-36">
+                                        9.2 - Crafts, creative arts and design
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-37" name="filter-ssa" type="checkbox" value="9.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-37">
+                                        9.3 - Media and communication
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-38" name="filter-ssa" type="checkbox" value="9.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-38">
+                                        9.4 - Publishing and information services
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-39" name="filter-ssa" type="checkbox" value="10">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-39">
+                                        10 - History, Philosophy and Theology
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-40" name="filter-ssa" type="checkbox" value="10.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-40">
+                                        10.1 - History
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-41" name="filter-ssa" type="checkbox" value="10.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-41">
+                                        10.2 - Archaeology and archaeological sciences
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-42" name="filter-ssa" type="checkbox" value="10.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-42">
+                                        10.3 - Philosophy
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-43" name="filter-ssa" type="checkbox" value="10.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-43">
+                                        10.4 - Theology and religious studies
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-44" name="filter-ssa" type="checkbox" value="11">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-44">
+                                        11 - Social Sciences
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-45" name="filter-ssa" type="checkbox" value="11.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-45">
+                                        11.1 - Geography
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-46" name="filter-ssa" type="checkbox" value="11.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-46">
+                                        11.2 - Sociology
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-47" name="filter-ssa" type="checkbox" value="11.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-47">
+                                        11.3 - Politics
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-48" name="filter-ssa" type="checkbox" value="11.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-48">
+                                        11.4 - Economics
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-49" name="filter-ssa" type="checkbox" value="11.5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-49">
+                                        11.5 - Anthropology
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-50" name="filter-ssa" type="checkbox" value="12">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-50">
+                                        12 - Languages, Literature and Culture
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-51" name="filter-ssa" type="checkbox" value="12.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-51">
+                                        12.1 - Linguistics
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-52" name="filter-ssa" type="checkbox" value="12.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-52">
+                                        12.2 - Literature
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-53" name="filter-ssa" type="checkbox" value="12.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-53">
+                                        12.3 - Cultural studies
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-54" name="filter-ssa" type="checkbox" value="12.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-54">
+                                        12.4 - English language and literature
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-55" name="filter-ssa" type="checkbox" value="13">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-55">
+                                        13 - Education and Training
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-56" name="filter-ssa" type="checkbox" value="13.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-56">
+                                        13.1 - Teaching and lecturing
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-57" name="filter-ssa" type="checkbox" value="13.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-57">
+                                        13.2 - Direct learning support
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-58" name="filter-ssa" type="checkbox" value="13.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-58">
+                                        13.3 - Educational support
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-59" name="filter-ssa" type="checkbox" value="14">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-59">
+                                        14 - Preparation for Life and Work
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-60" name="filter-ssa" type="checkbox" value="14.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-60">
+                                        14.1 - Foundations for learning and life
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-61" name="filter-ssa" type="checkbox" value="14.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-61">
+                                        14.2 - Preparation for work
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-62" name="filter-ssa" type="checkbox" value="15">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-62">
+                                        15 - Business, Administration and Law
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-63" name="filter-ssa" type="checkbox" value="15.1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-63">
+                                        15.1 - Business management
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-64" name="filter-ssa" type="checkbox" value="15.2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-64">
+                                        15.2 - Marketing and sales
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-65" name="filter-ssa" type="checkbox" value="15.3">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-65">
+                                        15.3 - Finance, banking and insurance
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-66" name="filter-ssa" type="checkbox" value="15.4">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-66">
+                                        15.4 - Administration
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-ssa-67" name="filter-ssa" type="checkbox" value="15.5">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-ssa-67">
+                                        15.5 - Law and legal services
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="grading">
+                    <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Grading type</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-grading" name="filter-grading" type="checkbox" value="graded">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-grading">
+                                        Graded (15,551)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-grading-2" name="filter-grading" type="checkbox" value="passfail">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-grading-2">
+                                        Pass or fail (3,042)
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="assessment-method">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Assessment method</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method" name="filter-assessment-method" type="checkbox" value="aural">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method">
+                                        Aural exam (492)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-2" name="filter-assessment-method" type="checkbox" value="coursework">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-2">
+                                        Coursework (1,078)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-3" name="filter-assessment-method" type="checkbox" value="controlled-assessment">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-3">
+                                        Task-based controlled assessment (810)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-4" name="filter-assessment-method" type="checkbox" value="E-assessment">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-4">
+                                        E-assessment (550)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-5" name="filter-assessment-method" type="checkbox" value="exam">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-5">
+                                        Written exam (1,386)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-6" name="filter-assessment-method" type="checkbox" value="multiple-choice">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-6">
+                                        Multiple choice exam (580)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-7" name="filter-assessment-method" type="checkbox" value="oral">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-7">
+                                        Oral exam (653)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-8" name="filter-assessment-method" type="checkbox" value="portfolio" checked="">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-8">
+                                        Portfolio of evidence (3,301)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-9" name="filter-assessment-method" type="checkbox" value="practical-demo" checked="">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-9">
+                                        Practical demonstration or assignment (1,316)
+                                    </label>
+
+                                </div>                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-10" name="filter-assessment-method" type="checkbox" value="practical-exam">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-10">
+                                        Practical exam (538)
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="national-availability">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">National availability</button>
+                    <div class="selected-counter"><span id="selected">0</span> selected</div>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+                    <div class="govuk-form-group">
+
+                        <fieldset class="govuk-fieldset">
+                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-national-availability" name="filter-national-availability" type="checkbox" value="england">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability">
+                                        England (12,321)
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-national-availability-2" name="filter-national-availability" type="checkbox" value="ni">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability-2">
+                                        Northern Ireland (915)
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-checkboxes__item">
+                                    <input class="govuk-checkboxes__input" id="filter-national-availability-3" name="filter-national-availability" type="checkbox" value="international">
+                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability-3">
+                                        International (155)
+                                    </label>
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="glh">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Guided learning hours</button>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="min-glh">
+                            Minimum hours
+                        </label>
+
+
+                        <input class="govuk-input ofq-filters-small-input" id="min-glh" name="min-glh" type="number" inputmode="numeric" size="3">
+
+                    </div>                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="max-glh">
+                            Maximum hours
+                        </label>
+
+
+                        <input class="govuk-input ofq-filters-small-input" id="max-glh" name="max-glh" type="number" inputmode="numeric" size="3">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="accordionExpander">
+            <div class="accordionItem">
+                <h3 class="accordionTitle" id="tqt">
+                    <span class="govuk-visually-hidden">Select filters for </span>
+                    <button class="accordionItem__button" type="button">Total qualification time</button>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                        </path>
+                    </svg>
+                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                        </path>
+                    </svg>
+                </h3>
+                <div class="accordionContent">
+
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="min-tqt">
+                            Minimum hours
+                        </label>
+
+
+                        <input class="govuk-input ofq-filters-small-input" id="min-tqt" name="min-tqt" type="number" inputmode="numeric" size="3" maxlength="3">
+
+                    </div>                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-label--s" for="max-tqt">
+                            Maximum hours
+                        </label>
+
+
+                        <input class="govuk-input ofq-filters-small-input" id="max-tqt" name="max-tqt" type="number" inputmode="numeric" size="3" maxlength="3">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="govuk-grid-column-two-thirds">
+
+        <ul id="action-buttons-row" class="ofq-action-buttons--list">
+            <li class="ofq-action-buttons--item">
+                <a href="compare-results" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
+                    Compare selected
+                </a>
+            </li>
+            <li class="ofq-action-buttons--item">
+                <a href="/download/download-results" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
+                    Download results as CSV
+                </a>
+            </li>
+        </ul>
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div><div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div><div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div><div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div><div class="app-application-cards" aria-live="polite">
+
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="organisation1" name="organisation" type="checkbox" value="1" {{data['organisation1']}}>
+                            <label class="govuk-label govuk-checkboxes__label" for="organisation1">
+                                Pearson BTEC Level 2 Certificate in Warehousing and Storage Principles
+                        </div>
+                    </div>
+                </header>
+
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-two-thirds">
+                        <dl class="app-application-card__list">
+                            <dd class="govuk-body-m">
+                                <a href="qualification-details">View qualification details</a>
+                            </dd>
+                            <br>
+                            <dt class="govuk-visually-hidden">Availability</dt>
+                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                Available to learners
+                            </dd>
+                            <dt class="govuk-visually-hidden">Organisation</dt>
+                            <dd class="govuk-body-s govuk-!-margin-bottom-1">Pearson</dd>
+                            <dt class="govuk-visually-hidden">Level</dt>
+                            <dd class="govuk-body-s govuk-!-font-size-16">
+                                Level 2
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <nav class="govuk-pagination" role="navigation" aria-label="Pagination">
+            <ul class="govuk-pagination__list">
+                <li class="govuk-pagination__item govuk-pagination__item--current">
+                    <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 1" aria-current="page">
+                        1
+                    </a>
+                </li>
+                <li class="govuk-pagination__item">
+                    <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 2">
+                        2
+                    </a>
+                </li>
+                <li class="govuk-pagination__item">
+                    <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page 3">
+                        3
+                    </a>
+                </li>
+            </ul><div class="govuk-pagination__next">
+                <a class="govuk-link govuk-pagination__link" href="#" rel="next">
+                    <span class="govuk-pagination__link-title">Next<span class="govuk-visually-hidden"> page</span></span>
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+        const accordionTitles = document.querySelectorAll(".accordionTitle");
+
+        accordionTitles.forEach(accordionTitle => {
+            accordionTitle.addEventListener("click", () => {
+                accordionTitle.classList.toggle("is-open")
+            })
+        })
+
+        const accordionIcons = document.querySelectorAll(".accordionItem");
+
+        accordionIcons.forEach(accordionIcon => {
+            accordionIcon.addEventListener("click", () => {
+                accordionIcon.classList.toggle("is-open")
+            })
+        })
+
+
+        const selectedElm = document.getElementById('selected');
+
+        function showChecked() {
+            selectedElm.innerHTML = document.querySelectorAll('input[name=assessment-method]:checked').length;
+        }
+
+        document.querySelectorAll("input[name=assessment-method]").forEach(i => {
+            i.onclick = () => showChecked();
+        });
+
+
+    </script>
+
+}
