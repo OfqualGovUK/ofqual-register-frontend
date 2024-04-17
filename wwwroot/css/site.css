@@ -1,0 +1,43 @@
+.govuk-back-link {
+    cursor: pointer;
+}
+
+.results-list-item {
+    margin-bottom: 25px;
+    padding-top: 10px;
+    border-top: 1px solid #b1b4b6;
+    list-style: none;
+}
+
+.ofq-hide-underline {
+    text-decoration: none;
+}
+
+.ofq-highlight {
+    background-color: #fdedde;
+    border-bottom: 2px solid #ffbf80;
+}
+
+.ofq-tree {
+    --spacing: 1.5rem;
+    --radius: 10px;
+}
+
+ul.ofq-tree {
+    padding-left: 0;
+}
+
+    ul.ofq-tree > li {
+        padding-left: 0;
+    }
+
+.ofq-tree li {
+    display: block;
+    position: relative;
+    padding-left: calc(2 * var(--spacing) - var(--radius) - 2px);
+}
+
+.ofq-tree ul {
+    margin-left: calc(var(--radius) - var(--spacing));
+    padding-left: 0;
+}

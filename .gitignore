@@ -483,6 +483,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-*.settings.json
-
-*/.vscode/*
+appsettings.*.json
+bfg-1.14.0.jar
