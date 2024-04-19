@@ -1,0 +1,183 @@
+﻿@model Ofqual.Common.RegisterFrontend.Models.APIModels.Organisation
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+
+    <div>
+        <h4>Organisation</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.RecognitionNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.RecognitionNumber)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.LegalName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LegalName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Acronym)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Acronym)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfqualOrganisationStatus)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfqualOrganisationStatus)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CceaOrganisationStatus)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CceaOrganisationStatus)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfqualRecognisedOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfqualRecognisedOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfqualRecognisedTo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfqualRecognisedTo)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfqualSurrenderedOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfqualSurrenderedOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.OfqualWithdrawnOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.OfqualWithdrawnOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CceaRecognisedOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CceaRecognisedOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CceaRecognisedTo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CceaRecognisedTo)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CceaSurrenderedOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CceaSurrenderedOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CceaWithdrawnOn)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CceaWithdrawnOn)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ContactEmail)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ContactEmail)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Website)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Website)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PhoneNumber)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.FeesUrl)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FeesUrl)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressLine1)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressLine1)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressLine2)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressLine2)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressCity)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressCity)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressCounty)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressCounty)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressCountry)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressCountry)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AddressPostCode)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AddressPostCode)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.LastUpdatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LastUpdatedDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CanonicalUrl)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CanonicalUrl)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>
