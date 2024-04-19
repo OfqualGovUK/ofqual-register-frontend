@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using System.Configuration;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -11,12 +12,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
     {
         private readonly ILogger<OrganisationsController> _logger;
         private readonly IRegisterAPIClient _registerAPIClient;
+        private readonly IConfiguration _config;
 
 
-        public OrganisationsController(ILogger<OrganisationsController> logger, IRegisterAPIClient registerAPIClient)
+        public OrganisationsController(ILogger<OrganisationsController> logger, IRegisterAPIClient registerAPIClient, IConfiguration config)
         {
             _logger = logger;
             _registerAPIClient = registerAPIClient;
+            _config = config;
         }
 
         public IActionResult Index()
@@ -31,11 +34,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchResults(string name, int page = 1, int limit = 10)
+        public async Task<IActionResult> SearchResults(string name, int page = 1)
         {
             //check for qualification number regex
             string? numberRN = null;
             string pattern = @"^\d+$";
+            int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
             if (name != null)
             {
@@ -55,8 +59,22 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             //    return RedirectToAction("Organisations", new { id = numberRN });
             //}
 
-            var orgs = await _registerAPIClient.GetOrganisationListAsync(name, page, limit);
-            var model = new OrganisationSearchResultViewModel { List = orgs, Name = name };
+            var paging = new List<int>();
+
+            var orgs = await _registerAPIClient.GetOrganisationListAsync(name, page, pagingLimit);
+
+            if (page >= 5)
+            {
+                paging.AddRange([1, -1, 4, 5, 6, -1, orgs.Count]);
+            }
+
+
+            var model = new SearchResultViewModel<OrganisationListViewModel> { 
+                List = orgs, 
+                Name = name, 
+                PagingURL = $"SearchResults?name={name}&page=||_page_||" ,
+                PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit)
+            };
 
             return View(model);
         }
