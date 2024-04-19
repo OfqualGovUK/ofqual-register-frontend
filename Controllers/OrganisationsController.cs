@@ -50,10 +50,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 }
             }
 
-            if (numberRN != null)
-            {
-                return RedirectToAction("Organisations", new { id = numberRN });
-            }
+            //if (numberRN != null)
+            //{
+            //    return RedirectToAction("Organisations", new { id = numberRN });
+            //}
 
             var orgs = await _registerAPIClient.GetOrganisationListAsync(name, page, limit);
             var model = new OrganisationSearchResultViewModel { List = orgs, Name = name };
