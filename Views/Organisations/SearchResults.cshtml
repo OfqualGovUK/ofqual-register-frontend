@@ -1,173 +1,127 @@
-﻿@model string;
+﻿@model OrganisationSearchResultViewModel;
 @{
     ViewData["Title"] = "Find a regulated awarding organisation";
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
 
-        <h1 class="govuk-heading-m">Search results – '@Model'</h1>
-
-
+        <h1 class="govuk-heading-m">Search results – '@Model.Name'</h1>
 
         <div class="app-search govuk-!-margin-bottom-4">
-            <form action="search" method="get" novalidate="">
-
-
+            <form action="SearchResults" method="get" novalidate="">
                 <div class="govuk-form-group">
                     <label class="govuk-label app-search__label govuk-label--s" for="keywords">
                         Search for an organisation
                     </label>
-
-                    <input class="govuk-input app-search__input" id="selected-organisation" name="selected-organisation" type="search" value="@Model">
-
+                    <input class="govuk-input app-search__input" id="name" name="name" type="search" value="@Model.Name">
+                    <input hidden id="page" name="page" type="number" value="1" />
+                    <input hidden id="limit" name="limit" type="number" value="10" />
                 </div>
-
                 <button class="govuk-button app-search__button" data-module="govuk-button">
                     Search
                 </button>
             </form>
         </div>
 
+        @if (Model.List.Results == null || !Model.List.Results.Any())
+        {
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+            <h2 class="govuk-heading-s">No results</h2>
+            <p class="govuk-body-m">No search results found. Try a searching for something different.</p>
+        }
+        else
+        {
+            <a href="DownloadCSV?name=@Model.Name" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Download results as CSV
+            </a>
 
+            <ul class="govuk-list govuk-list--spaced">
 
+                @foreach (var item in Model.List.Results!)
+                {
+                    <li class="results-list-item">
+                        <p class="govuk-body-!-margin-top-2">
+                            <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="@item.RecognitionNumber">@item.Name</a><br>
+                            <span class="govuk-body-s">@item.Acronym</span>
+                        </p>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
+                            <div class="govuk-grid-column-one-half">
+                                @switch (item.OfqualOrganisationStatus?.ToLower())
+                                {
+                                    case "surrendered":
+                                        <strong class="govuk-tag govuk-tag--purple">
+                                            Surrendered
+                                        </strong>
+                                        break;
+                                    case "withdrawn":
+                                        <strong class="govuk-tag govuk-tag--blue">
+                                            Withdrawn
+                                        </strong>
+                                        break;
+                                    case "recognised":
+                                        <strong class="govuk-tag govuk-tag--green">
+                                            Recognised
+                                        </strong>
+                                        break;
+                                    case "Never been recognised":
+                                        <strong class="govuk-tag govuk-tag--grey">
+                                            Never recognised
+                                        </strong>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-one-quarter">CCEA status: </div>
+                            <div class="govuk-grid-column-one-half">
+                                @switch (item.OfqualOrganisationStatus?.ToLower())
+                                {
+                                    case "surrendered":
+                                        <strong class="govuk-tag govuk-tag--purple">
+                                            Surrendered
+                                        </strong>
+                                        break;
+                                    case "withdrawn":
+                                        <strong class="govuk-tag govuk-tag--blue">
+                                            Withdrawn
+                                        </strong>
+                                        break;
+                                    case "recognised":
+                                        <strong class="govuk-tag govuk-tag--green">
+                                            Recognised
+                                        </strong>
+                                        break;
+                                    case "never been recognised":
+                                        <strong class="govuk-tag govuk-tag--grey">
+                                            Never recognised
+                                        </strong>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <p></p>
+                    </li>
+                }
 
+            </ul>
 
-
-
-
-        <a href="/download/download-org-results" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-            Download results as CSV
-        </a>
-
-
-        <ul class="govuk-list govuk-list--spaced">
-            <li class="results-list-item">
-                <p class="govuk-body-!-margin-top-2">
-                    <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisation-details">Pearson EDI</a><br>
-                    <span class="govuk-body-s">Pearson EDI</span>
-                </p>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--purple">
-                            Surrendered
-                        </strong>
-                    </div>
+            <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="Pagination">
+                <div class="govuk-pagination__next">
+                    <a class="govuk-link govuk-pagination__link" href="#" rel="next">
+                        <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                            <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                        </svg>
+                        <span class="govuk-pagination__link-title">Next<span class="govuk-visually-hidden"> page</span></span><span class="govuk-visually-hidden">:</span>
+                        <span class="govuk-pagination__link-label">1 of 2</span>
+                    </a>
                 </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--grey">
-                            Never recognised
-                        </strong>
-                    </div>
-                </div>
-                <p></p>
-            </li>
-            <li class="results-list-item">
-                <p class="govuk-body-!-margin-top-2">
-                    <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisation-details">Pearson Education Ltd</a><br>
-                    <span class="govuk-body-s">Pearson</span>
-                </p>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--green">
-                            Recognised
-                        </strong>
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--green">
-                            Recognised
-                        </strong>
-                    </div>
-                </div>
-            </li>
-            <li class="results-list-item">
-                <p class="govuk-body-!-margin-top-2">
-                    <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisation-details">Person Centred Awards</a><br>
-                    <span class="govuk-body-s">PCA</span>
-                </p>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--blue">
-                            Withdrawn
-                        </strong>
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--green">
-                            Recognised
-                        </strong>
-
-                    </div>
-                </div>
-            </li>
-            <li class="results-list-item">
-                <p class="govuk-body-!-margin-top-2">
-                    <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisation-details">Personal Development Qualifications</a><br>
-                    <span class="govuk-body-s">PDQ</span>
-                </p>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--green">
-                            Recognised
-                        </strong>
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--green">
-                            Recognised
-                        </strong>
-                    </div>
-                </div>
-            </li>
-            <li class="results-list-item">
-                <p class="govuk-body-!-margin-top-2">
-                    <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisation-details">Percival Adamson Ltd</a><br>
-                    <span class="govuk-body-s">Percival Adamson</span>
-                </p>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--grey">
-                            Never recognised
-                        </strong>
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                    <div class="govuk-grid-column-one-half">
-                        <strong class="govuk-tag govuk-tag--blue">
-                            Withdrawn
-                        </strong>
-                    </div>
-                </div>
-            </li>
-        </ul>
-
-
-
-        <nav class="govuk-pagination govuk-pagination--block" role="navigation" aria-label="Pagination">
-            <div class="govuk-pagination__next">
-                <a class="govuk-link govuk-pagination__link" href="#" rel="next">
-                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
-                    </svg>
-                    <span class="govuk-pagination__link-title">Next<span class="govuk-visually-hidden"> page</span></span><span class="govuk-visually-hidden">:</span>
-                    <span class="govuk-pagination__link-label">1 of 2</span>
-                </a>
-            </div>
-        </nav>
+            </nav>
+        }
 
 
     </div>

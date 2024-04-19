@@ -1,12 +1,14 @@
 ﻿<search>
-    <form method="post" role="search">
+    <form method="get" action="SearchResults" role="search">
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--l" for="selected-qualification">
                     Find a regulated awarding organisation
                 </label>
             </h1>
-            <input class="govuk-input" id="title" name="title" type="text" autocomplete="search">
+            <input class="govuk-input" id="name" name="name" type="text" autocomplete="search">
+            <input hidden id="page" name="page" type="number" value="1" />
+            <input hidden id="limit" name="limit" type="number" value="10" />
         </div>
         <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
             Search organisation
