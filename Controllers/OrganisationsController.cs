@@ -41,33 +41,26 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             string pattern = @"^\d+$";
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
-            if (name != null)
-            {
-                Match m = Regex.Match(name, pattern, RegexOptions.IgnoreCase);
-                if (m.Success)
-                {
-                    numberRN = $"RN{name}";
-                }
-                else if (name!.Substring(0, 2).Equals("rn", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    numberRN = name;
-                }
-            }
+            //if (name != null)
+            //{
+            //    Match m = Regex.Match(name, pattern, RegexOptions.IgnoreCase);
+            //    if (m.Success)
+            //    {
+            //        numberRN = $"RN{name}";
+            //    }
+            //    else if (name!.Substring(0, 2).Equals("rn", StringComparison.InvariantCultureIgnoreCase))
+            //    {
+            //        numberRN = name;
+            //    }
+            //}
 
             //if (numberRN != null)
             //{
             //    return RedirectToAction("Organisations", new { id = numberRN });
             //}
 
-            var paging = new List<int>();
 
             var orgs = await _registerAPIClient.GetOrganisationListAsync(name, page, pagingLimit);
-
-            if (page >= 5)
-            {
-                paging.AddRange([1, -1, 4, 5, 6, -1, orgs.Count]);
-            }
-
 
             var model = new SearchResultViewModel<OrganisationListViewModel> { 
                 List = orgs, 
