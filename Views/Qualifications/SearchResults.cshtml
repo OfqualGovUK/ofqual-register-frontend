@@ -1,9 +1,9 @@
 ﻿@using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 @model SearchResultViewModel<QualificationListViewModel>
 
-
 @{
     ViewData["Title"] = "Find a regulated qualification";
+    var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
 }
 <div class="govuk-grid-row">
     <div class="govuk-width-container">
@@ -11,12 +11,12 @@
         <p class="govuk-body">Select all the qualifications you want to compare.</p>
 
         <div class="app-search govuk-!-margin-bottom-4">
-            <form action="Search" method="get" novalidate="">
+            <form action="searchresults" method="get" novalidate="">
                 <div class="govuk-form-group">
-                    <label class="govuk-label app-search__label govuk-label--s" for="selected-qualification">
+                    <label class="govuk-label app-search__label govuk-label--s" for="title">
                         Search for a qualification
                     </label>
-                    <input class="govuk-input app-search__input " id="selected-qualification" name="selected-qualification" type="search" value="@Model.Title">
+                    <input class="govuk-input app-search__input " id="title" name="title" type="search" value="@Model.Title">
                 </div>
                 <button class="govuk-button app-search__button" data-module="govuk-button">
                     Search
@@ -36,466 +36,530 @@
             <div class="app-filter__header-action">
             </div>
         </div>
-
-        <div class="accordionExpander">
-            <div class="accordionItem is-open">
-                <h3 class="accordionTitle is-open" id="availability">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Availability</button>
-                    @* <div class="selected-counter"><span id="selected">1</span> selected</div> *@
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="availability_available" name="availability" type="checkbox" value="available">
-                                    <label class="govuk-label govuk-checkboxes__label" for="availability_available">
-                                        Available
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="availability_nolongerawarded" name="availability" type="checkbox" value="No longer awarded">
-                                    <label class="govuk-label govuk-checkboxes__label" for="availability_nolongerawarded">
-                                        No longer awarded
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="availability_notavailabletonewlearners" name="availability" type="checkbox" value="Not available to new learners">
-                                    <label class="govuk-label govuk-checkboxes__label" for="availability_notavailabletonewlearners">
-                                        Not available to new learners
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="availability_notyetavailable" name="availability" type="checkbox" value="Not yet available">
-                                    <label class="govuk-label govuk-checkboxes__label" for="availability_notyetavailable">
-                                        Not yet available
-                                    </label>
-                                </div>
-                            </div>
-                        </fieldset>
+            <div class="app-filter__selected">
+                <div class="app-filter__selected-heading">
+                    <div class="app-filter__heading-title">
+                        <h3 class="govuk-heading-m govuk-!-margin-bottom-1">Selected filters</h3>
+                        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="#">Clear filters</a></p>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="qual-type">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Qualification type</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                @foreach (var item in ((QualificationFilterModel)Model.Filters!).QualificationTypes!)
-                                {
+
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Assessment method</h4>
+                <ul class="app-filter-tags">
+
+                    <li><a class="app-filter__tag" href="/applications/remove-cycle-filter/2022 to 2023"><span class="govuk-visually-hidden">Remove this filter</span> Portfolio of evidence</a></li>
+
+
+                    <li><a class="app-filter__tag" href="/applications/remove-cycle-filter/_unchecked"><span class="govuk-visually-hidden">Remove this filter</span> Practical demonstration or<br> assignment</a></li>
+
+                </ul>
+
+
+
+
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Status</h4>
+                <ul class="app-filter-tags">
+
+                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> Available</a></li>
+
+                </ul>
+
+
+
+
+
+
+
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Awarding organisation</h4>
+                <ul class="app-filter-tags">
+
+                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> Pearson</a></li>
+
+                </ul>
+
+
+
+                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Sector subject area</h4>
+                <ul class="app-filter-tags">
+
+                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> 7.2 – Warehousing and distribution</a></li>
+
+                </ul>
+
+            </div>
+        <form id="qualificationsFilterForm" action="filters" method="get">
+            <input type="hidden" id="title" name="title" value="@Model.Title">
+
+            <div class="accordionExpander">
+                <div class="accordionItem is-open">
+                    <h3 class="accordionTitle is-open" id="availability">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Availability</button>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @{
+                                        string available = "", notAwarded = "", notAvailable = "", notYetAvailable = "";
+                                        @if (appliedFilters.Availability != null && appliedFilters.Availability.Any())
+                                        {
+                                            available = appliedFilters.Availability.Contains("Available to learners") ? "checked" : "";
+                                            notAwarded = appliedFilters.Availability.Contains("No longer awarded") ? "checked" : "";
+                                            notAvailable = appliedFilters.Availability.Contains("No longer available to new learners") ? "checked" : "";
+                                            notYetAvailable = appliedFilters.Availability.Contains("Not yet available to learners") ? "checked" : "";
+                                        }
+                                    }
+
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item" name="@item" type="checkbox" value="@item">
-                                        <label class="govuk-label govuk-checkboxes__label" for="@item">
-                                            @item
+                                        <input class="govuk-checkboxes__input" id="availability_available" name="availability" type="checkbox" value="Available to learners" @available>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_available">
+                                            Available to learners
                                         </label>
                                     </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="qualification-level">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Qualification level</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                @foreach (var item in ((QualificationFilterModel)Model.Filters!).QualificationLevels!)
-                                {
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item" name="@item" type="checkbox" value="@item">
-                                        <label class="govuk-label govuk-checkboxes__label" for="@item">
-                                            @item
+                                        <input class="govuk-checkboxes__input" id="availability_nolongerawarded" name="availability" type="checkbox" value="No longer awarded" @notAwarded>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_nolongerawarded">
+                                            No longer awarded
                                         </label>
                                     </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="organisation">
-                    <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Organisation</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                @foreach (var item in ((QualificationFilterModel)Model.Filters!).Organisations!)
-                                {
-                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item" name="@item" type="checkbox" value="@item">
-                                        <label class="govuk-label govuk-checkboxes__label" for="@item">
-                                            @item
-                                        </label>
-                                    </div>
-                                } 
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="sector subject area">
-                    <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Sector subject area</button>
-                    <div class="selected-counter"><span id="selected">1</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                @foreach (var item in ((QualificationFilterModel)Model.Filters!).SSA!)
-                                {
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="@item" name="@item" type="checkbox" value="@item">
-                                        <label class="govuk-label govuk-checkboxes__label" for="@item">
-                                            @item
+                                        <input class="govuk-checkboxes__input" id="availability_notavailabletonewlearners" name="availability" type="checkbox" value="No longer available to new learners" @notAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_notavailabletonewlearners">
+                                            No longer available to new learners
                                         </label>
                                     </div>
-                                }
-                                
-                            </div>
-
-                        </fieldset>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="grading">
-                    <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Grading type</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-grading" name="filter-grading" type="checkbox" value="graded">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-grading">
-                                        Graded
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-grading-2" name="filter-grading" type="checkbox" value="passfail">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-grading-2">
-                                        Pass or fail
-                                    </label>
-
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="availability_notyetavailable" name="availability" type="checkbox" value="Not yet available to learners" @notYetAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_notyetavailable">
+                                            Not yet available to learners
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-
-                        </fieldset>
-
+                            </fieldset>
+                        </div>
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="assessment-method">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Assessment method</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="qual-type">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Qualification type</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @foreach (var item in ((QualificationFilterModel)Model.Filters!).QualificationTypes!)
+                                    {
+                                        string qapplied = "";
+                                        if (appliedFilters.QualificationTypes != null && appliedFilters.QualificationTypes.Any())
+                                        {
+                                            qapplied = appliedFilters.QualificationTypes.Contains(item) ? "checked" : "";
+                                        }
 
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
-
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method" name="filter-assessment-method" type="checkbox" value="aural">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method">
-                                        Aural exam
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-2" name="filter-assessment-method" type="checkbox" value="coursework">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-2">
-                                        Coursework
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-3" name="filter-assessment-method" type="checkbox" value="controlled-assessment">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-3">
-                                        Task-based controlled assessment
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-4" name="filter-assessment-method" type="checkbox" value="E-assessment">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-4">
-                                        E-assessment
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-5" name="filter-assessment-method" type="checkbox" value="exam">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-5">
-                                        Written exam
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-6" name="filter-assessment-method" type="checkbox" value="multiple-choice">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-6">
-                                        Multiple choice exam
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-7" name="filter-assessment-method" type="checkbox" value="oral">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-7">
-                                        Oral exam
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-8" name="filter-assessment-method" type="checkbox" value="portfolio" checked="">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-8">
-                                        Portfolio of evidence
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-9" name="filter-assessment-method" type="checkbox" value="practical-demo" checked="">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-9">
-                                        Practical demonstration or assignment
-                                    </label>
-
-                                </div>                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-assessment-method-10" name="filter-assessment-method" type="checkbox" value="practical-exam">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-assessment-method-10">
-                                        Practical exam
-                                    </label>
-
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="qualificationTypes_@item" name="qualificationTypes" type="checkbox" value="@item" @qapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
                                 </div>
-                            </div>
-
-                        </fieldset>
-
+                            </fieldset>
+                        </div>
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="national-availability">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">National availability</button>
-                    <div class="selected-counter"><span id="selected">0</span> selected</div>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
-                    <div class="govuk-form-group">
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="qualification-level">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Qualification level</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @foreach (var item in ((QualificationFilterModel)Model.Filters!).QualificationLevels!)
+                                    {
+                                        string qlapplied = "";
+                                        if (appliedFilters.QualificationLevels != null && appliedFilters.QualificationLevels.Any())
+                                        {
+                                            qlapplied = appliedFilters.QualificationLevels.Contains(item) ? "checked" : "";
+                                        }
 
-                        <fieldset class="govuk-fieldset">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="qualificationLevels_@item" name="qualificationLevels" type="checkbox" value="@item" @qlapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationLevels_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-national-availability" name="filter-national-availability" type="checkbox" value="england">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability">
-                                        England
-                                    </label>
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="organisation">
+                        <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Organisation</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @foreach (var item in ((QualificationFilterModel)Model.Filters!).Organisations!)
+                                    {
+                                        string oapplied = "";
+                                        if (appliedFilters.AwardingOrganisations != null && appliedFilters.AwardingOrganisations.Any())
+                                        {
+                                            oapplied = appliedFilters.AwardingOrganisations.Contains(item) ? "checked" : "";
+                                        }
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="awardingOrganisations_@item" name="awardingOrganisations" type="checkbox" value="@item" @oapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="awardingOrganisations_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="sector subject area">
+                        <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Sector subject area</button>
+                        <div class="selected-counter"><span id="selected">1</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @foreach (var item in ((QualificationFilterModel)Model.Filters!).SSA!)
+                                    {
+                                        string ssaapplied = "";
+                                        if (appliedFilters.SectorSubjectAreas != null && appliedFilters.SectorSubjectAreas.Any())
+                                        {
+                                            ssaapplied = appliedFilters.SectorSubjectAreas.Contains(item) ? "checked" : "";
+                                        }
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="sectorSubjectAreas_@item" name="sectorSubjectAreas" type="checkbox" value="@item" @ssaapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="sectorSubjectAreas_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
 
                                 </div>
 
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-national-availability-2" name="filter-national-availability" type="checkbox" value="ni">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability-2">
-                                        Northern Ireland
-                                    </label>
+                            </fieldset>
 
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="grading">
+                        <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Grading type</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+
+                                    @{
+                                        string graded = "", passfail = "";
+                                        @if (appliedFilters.GradingTypes != null && appliedFilters.GradingTypes.Any())
+                                        {
+                                            graded = appliedFilters.GradingTypes.Contains("Graded") ? "checked" : "";
+                                            passfail = appliedFilters.GradingTypes.Contains("Pass/Fail") ? "checked" : "";
+                                        }
+
+                                    }
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="gradingTypes_Graded" name="gradingTypes" type="checkbox" value="Graded" @graded>
+                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes_Graded">
+                                            Graded
+                                        </label>
+                                    </div>
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="gradingTypes_Pass/Fail" name="gradingTypes" type="checkbox" value="Pass/Fail" @passfail>
+                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes_Pass/Fail">
+                                            Pass/Fail
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="assessment-method">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Assessment method</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @foreach (var item in ((QualificationFilterModel)Model.Filters!).AssessmentMethods!)
+                                    {
+                                        string assmapplied = "";
+                                        if (appliedFilters.AssessmentMethods != null && appliedFilters.AssessmentMethods.Any())
+                                        {
+                                            assmapplied = appliedFilters.AssessmentMethods.Contains(item) ? "checked" : "";
+                                        }
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="assessmentMethods_@item" name="assessmentMethods" type="checkbox" value="@item" @assmapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="assessmentMethods_@item">
+                                                @item
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="national-availability">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">National availability</button>
+                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        <div class="govuk-form-group">
+
+                            <fieldset class="govuk-fieldset">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    @{
+                                        string eng = "", ni = "", inter = "";
+                                        @if (appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any())
+                                        {
+                                            eng = appliedFilters.NationalAvailability.Contains("England") ? "checked" : "";
+                                            ni = appliedFilters.NationalAvailability.Contains("Northern Ireland") ? "checked" : "";
+                                            inter = appliedFilters.NationalAvailability.Contains("International") ? "checked" : "";
+                                        }
+
+                                    }
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_england" name="nationalAvailability" type="checkbox" value="England" @eng>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_england">
+                                            England
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_ni" name="nationalAvailability" type="checkbox" value="Northern Ireland" @ni>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_ni">
+                                            Northern Ireland
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_international" name="nationalAvailability" type="checkbox" value="International" @inter>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_international">
+                                            International
+                                        </label>
+
+                                    </div>
                                 </div>
 
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="filter-national-availability-3" name="filter-national-availability" type="checkbox" value="international">
-                                    <label class="govuk-label govuk-checkboxes__label" for="filter-national-availability-3">
-                                        International
-                                    </label>
+                            </fieldset>
 
-                                </div>
-                            </div>
-
-                        </fieldset>
+                        </div>
 
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="glh">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Guided learning hours</button>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="glh">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Guided learning hours</button>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        @{
+                            int minglh = default, maxglh = default;
+                            @if (appliedFilters.MinGuidedLearninghours != null)
+                            {
+                                minglh = appliedFilters.MinGuidedLearninghours ?? default;
+                            }
 
+                            @if (appliedFilters.MaxGuidedLearninghours != null)
+                            {
+                                maxglh = appliedFilters.MaxGuidedLearninghours ?? default;
+                            }
+                        }
 
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-label--s" for="min-glh">
-                            Minimum hours
-                        </label>
-
-
-                        <input class="govuk-input ofq-filters-small-input" id="min-glh" name="min-glh" type="number" inputmode="numeric" size="3">
-
-                    </div>                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-label--s" for="max-glh">
-                            Maximum hours
-                        </label>
-
-
-                        <input class="govuk-input ofq-filters-small-input" id="max-glh" name="max-glh" type="number" inputmode="numeric" size="3">
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--s" for="minGuidedLearninghours">
+                                Minimum hours
+                            </label>
+                            <input class="govuk-input ofq-filters-small-input" id="minGuidedLearninghours" name="minGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@minglh">
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--s" for="maxGuidedLearninghours">
+                                Maximum hours
+                            </label>
+                            <input class="govuk-input ofq-filters-small-input" id="maxGuidedLearninghours" name="maxGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@maxglh">
+                        </div>
 
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <div class="accordionExpander">
-            <div class="accordionItem">
-                <h3 class="accordionTitle" id="tqt">
-                    <span class="govuk-visually-hidden">Select filters for </span>
-                    <button class="accordionItem__button" type="button">Total qualification time</button>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
-                        <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
-                        </path>
-                    </svg>
-                    <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
-                        <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
-                        </path>
-                    </svg>
-                </h3>
-                <div class="accordionContent">
+            <div class="accordionExpander">
+                <div class="accordionItem">
+                    <h3 class="accordionTitle" id="tqt">
+                        <span class="govuk-visually-hidden">Select filters for </span>
+                        <button class="accordionItem__button" type="button">Total qualification time</button>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
+                            <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
+                            </path>
+                        </svg>
+                        <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon--up" aria-hidden="true" focusable="false">
+                            <path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z">
+                            </path>
+                        </svg>
+                    </h3>
+                    <div class="accordionContent">
+                        @{
+                            int mintqt = default, maxtqt = default;
+                            @if (appliedFilters.MinTotalQualificationTime != null)
+                            {
+                                mintqt = appliedFilters.MinGuidedLearninghours ?? default;
+                            }
+                            @if (appliedFilters.MaxTotalQualificationTime != null)
+                            {
+                                maxtqt = appliedFilters.MaxTotalQualificationTime ?? default;
+                            }
+                        }
 
-
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-label--s" for="min-tqt">
-                            Minimum hours
-                        </label>
-
-
-                        <input class="govuk-input ofq-filters-small-input" id="min-tqt" name="min-tqt" type="number" inputmode="numeric" size="3" maxlength="3">
-
-                    </div>                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-label--s" for="max-tqt">
-                            Maximum hours
-                        </label>
-
-
-                        <input class="govuk-input ofq-filters-small-input" id="max-tqt" name="max-tqt" type="number" inputmode="numeric" size="3" maxlength="3">
-
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--s" for="minTotalQualificationTime">
+                                Minimum hours
+                            </label>
+                            <input class="govuk-input ofq-filters-small-input" id="minTotalQualificationTime" name="minTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@mintqt">
+                        </div>
+                        <div class="govuk-form-group">
+                            <label class="govuk-label govuk-label--s" for="maxTotalQualificationTime">
+                                Maximum hours
+                            </label>
+                            <input class="govuk-input ofq-filters-small-input" id="maxTotalQualificationTime" name="maxTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@maxtqt">
+                        </div>
                     </div>
-
                 </div>
             </div>
-        </div>
+            <noscript>
+                <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
+                    Search
+                </button>
+            </noscript>
+        </form>
     </div>
 
     <div class="govuk-grid-column-two-thirds">
@@ -555,14 +619,14 @@
                                                 Available to learners
                                             </dd>
                                             break;
-                                        case "not yet available":
+                                        case "not yet available to learners":
                                             <dd class="govuk-tag govuk-tag--blue govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                Not yet available
+                                                Not yet available to learners
                                             </dd>
                                             break;
-                                        case "not available to new learners":
+                                        case "no longer available to new learners":
                                             <dd class="govuk-tag govuk-tag--yellow govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                Not available to new learners
+                                                No longer available to new learners
                                             </dd>
                                             break;
                                         case "no longer awarded":
@@ -614,15 +678,22 @@
         // })
 
 
-        const selectedElm = document.getElementById('selected');
+        // const selectedElm = document.getElementById('selected');
 
-        function showChecked() {
-            selectedElm.innerHTML = document.querySelectorAll('input[name=assessment-method]:checked').length;
-        }
+        // function showChecked() {
+        //     selectedElm.innerHTML = document.querySelectorAll('input[name=assessment-method]:checked').length;
+        // }
 
-        document.querySelectorAll("input[name=assessment-method]").forEach(i => {
-            i.onclick = () => showChecked();
+        // document.querySelectorAll("input[name=assessment-method]").forEach(i => {
+        //     i.onclick = () => showChecked();
+        // });
+
+        var queryFiltersForm = document.querySelector('#qualificationsFilterForm')
+
+        queryFiltersForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
+            i.onchange = () => { queryFiltersForm.submit() }
         });
+
     </script>
 
 }

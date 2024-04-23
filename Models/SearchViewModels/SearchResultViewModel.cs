@@ -7,5 +7,6 @@
         public required PagingModel Paging { get; set; }
 
         public FilterModel? Filters { get; set; }
+        public FilterModel? AppliedFilters { get; set; }
     }
 }

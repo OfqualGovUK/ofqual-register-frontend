@@ -39,7 +39,7 @@
             }
         }
 
-        @if (currentPage < Model.PagingList.Max())
+        @if (Model.PagingList.Any() && currentPage < Model.PagingList.Max())
         {
             <div class="govuk-pagination__next">
                 <a class="govuk-link govuk-pagination__link" href="@Model.PagingURL!.Replace("||_page_||", (currentPage+1).ToString())" rel="next">
