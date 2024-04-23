@@ -1,4 +1,4 @@
-﻿namespace Ofqual.Common.RegisterFrontend.Models
+﻿namespace Ofqual.Common.RegisterFrontend.Models.SearchViewModels
 {
     public class OrganisationListViewModel
     {

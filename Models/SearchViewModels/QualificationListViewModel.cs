@@ -1,4 +1,4 @@
-﻿namespace Ofqual.Common.RegisterFrontend.Models
+﻿namespace Ofqual.Common.RegisterFrontend.Models.SearchViewModels
 {
     public class QualificationListViewModel
     {
@@ -6,7 +6,7 @@
 
         public required string QualificationNumber { get; set; }
 
-        public required string Status { get; set; }
+        public required string? Status { get; set; }
 
         public required string OrganisationName { get; set; }
 

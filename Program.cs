@@ -18,6 +18,12 @@ builder.Services.AddRefitClient<IRegisterAPIClient>().ConfigureHttpClient(httpCl
     
 });
 
+builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpClient =>
+{
+    httpClient.BaseAddress = new Uri(builder.Configuration["RefDataAPIUrl"]!);
+    
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

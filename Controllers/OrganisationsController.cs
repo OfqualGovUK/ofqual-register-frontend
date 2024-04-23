@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Models;
+using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using System.Configuration;
 using System.Diagnostics;
@@ -47,8 +48,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             var model = new SearchResultViewModel<OrganisationListViewModel> { 
                 List = orgs, 
                 Title = name, 
-                PagingURL = $"SearchResults?name={name}&page=||_page_||" ,
-                PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit)
+                Paging = new PagingModel
+                {
+                    PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
+                    PagingURL = $"SearchResults?name={name}&page=||_page_||",
+                    CurrentPage = orgs.CurrentPage
+                }
             };
 
             return View(model);
