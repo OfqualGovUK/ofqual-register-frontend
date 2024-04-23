@@ -46,7 +46,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             var model = new SearchResultViewModel<OrganisationListViewModel> { 
                 List = orgs, 
-                Name = name, 
+                Title = name, 
                 PagingURL = $"SearchResults?name={name}&page=||_page_||" ,
                 PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit)
             };

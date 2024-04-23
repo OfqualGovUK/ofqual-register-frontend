@@ -6,7 +6,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
 
-        <h1 class="govuk-heading-m">Search results – '@Model.Name'</h1>
+        <h1 class="govuk-heading-m">Search results – '@Model.Title'</h1>
 
         <div class="app-search govuk-!-margin-bottom-4">
             <form action="SearchResults" method="get" novalidate="">
@@ -14,7 +14,7 @@
                     <label class="govuk-label app-search__label govuk-label--s" for="keywords">
                         Search for an organisation
                     </label>
-                    <input class="govuk-input app-search__input" id="name" name="name" type="search" value="@Model.Name">
+                    <input class="govuk-input app-search__input" id="name" name="name" type="search" value="@Model.Title">
                     <input hidden id="page" name="page" type="number" value="1" />
                 </div>
                 <button class="govuk-button app-search__button" data-module="govuk-button">
@@ -31,7 +31,7 @@
         }
         else
         {
-            <a href="DownloadCSV?name=@Model.Name" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+            <a href="DownloadCSV?name=@Model.Title" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                 Download results as CSV
             </a>
 
