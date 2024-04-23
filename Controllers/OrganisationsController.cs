@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using System.Configuration;
@@ -41,26 +42,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             string pattern = @"^\d+$";
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
-            //if (name != null)
-            //{
-            //    Match m = Regex.Match(name, pattern, RegexOptions.IgnoreCase);
-            //    if (m.Success)
-            //    {
-            //        numberRN = $"RN{name}";
-            //    }
-            //    else if (name!.Substring(0, 2).Equals("rn", StringComparison.InvariantCultureIgnoreCase))
-            //    {
-            //        numberRN = name;
-            //    }
-            //}
-
-            //if (numberRN != null)
-            //{
-            //    return RedirectToAction("Organisations", new { id = numberRN });
-            //}
-
-
-            var orgs = await _registerAPIClient.GetOrganisationListAsync(name, page, pagingLimit);
+            var orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
 
             var model = new SearchResultViewModel<OrganisationListViewModel> { 
                 List = orgs, 
@@ -72,12 +54,5 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             return View(model);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> Index(string number)
-        //{
-        //    var org = await _registerAPIClient.GetOrganisationAsync(number);
-
-        //    return View("Organisation", org);
-        //}
     }
 }
