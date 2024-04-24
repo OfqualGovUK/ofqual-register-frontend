@@ -1,4 +1,6 @@
-﻿@model Ofqual.Common.RegisterFrontend.Models.APIModels.Organisation
+﻿@using Ofqual.Common.RegisterFrontend.Models.APIModels;
+@using Ofqual.Common.RegisterFrontend.Extensions;
+@model Organisation
 
 
 <div class="govuk-grid-row">
@@ -17,7 +19,7 @@
 
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
-                        @if (Model.Website != null)
+                        @if (Model.ContactEmail.IsNotNull())
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -28,7 +30,7 @@
                                 </dd>
                             </div>
                         }
-                        @if (Model.ContactEmail != null)
+                        @if (Model.Website.IsNotNull())
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -39,15 +41,17 @@
                                 </dd>
                             </div>
                         }
-
-                        @*                     <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                    Pricing and fees
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                    <a href="https://support.pearson.com/uk/s/article/Qualification-Fees-Prices">Qualification fees and prices</a>
-                    </dd>
-                    </div> *@
+                        @if (Model.Website.IsNotNull())
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Pricing and fees
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="@Model.FeesUrl">Qualification fees and prices</a>
+                                </dd>
+                            </div>
+                        }
                     </dl>
                 </div>
             </div>
@@ -59,53 +63,55 @@
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
 
+                    @if (Model.OfqualOrganisationStatus.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @switch (Model.OfqualOrganisationStatus?.ToLower())
+                                {
+                                    case "surrendered":
+                                        <strong class="govuk-tag govuk-tag--purple">
+                                            Surrendered
+                                        </strong>
+                                        break;
+                                    case "withdrawn":
+                                        <strong class="govuk-tag govuk-tag--blue">
+                                            Withdrawn
+                                        </strong>
+                                        break;
+                                    case "recognised":
+                                        <strong class="govuk-tag govuk-tag--green">
+                                            Recognised
+                                        </strong>
+                                        break;
+                                    case "never been recognised":
+                                        <strong class="govuk-tag govuk-tag--grey">
+                                            Never recognised
+                                        </strong>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            </dd>
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Status
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @switch (Model.OfqualOrganisationStatus?.ToLower())
-                            {
-                                case "surrendered":
-                                    <strong class="govuk-tag govuk-tag--purple">
-                                        Surrendered
-                                    </strong>
-                                    break;
-                                case "withdrawn":
-                                    <strong class="govuk-tag govuk-tag--blue">
-                                        Withdrawn
-                                    </strong>
-                                    break;
-                                case "recognised":
-                                    <strong class="govuk-tag govuk-tag--green">
-                                        Recognised
-                                    </strong>
-                                    break;
-                                case "never been recognised":
-                                    <strong class="govuk-tag govuk-tag--grey">
-                                        Never recognised
-                                    </strong>
-                                    break;
-                                default:
-                                    break;
-                            }
-                        </dd>
+                        </div>
+                    }
 
-                    </div>
+                    @if (Model.OfqualRecognisedOn != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Recognised from
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <time datetime="@Model.OfqualRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.OfqualRecognisedOn?.ToString("dd MMMM yyyy")</time>
+                            </dd>
 
-
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Recognised from
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@Model.OfqualRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.OfqualRecognisedOn?.ToString("dd MMMM yyyy")</time>
-                        </dd>
-
-                    </div>
-
+                        </div>
+                    }
 
 
                     <div class="govuk-summary-list__row">
@@ -130,52 +136,55 @@
                 <dl class="govuk-summary-list">
 
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Status
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @switch (Model.CceaOrganisationStatus?.ToLower())
-                            {
-                                case "surrendered":
-                                    <strong class="govuk-tag govuk-tag--purple">
-                                        Surrendered
-                                    </strong>
-                                    break;
-                                case "withdrawn":
-                                    <strong class="govuk-tag govuk-tag--blue">
-                                        Withdrawn
-                                    </strong>
-                                    break;
-                                case "recognised":
-                                    <strong class="govuk-tag govuk-tag--green">
-                                        Recognised
-                                    </strong>
-                                    break;
-                                case "never been recognised":
-                                    <strong class="govuk-tag govuk-tag--grey">
-                                        Never recognised
-                                    </strong>
-                                    break;
-                                default:
-                                    break;
-                            }
-                        </dd>
+                    @if (Model.CceaOrganisationStatus.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @switch (Model.CceaOrganisationStatus?.ToLower())
+                                {
+                                    case "surrendered":
+                                        <strong class="govuk-tag govuk-tag--purple">
+                                            Surrendered
+                                        </strong>
+                                        break;
+                                    case "withdrawn":
+                                        <strong class="govuk-tag govuk-tag--blue">
+                                            Withdrawn
+                                        </strong>
+                                        break;
+                                    case "recognised":
+                                        <strong class="govuk-tag govuk-tag--green">
+                                            Recognised
+                                        </strong>
+                                        break;
+                                    case "never been recognised":
+                                        <strong class="govuk-tag govuk-tag--grey">
+                                            Never recognised
+                                        </strong>
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            </dd>
 
-                    </div>
+                        </div>
+                    }
 
 
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Recognised from
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@Model.CceaRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.CceaRecognisedOn?.ToString("dd MMMM yyyy")</time>
-                        </dd>
-
-                    </div>
-
+                    @if (Model.CceaOrganisationStatus != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Recognised from
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <time datetime="@Model.CceaRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.CceaRecognisedOn?.ToString("dd MMMM yyyy")</time>
+                            </dd>
+                        </div>
+                    }
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Recognition number
@@ -183,9 +192,7 @@
                         <dd class="govuk-summary-list__value">
                             @Model.RecognitionNumber
                         </dd>
-
                     </div>
-
 
                 </dl>
             </div>
