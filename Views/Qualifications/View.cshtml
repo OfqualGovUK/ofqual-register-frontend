@@ -1,35 +1,301 @@
-﻿@model Ofqual.Common.RegisterFrontend.Models.SearchViewModels.SearchResultViewModel<Ofqual.Common.RegisterFrontend.Models.SearchViewModels.QualificationListViewModel>
+﻿@using Ofqual.Common.RegisterFrontend.Models.APIModels;
+@using Ofqual.Common.RegisterFrontend.Extensions;
+@model Qualification
 
-@{
-    Layout = null;
-}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
 
-<!DOCTYPE html>
+        <h1 class="govuk-heading-m">
+            Pearson Apprenticeship End-point Assessment for Warehouse Operative (Level 2)
+        </h1>
+        <div class="govuk-summary-card" id="qual-summary">
+            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Qualification summary</h2></div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    @if (Model.Type.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Qualification type
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Type
+                            </dd>
+                        </div>
+                    }
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>View</title>
-</head>
-<body>
+                    @if (Model.Level.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Qualification level
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Level
+                            </dd>
+                        </div>
+                    }
 
-<div>
-    <h4>QualificationListViewModel</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Qualification number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.QualificationNumber
+                        </dd>
+                    </div>
+                    @if (Model.AssessmentMethods.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Assessment methods
+                            </dt>
+                            <dd class="govuk-summary-list__value">
 
-        </dd>
-    </dl>
+                                @String.Join(", ", Model.AssessmentMethods!)
+
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.LinkToSpecification.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Specification
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <a href="@Model.LinkToSpecification">View this qualification's specification</a>
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.SSA.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Sector subject area
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.SSA
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.GradingScale.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Grading scale
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.GradingScale
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.ApprenticeshipStandardTitle.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                End-point assessment standard
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ApprenticeshipStandardTitle
+                            </dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+        </div>
+        <div class="govuk-summary-card" id="org">
+            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Organisation</h2></div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Awarding organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <a href="/Organisations/@Model.OrganisationRecognitionNumber">@Model.OrganisationName</a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        @if (Model.GradingType.IsNotNull())
+        {
+            <div class="govuk-summary-card" id="details">
+                <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Further details</h2></div>
+
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Grading type
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.GradingType
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        }
+        <div class="govuk-summary-card" id="funding-details">
+            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Funding details</h2></div>
+
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key">
+                            Funding in England
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <a href="https://www.qualifications.education.gov.uk/Qualification/@Model.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Standard qualification fee
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            £
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="#info-fees">information on fees<span class="govuk-visually-hidden"> (Funding details)</span></a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="govuk-summary-card" id="availability">
+            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Availability</h2></div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    @if (Model.Status.IsNotNull())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <div class="govuk-label__green">@Model.Status</div>
+                            </dd>
+                        </div>
+                    }
+                    @if ((Model.OfferedInEngland ?? false) || (Model.OfferedInNorthernIreland ?? false) || (Model.OfferedInternationally ?? false))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                National availability
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+
+                                @{
+                                    if (Model.OfferedInEngland ?? false)
+                                    {
+                                        <text>
+                                            England
+                                        </text>
+                                    }
+                                    if (Model.OfferedInNorthernIreland ?? false)
+                                    {
+                                        <text>
+                                            Northern Ireland
+                                        </text>
+                                    }
+                                    if (Model.OfferedInternationally ?? false)
+                                    {
+                                        <text>
+                                            International
+                                        </text>
+                                    }
+                                }
+                            </dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+        </div>
+        @if (Model.OfferedInNorthernIreland ?? false)
+        {
+            <div class="govuk-summary-card" id="northern-ireland">
+                <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Northern Ireland</h2></div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Available in Northern Ireland
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @{
+                                    if (Model.OfferedInNorthernIreland ?? false)
+                                    {
+                                        <text>Yes</text>
+                                    }
+                                    else
+                                    {
+                                        <text>No</text>
+                                    }
+                                }
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Funded in Northern Ireland
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is funded in Northern Ireland</a>
+                            </dd>
+                        </div>
+
+                    </dl>
+                </div>
+            </div>
+        }
+        <div class="govuk-summary-card" id="additional-info">
+            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Additional information</h2></div>
+
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Regulation start date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <time datetime="@Model.RegulationStartDate.ToString("dd-MM-yyyy")" lang="en">@Model.RegulationStartDate.ToString("dd MMMM yyyy")</time>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Operational start date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <time datetime="@Model.OperationalStartDate.ToString("dd-MM-yyyy")" lang="en">@Model.OperationalStartDate.ToString("dd MMMM yyyy")</time>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        <div class="app-application-cards">
+            <section class="app-application-card">
+                <header class="app-application-card__header">
+                    <h2 class="govuk-heading-s">
+                        Information about fees
+                    </h2>
+                </header>
+                <div class="govuk-grid-row app-grid-row--flex">
+                    <div class="govuk-grid-column-full">
+                        <div class="govuk-body-s" id="info-fees">
+                            The fee listed is the standard quoted fee from the awarding organisation.
+                            It does not necessarily mean that this is the fee you will pay as
+                            awarding organisations may offer discount schemes or other pricing models.
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>
-</body>
-</html>
