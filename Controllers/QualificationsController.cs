@@ -100,29 +100,29 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 pagingURL += $"&sectorSubjectAreas={sectorSubjectAreas}";
             }
 
-            if (minTotalQualificationTime != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
-            }
+            //if (minTotalQualificationTime != null)
+            //{
+            //    filtersApplied = true;
+            //    pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
+            //}
 
-            if (maxTotalQualificationTime != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
-            }
+            //if (maxTotalQualificationTime != null)
+            //{
+            //    filtersApplied = true;
+            //    pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
+            //}
 
-            if (minGuidedLearninghours != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
-            }
+            //if (minGuidedLearninghours != null)
+            //{
+            //    filtersApplied = true;
+            //    pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
+            //}
 
-            if (maxGuidedLearninghours != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
-            }
+            //if (maxGuidedLearninghours != null)
+            //{
+            //    filtersApplied = true;
+            //    pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
+            //}
 
             var model = new SearchResultViewModel<QualificationListViewModel>
             {
