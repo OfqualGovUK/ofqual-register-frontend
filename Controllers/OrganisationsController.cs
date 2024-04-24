@@ -1,12 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
-using System.Configuration;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
@@ -30,17 +26,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
+        [Route("Organisations/Search")]
         public IActionResult Search()
         {
             return View();
         }
 
         [HttpGet]
+        [Route("Organisations/SearchResults")]
         public async Task<IActionResult> SearchResults(string name, int page = 1)
         {
-            //check for qualification number regex
-            string? numberRN = null;
-            string pattern = @"^\d+$";
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
             var orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
@@ -57,6 +52,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             };
 
             return View(model);
+        }
+
+
+        [HttpGet]
+        [Route("Organisations/{number}")]
+        public async Task<IActionResult> Organisation(string number)
+        {
+            var org = await _registerAPIClient.GetOrganisationAsync(number);
+
+            return View(org);
         }
 
     }
