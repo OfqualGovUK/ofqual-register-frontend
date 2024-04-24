@@ -19,6 +19,6 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
         Task<APIResponseList<QualificationListViewModel>> GetQualificationsListAsync(string? title, int page, int limit, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, string? sectorSubjectAreas = null);
 
         [Get("/api/qualifications/{number1}/{number2}/{number3}")]
-        Task<Qualification> GetQualification(string number1, string? number2 = null, string? number3 = null);
+        Task<Qualification> GetQualificationAsync(string number1, string? number2 = null, string? number3 = null);
     }
 }

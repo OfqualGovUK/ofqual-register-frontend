@@ -8,7 +8,7 @@
             @Model.Name
         </h1>
 
-        <a href="/Qualifications/SearchResults?awardingOrganisation=@Model.Name&page=1&limit=10" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
+        <a href="/Qualifications/SearchResults?awardingOrganisations=@Model.Name&page=1" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
 
         @if (!(Model.Website == null && Model.ContactEmail == null))
         {
@@ -53,18 +53,6 @@
             </div>
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Ofqual recognition</h2></div>
 
@@ -77,7 +65,31 @@
                             Status
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <strong class="govuk-tag--green">Recognised</strong>
+                            @switch (Model.OfqualOrganisationStatus?.ToLower())
+                            {
+                                case "surrendered":
+                                    <strong class="govuk-tag govuk-tag--purple">
+                                        Surrendered
+                                    </strong>
+                                    break;
+                                case "withdrawn":
+                                    <strong class="govuk-tag govuk-tag--blue">
+                                        Withdrawn
+                                    </strong>
+                                    break;
+                                case "recognised":
+                                    <strong class="govuk-tag govuk-tag--green">
+                                        Recognised
+                                    </strong>
+                                    break;
+                                case "never been recognised":
+                                    <strong class="govuk-tag govuk-tag--grey">
+                                        Never recognised
+                                    </strong>
+                                    break;
+                                default:
+                                    break;
+                            }
                         </dd>
 
                     </div>
@@ -89,7 +101,7 @@
                             Recognised from
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="2010-04-01" lang="en">1 April 2010</time>
+                            <time datetime="@Model.OfqualRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.OfqualRecognisedOn?.ToString("dd MMMM yyyy")</time>
                         </dd>
 
                     </div>
@@ -101,7 +113,7 @@
                             Recognition number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            RN5133
+                            @Model.RecognitionNumber
                         </dd>
 
                     </div>
@@ -110,16 +122,6 @@
                 </dl>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
 
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">CCEA recognition</h2></div>
@@ -133,7 +135,31 @@
                             Status
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <strong class="govuk-tag--green">Recognised</strong>
+                            @switch (Model.CceaOrganisationStatus?.ToLower())
+                            {
+                                case "surrendered":
+                                    <strong class="govuk-tag govuk-tag--purple">
+                                        Surrendered
+                                    </strong>
+                                    break;
+                                case "withdrawn":
+                                    <strong class="govuk-tag govuk-tag--blue">
+                                        Withdrawn
+                                    </strong>
+                                    break;
+                                case "recognised":
+                                    <strong class="govuk-tag govuk-tag--green">
+                                        Recognised
+                                    </strong>
+                                    break;
+                                case "never been recognised":
+                                    <strong class="govuk-tag govuk-tag--grey">
+                                        Never recognised
+                                    </strong>
+                                    break;
+                                default:
+                                    break;
+                            }
                         </dd>
 
                     </div>
@@ -145,19 +171,17 @@
                             Recognised from
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="2010-04-01" lang="en">1 April 2010</time>
+                            <time datetime="@Model.CceaRecognisedOn?.ToString("dd-MM-yyyy")" lang="en">@Model.CceaRecognisedOn?.ToString("dd MMMM yyyy")</time>
                         </dd>
 
                     </div>
-
-
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Recognition number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            RN5133
+                            @Model.RecognitionNumber
                         </dd>
 
                     </div>
@@ -167,63 +191,37 @@
             </div>
         </div>
 
-
-
-
-
-
-
-
-
-
-
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Organisation details</h2></div>
-
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
-
-
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Name
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            Pearson Education Ltd
+                            @Model.Name
                         </dd>
-
                     </div>
-
-
-
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Legal name
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            Pearson Education Ltd
+                            @Model.LegalName
                         </dd>
-
                     </div>
-
-
-
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Known as
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            Pearson
+                            @Model.Acronym
                         </dd>
-
                     </div>
-
-
                 </dl>
             </div>
         </div>
-
-
 
         <!-- Display scope of recognition -->
         <div class="govuk-summary-card">
@@ -251,21 +249,10 @@
                                             Level 3
                                         </summary>
                                         <ul id="AdvancedExtensionAward-Level3-list">
-
-
                                             <li class="govuk-body"><div role="treeitem">02.2 Mathematics and statistics</div></li>
-
-
-
-
-
-
-
-
                                         </ul>
                                     </details>
                                 </li>
-
                             </ul>
                         </details>
                     </li>

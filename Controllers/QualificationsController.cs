@@ -48,9 +48,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             var types = await _refDataAPIClient.GetQualificationTypesAsync();
             var organisations = await _registerAPIClient.GetOrganisationsListAsync(null, 1, 500);
 
-            var pagingURL = $"SearchResults?title={title}&page=||_page_||";
+            var pagingURL = $"SearchResults?page=||_page_||";
 
             var filtersApplied = false;
+
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                pagingURL += $"&title={title}";
+            }
 
             if (assessmentMethods != null && assessmentMethods.GetSubStrings() != null)
             {
@@ -67,7 +73,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             if (awardingOrganisations != null && awardingOrganisations.GetSubStrings() != null)
             {
                 filtersApplied = true;
-                pagingURL += $"&gradingTypes={awardingOrganisations}";
+                pagingURL += $"&awardingOrganisations={awardingOrganisations}";
             }
 
             if (availability != null && availability.GetSubStrings() != null)
@@ -188,7 +194,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("Qualifications/{number1}/{number2}/{number3}")]
         public async Task<IActionResult> View(string number1, string number2, string number3)
         {
-            var qual = await _registerAPIClient.GetQualification(number1, number2, number3);
+            var qual = await _registerAPIClient.GetQualificationAsync(number1, number2, number3);
 
             return View(qual);
         }
