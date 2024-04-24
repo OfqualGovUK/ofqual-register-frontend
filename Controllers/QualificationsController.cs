@@ -40,13 +40,89 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             int pagingLimit = _config.GetValue<int>("QualificationsPagingLimit");
 
-            var quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability);
+            var quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas);
 
             var ssa = await _refDataAPIClient.GetSSAAsync();
             var levels = await _refDataAPIClient.GetLevelsAsync();
             var assessMethods = await _refDataAPIClient.GetAssessmentMethodsAsync();
             var types = await _refDataAPIClient.GetQualificationTypesAsync();
             var organisations = await _registerAPIClient.GetOrganisationsListAsync(null, 1, 500);
+
+            var pagingURL = $"SearchResults?title={title}&page=||_page_||";
+
+            var filtersApplied = false;
+
+            if (assessmentMethods != null && assessmentMethods.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&assessmentMethods={assessmentMethods}";
+            }
+
+            if (gradingTypes != null && gradingTypes.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&gradingTypes={gradingTypes}";
+            }
+
+            if (awardingOrganisations != null && awardingOrganisations.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&gradingTypes={awardingOrganisations}";
+            }
+
+            if (availability != null && availability.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&availability={availability}";
+            }
+
+            if (qualificationTypes != null && qualificationTypes.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&qualificationTypes={qualificationTypes}";
+            }
+
+            if (qualificationLevels != null && qualificationLevels.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&qualificationLevels={qualificationLevels}";
+            }
+
+            if (nationalAvailability != null && nationalAvailability.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&nationalAvailability={nationalAvailability}";
+            }
+
+            if (sectorSubjectAreas != null && sectorSubjectAreas.GetSubStrings() != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&sectorSubjectAreas={sectorSubjectAreas}";
+            }
+
+            if (minTotalQualificationTime != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
+            }
+
+            if (maxTotalQualificationTime != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
+            }
+
+            if (minGuidedLearninghours != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
+            }
+
+            if (maxGuidedLearninghours != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
+            }
 
             var model = new SearchResultViewModel<QualificationListViewModel>
             {
@@ -63,7 +139,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, quals.Count, pagingLimit),
-                    PagingURL = $"SearchResults?title={title}&page=||_page_||&assessmentMethods={assessmentMethods}&gradingTypes={gradingTypes}&awardingOrganisations={awardingOrganisations}&availability={availability}&qualificationTypes={qualificationTypes}&qualificationLevels={qualificationLevels}&nationalAvailability={nationalAvailability}&minTotalQualificationTime={minTotalQualificationTime}&maxTotalQualificationTime={maxTotalQualificationTime}&minGuidedLearninghours={minGuidedLearninghours}&maxGuidedLearninghours={maxGuidedLearninghours}&sectorSubjectAreas={sectorSubjectAreas}",
+                    PagingURL = pagingURL,
                     CurrentPage = quals.CurrentPage
                 },
                 AppliedFilters = new QualificationAppliedFilterModel
@@ -79,7 +155,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     MinTotalQualificationTime = minTotalQualificationTime,
                     MaxTotalQualificationTime = maxTotalQualificationTime,
                     MinGuidedLearninghours = minGuidedLearninghours,
-                    MaxGuidedLearninghours = maxGuidedLearninghours
+                    MaxGuidedLearninghours = maxGuidedLearninghours,
+                    FiltersApplied = filtersApplied
                 }
             };
 

@@ -29,65 +29,122 @@
     </div>
 
     <div class="govuk-grid-column-one-third">
-        <div class="app-filter__header">
-            <div class="app-filter__header-title">
-                <h2 class="govuk-heading-m">Filter</h2>
-            </div>
-            <div class="app-filter__header-action">
-            </div>
-        </div>
-            <div class="app-filter__selected">
-                <div class="app-filter__selected-heading">
-                    <div class="app-filter__heading-title">
-                        <h3 class="govuk-heading-m govuk-!-margin-bottom-1">Selected filters</h3>
-                        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="#">Clear filters</a></p>
+        @if (appliedFilters.FiltersApplied)
+        {
+            <div id="selectedFilters" style="display:none">
+                <div class="app-filter__header">
+                    <div class="app-filter__header-title">
+                        <h2 class="govuk-heading-m">Filter</h2>
+                    </div>
+                    <div class="app-filter__header-action">
                     </div>
                 </div>
+                <div class="app-filter__selected">
+                    <div class="app-filter__selected-heading">
+                        <div class="app-filter__heading-title">
+                            <h3 class="govuk-heading-m govuk-!-margin-bottom-1">Selected filters</h3>
+                            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="SearchResults?title=@Model.Title&page=@Model.Paging.CurrentPage">Clear filters</a></p>
+                        </div>
+                    </div>
 
+                    @if (appliedFilters.Availability != null && appliedFilters.Availability.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Availability</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.Availability)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="availability_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
+                        </ul>
+                    }
 
-                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Assessment method</h4>
-                <ul class="app-filter-tags">
+                    @if (appliedFilters.QualificationTypes != null && appliedFilters.QualificationTypes.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Qualification Type</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.QualificationTypes)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="qualificationTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
-                    <li><a class="app-filter__tag" href="/applications/remove-cycle-filter/2022 to 2023"><span class="govuk-visually-hidden">Remove this filter</span> Portfolio of evidence</a></li>
+                        </ul>
+                    }
 
+                    @if (appliedFilters.QualificationLevels != null && appliedFilters.QualificationLevels.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Qualification Level</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.QualificationLevels)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="qualificationLevels_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
-                    <li><a class="app-filter__tag" href="/applications/remove-cycle-filter/_unchecked"><span class="govuk-visually-hidden">Remove this filter</span> Practical demonstration or<br> assignment</a></li>
+                        </ul>
+                    }
 
-                </ul>
+                    @if (appliedFilters.AwardingOrganisations != null && appliedFilters.AwardingOrganisations.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Organisation</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.AwardingOrganisations)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="awardingOrganisations_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
+                        </ul>
+                    }
 
+                    @if (appliedFilters.SectorSubjectAreas != null && appliedFilters.SectorSubjectAreas.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Sector Subject Area</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.SectorSubjectAreas)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="sectorSubjectAreas_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
+                        </ul>
+                    }
 
-                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Status</h4>
-                <ul class="app-filter-tags">
+                    @if (appliedFilters.GradingTypes != null && appliedFilters.GradingTypes.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Grading Type</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.GradingTypes)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="gradingTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
-                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> Available</a></li>
+                        </ul>
+                    }
 
-                </ul>
+                    @if (appliedFilters.AssessmentMethods != null && appliedFilters.AssessmentMethods.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Assessment method</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.AssessmentMethods)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="assessmentMethods_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
+                        </ul>
+                    }
 
+                    @if (appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any())
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">National Availability</h4>
+                        <ul class="app-filter-tags">
+                            @foreach (var item in appliedFilters.NationalAvailability)
+                            {
+                                <li><a class="app-filter__tag removeFilter" data-checkbox="nationalAvailability_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a></li>
+                            }
 
-
-
-
-
-                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Awarding organisation</h4>
-                <ul class="app-filter-tags">
-
-                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> Pearson</a></li>
-
-                </ul>
-
-
-
-                <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Sector subject area</h4>
-                <ul class="app-filter-tags">
-
-                    <li><a class="app-filter__tag" href="#"><span class="govuk-visually-hidden">Remove this filter</span> 7.2 – Warehousing and distribution</a></li>
-
-                </ul>
+                        </ul>
+                    }
+                </div>
 
             </div>
+        }
         <form id="qualificationsFilterForm" action="filters" method="get">
             <input type="hidden" id="title" name="title" value="@Model.Title">
 
@@ -121,26 +178,26 @@
                                     }
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_available" name="availability" type="checkbox" value="Available to learners" @available>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_available">
+                                        <input class="govuk-checkboxes__input" id="availability_Available_to_learners" name="availability" type="checkbox" value="Available to learners" @available>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_Available_to_learners">
                                             Available to learners
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_nolongerawarded" name="availability" type="checkbox" value="No longer awarded" @notAwarded>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_nolongerawarded">
+                                        <input class="govuk-checkboxes__input" id="availability_No_longer_awarded" name="availability" type="checkbox" value="No longer awarded" @notAwarded>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_No_longer_awarded">
                                             No longer awarded
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_notavailabletonewlearners" name="availability" type="checkbox" value="No longer available to new learners" @notAvailable>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_notavailabletonewlearners">
+                                        <input class="govuk-checkboxes__input" id="availability_No_longer_available_to_new_learners" name="availability" type="checkbox" value="No longer available to new learners" @notAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_No_longer_available_to_new_learners">
                                             No longer available to new learners
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_notyetavailable" name="availability" type="checkbox" value="Not yet available to learners" @notYetAvailable>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_notyetavailable">
+                                        <input class="govuk-checkboxes__input" id="availability_Not_yet_available_to_learners" name="availability" type="checkbox" value="Not yet available to learners" @notYetAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability_Not_yet_available_to_learners">
                                             Not yet available to learners
                                         </label>
                                     </div>
@@ -179,8 +236,8 @@
                                         }
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="qualificationTypes_@item" name="qualificationTypes" type="checkbox" value="@item" @qapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes_@item">
+                                            <input class="govuk-checkboxes__input" id="qualificationTypes_@item.Replace(' ', '_')" name="qualificationTypes" type="checkbox" value="@item" @qapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes_@item.Replace(' ', '_')">
                                                 @item
                                             </label>
                                         </div>
@@ -220,8 +277,8 @@
                                         }
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="qualificationLevels_@item" name="qualificationLevels" type="checkbox" value="@item" @qlapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationLevels_@item">
+                                            <input class="govuk-checkboxes__input" id="qualificationLevels_@item.Replace(' ', '_')" name="qualificationLevels" type="checkbox" value="@item" @qlapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationLevels_@item.Replace(' ', '_')">
                                                 @item
                                             </label>
                                         </div>
@@ -259,8 +316,8 @@
                                             oapplied = appliedFilters.AwardingOrganisations.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="awardingOrganisations_@item" name="awardingOrganisations" type="checkbox" value="@item" @oapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="awardingOrganisations_@item">
+                                            <input class="govuk-checkboxes__input" id="awardingOrganisations_@item.Replace(' ', '_')" name="awardingOrganisations" type="checkbox" value="@item" @oapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="awardingOrganisations_@item.Replace(' ', '_')">
                                                 @item
                                             </label>
                                         </div>
@@ -298,8 +355,8 @@
                                             ssaapplied = appliedFilters.SectorSubjectAreas.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="sectorSubjectAreas_@item" name="sectorSubjectAreas" type="checkbox" value="@item" @ssaapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="sectorSubjectAreas_@item">
+                                            <input class="govuk-checkboxes__input" id="sectorSubjectAreas_@item.Replace(' ', '_')" name="sectorSubjectAreas" type="checkbox" value="@item" @ssaapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="sectorSubjectAreas_@item.Replace(' ', '_')">
                                                 @item
                                             </label>
                                         </div>
@@ -391,8 +448,8 @@
                                             assmapplied = appliedFilters.AssessmentMethods.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="assessmentMethods_@item" name="assessmentMethods" type="checkbox" value="@item" @assmapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="assessmentMethods_@item">
+                                            <input class="govuk-checkboxes__input" id="assessmentMethods_@item.Replace(' ', '_')" name="assessmentMethods" type="checkbox" value="@item" @assmapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="assessmentMethods_@item.Replace(' ', '_')">
                                                 @item
                                             </label>
                                         </div>
@@ -435,24 +492,24 @@
 
                                     }
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_england" name="nationalAvailability" type="checkbox" value="England" @eng>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_england">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_England" name="nationalAvailability" type="checkbox" value="England" @eng>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_England">
                                             England
                                         </label>
 
                                     </div>
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_ni" name="nationalAvailability" type="checkbox" value="Northern Ireland" @ni>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_ni">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_Northern_Ireland" name="nationalAvailability" type="checkbox" value="Northern Ireland" @ni>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_Northern_Ireland">
                                             Northern Ireland
                                         </label>
 
                                     </div>
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_international" name="nationalAvailability" type="checkbox" value="International" @inter>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_international">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability_International" name="nationalAvailability" type="checkbox" value="International" @inter>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_International">
                                             International
                                         </label>
 
@@ -564,21 +621,6 @@
 
     <div class="govuk-grid-column-two-thirds">
 
-        <ul id="action-buttons-row" class="ofq-action-buttons--list">
-            <li class="ofq-action-buttons--item">
-                <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
-                    Compare selected
-                </a>
-            </li>
-            <li class="ofq-action-buttons--item">
-                <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
-                    Download results as CSV
-                </a>
-            </li>
-        </ul>
-
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
         @if (Model.List.Results == null || !Model.List.Results.Any())
         {
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -590,6 +632,20 @@
 
         @if (Model.List.Results != null && Model.List.Results.Count() > 0)
         {
+            <ul id="action-buttons-row" class="ofq-action-buttons--list">
+                <li class="ofq-action-buttons--item">
+                    <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
+                        Compare selected
+                    </a>
+                </li>
+                <li class="ofq-action-buttons--item">
+                    <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
+                        Download results as CSV
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             @foreach (var item in Model.List.Results)
             {
                 <div class="app-application-cards" aria-live="polite">
@@ -669,30 +725,28 @@
             })
         })
 
-        // const accordionIcons = document.querySelectorAll(".accordionItem");
-
-        // accordionIcons.forEach(accordionIcon => {
-        //     accordionIcon.addEventListener("click", () => {
-        //         accordionIcon.classList.toggle("is-open")
-        //     })
-        // })
-
-
-        // const selectedElm = document.getElementById('selected');
-
-        // function showChecked() {
-        //     selectedElm.innerHTML = document.querySelectorAll('input[name=assessment-method]:checked').length;
-        // }
-
-        // document.querySelectorAll("input[name=assessment-method]").forEach(i => {
-        //     i.onclick = () => showChecked();
-        // });
-
         var queryFiltersForm = document.querySelector('#qualificationsFilterForm')
 
         queryFiltersForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => { queryFiltersForm.submit() }
         });
+
+        document.getElementById('selectedFilters').style.display = 'block';
+
+        var selectedFilters = document.getElementsByClassName("removeFilter");
+
+        for (var i = 0; i < selectedFilters.length; i++) {
+            selectedFilters[i].addEventListener('click', function () {
+                var cBox = document.getElementById(this.getAttribute("data-checkbox"));
+
+                if (cBox.checked) {
+                    cBox.checked = false;
+                } else {
+                    cBox.checked = true;
+                }
+                queryFiltersForm.submit()
+            }, false);
+        }
 
     </script>
 

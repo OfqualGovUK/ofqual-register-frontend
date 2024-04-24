@@ -15,5 +15,6 @@
         public int? MinGuidedLearninghours { get; set; }
         public int? MaxGuidedLearninghours { get; set; }
         public string[]? SectorSubjectAreas { get; set; }
+        public bool FiltersApplied { get; set; } = false;
     }
 }
