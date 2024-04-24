@@ -5,14 +5,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Ofqual.Common.RegisterAPI.Extensions
+namespace Ofqual.Common.RegisterFrontend.Extensions
 {
     public static partial class StringExtensions
     {
         [GeneratedRegex(@"[\[\\""\]]+")]
         private static partial Regex SubStringRegex();
 
-        public static string[]? GetSubStrings(this string value)
+        public static string[]? GetSubStrings(this string? value)
         {
             if (value == null) return null;
             if (value == "null") return null;
@@ -27,6 +27,16 @@ namespace Ofqual.Common.RegisterAPI.Extensions
 
             var arr = str.Replace(", ", ",").Split(",");
             return arr;
+        }
+
+        public static bool IsNotNull(this string? value)
+        {
+            return value != null;
+        }
+
+        public static bool IsNotNull(this string[]? value)
+        {
+            return value != null;
         }
 
     }

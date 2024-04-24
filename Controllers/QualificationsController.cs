@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Ofqual.Common.RegisterAPI.Extensions;
+using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
@@ -182,6 +182,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 maxGuidedLearninghours,
                 sectorSubjectAreas = string.Join(',', sectorSubjectAreas),
             });
+        }
+
+        [HttpGet]
+        [Route("Qualifications/{number1}/{number2}/{number3}")]
+        public async Task<IActionResult> View(string number1, string number2, string number3)
+        {
+            var qual = await _registerAPIClient.GetQualification(number1, number2, number3);
+
+            return View(qual);
         }
 
     }
