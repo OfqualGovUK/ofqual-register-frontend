@@ -1,47 +1,4 @@
 @charset "UTF-8";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 :root {
   --govuk-frontend-version: "5.1.0";
   --govuk-frontend-breakpoint-mobile: 20rem;
@@ -8335,7 +8292,7 @@ p + .govuk-heading-s,
   border: 0;
 }
 .app-filter__legend button::after {
-  background-image: url("/public/images/icon-toggle-plus-minus.svg");
+  background-image: url("/assets/images/icon-toggle-plus-minus.svg");
   background-position: 0 0;
   content: "";
   display: block;
@@ -8378,7 +8335,7 @@ p + .govuk-heading-s,
   border: 0;
 }
 .app-filter__close::before {
-  background-image: url("/public/images/icon-close-cross-black.svg");
+  background-image: url("/assets/images/icon-close-cross-black.svg");
   content: "";
   display: inline-block;
   height: 14px;
@@ -8449,7 +8406,7 @@ p + .govuk-heading-s,
   color: #ffffff;
 }
 .app-filter__tag:after {
-  background-image: url("/public/images/icon-tag-remove-cross.svg");
+  background-image: url("/assets/images/icon-tag-remove-cross.svg");
   content: "";
   display: inline-block;
   font-weight: bold;
@@ -8459,7 +8416,7 @@ p + .govuk-heading-s,
   width: 10px;
 }
 .app-filter__tag:hover:after {
-  background-image: url("/public/images/icon-tag-remove-cross-white.svg");
+  background-image: url("/assets/images/icon-tag-remove-cross-white.svg");
 }
 
 .app-filter__options {

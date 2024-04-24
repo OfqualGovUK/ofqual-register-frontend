@@ -1,5 +1,5 @@
 ﻿<search>
-    <form method="post" role="search">
+    <form method="get" action="searchresults">
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--l" for="selected-qualification">
@@ -7,6 +7,7 @@
                 </label>
             </h1>
             <input class="govuk-input" id="title" name="title" type="text" autocomplete="search">
+            <input hidden id="page" name="page" type="number" value="1" />
         </div>
         <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
             Search qualifications
