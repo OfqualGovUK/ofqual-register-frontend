@@ -44,6 +44,30 @@
                             @Model.QualificationNumber
                         </dd>
                     </div>
+
+                    @if (Model.GLH != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Guided learning hours
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.GLH
+                            </dd>
+                        </div>
+                    }
+
+                    @if (Model.TQT != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Total qualification time
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.TQT
+                            </dd>
+                        </div>
+                    }
                     @if (Model.AssessmentMethods.IsNotNull())
                     {
                         <div class="govuk-summary-list__row">
@@ -97,7 +121,7 @@
                                 End-point assessment standard
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.ApprenticeshipStandardTitle
+                                @Model.ApprenticeshipStandardTitle (@Model.ApprenticeshipStandardReferenceNumber)
                             </dd>
                         </div>
                     }
@@ -136,6 +160,23 @@
                         </div>
                     </dl>
                 </div>
+
+                @if (Model.Specialism.IsNotNull())
+                {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Specialisms
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Specialism
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                }
+
             </div>
         }
         <div class="govuk-summary-card" id="funding-details">
@@ -149,17 +190,6 @@
                         </dt>
                         <dd class="govuk-summary-list__value">
                             <a href="https://www.qualifications.education.gov.uk/Qualification/@Model.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Standard qualification fee
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            £
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="#info-fees">information on fees<span class="govuk-visually-hidden"> (Funding details)</span></a>
                         </dd>
                     </div>
                 </dl>
@@ -273,6 +303,42 @@
                             <time datetime="@Model.OperationalStartDate.ToString("dd-MM-yyyy")" lang="en">@Model.OperationalStartDate.ToString("dd MMMM yyyy")</time>
                         </dd>
                     </div>
+                    @if (Model.OperationalEndDate != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Operational end date
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <time datetime="@Model.OperationalEndDate?.ToString("dd-MM-yyyy")" lang="en">@Model.OperationalEndDate?.ToString("dd MMMM yyyy")</time>
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.CertificationEndDate != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Final certification date
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <time datetime="@Model.CertificationEndDate?.ToString("dd-MM-yyyy")" lang="en">@Model.CertificationEndDate?.ToString("dd MMMM yyyy")</time>
+                            </dd>
+                        </div>
+                    }
+
+                    @if (Model.EQFLevel != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                European qualification level
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.EQFLevel
+                            </dd>
+                        </div>
+                    }
+
+                    
                 </dl>
             </div>
         </div>
