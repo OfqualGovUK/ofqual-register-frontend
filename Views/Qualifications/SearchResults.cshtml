@@ -17,6 +17,7 @@
                         Search for a qualification
                     </label>
                     <input class="govuk-input app-search__input " id="title" name="title" type="search" value="@Model.Title">
+                    <input id="bav" name="bav" type="hidden" value="1">
                 </div>
                 <button class="govuk-button app-search__button" data-module="govuk-button">
                     Search
@@ -656,6 +657,7 @@
                                     <input class="govuk-checkboxes__input" id="@item.QualificationNumber" name="@item.QualificationNumber" type="checkbox" value="@item.QualificationNumber">
                                     <label class="govuk-label govuk-checkboxes__label" for="@item.QualificationNumber">
                                         @item.Title
+                                        </label>
                                 </div>
                             </div>
                         </header>

@@ -10,7 +10,7 @@
         public string[]? QualificationLevels { get; set; }
         public string[]? QualificationSubLevels { get; set; }
         public string[]? NationalAvailability { get; set; }
-        public string? MinTotalQualificationTime { get; set; }
+        public int? MinTotalQualificationTime { get; set; }
         public int? MaxTotalQualificationTime { get; set; }
         public int? MinGuidedLearninghours { get; set; }
         public int? MaxGuidedLearninghours { get; set; }
