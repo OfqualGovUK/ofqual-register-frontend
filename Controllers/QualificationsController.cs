@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
@@ -36,11 +37,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> SearchResults(string title, int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, string? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
+        public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
         {
+            if (!string.IsNullOrWhiteSpace(bav) && !string.IsNullOrWhiteSpace(title))
+            {
+                availability = "Available to learners";
+            }
+
             int pagingLimit = _config.GetValue<int>("QualificationsPagingLimit");
 
-            var quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas);
+            var quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
 
             var ssa = await _refDataAPIClient.GetSSAAsync();
             var levels = await _refDataAPIClient.GetLevelsAsync();
@@ -106,29 +112,29 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 pagingURL += $"&sectorSubjectAreas={sectorSubjectAreas}";
             }
 
-            //if (minTotalQualificationTime != null)
-            //{
-            //    filtersApplied = true;
-            //    pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
-            //}
+            if (minTotalQualificationTime != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
+            }
 
-            //if (maxTotalQualificationTime != null)
-            //{
-            //    filtersApplied = true;
-            //    pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
-            //}
+            if (maxTotalQualificationTime != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
+            }
 
-            //if (minGuidedLearninghours != null)
-            //{
-            //    filtersApplied = true;
-            //    pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
-            //}
+            if (minGuidedLearninghours != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
+            }
 
-            //if (maxGuidedLearninghours != null)
-            //{
-            //    filtersApplied = true;
-            //    pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
-            //}
+            if (maxGuidedLearninghours != null)
+            {
+                filtersApplied = true;
+                pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
+            }
 
             var model = new SearchResultViewModel<QualificationListViewModel>
             {
@@ -192,7 +198,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("Qualifications/{number1}/{number2}/{number3}")]
-        public async Task<IActionResult> View(string number1, string number2, string number3)
+        public async Task<IActionResult> Qualification(string number1, string number2, string number3)
         {
             var qual = await _registerAPIClient.GetQualificationAsync(number1, number2, number3);
 
