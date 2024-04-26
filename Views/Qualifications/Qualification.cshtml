@@ -340,7 +340,19 @@
                         </div>
                     }
 
-                    
+                    @if (Model.Pathways != null)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Optional Routes
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Pathways
+                            </dd>
+                        </div>
+                    }
+
+
                 </dl>
             </div>
         </div>
