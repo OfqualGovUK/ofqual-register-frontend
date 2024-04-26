@@ -46,6 +46,15 @@ app.Use(async (ctx, next) =>
         ctx.Request.Path = "/error/404";
         await next();
     }
+
+    if (ctx.Response.StatusCode == 400 && !ctx.Response.HasStarted)
+    {
+        //Re-execute the request so the user gets the error page
+        string originalPath = ctx.Request.Path.Value;
+        ctx.Items["originalPath"] = originalPath;
+        ctx.Request.Path = "/error/500";
+        await next();
+    }
 });
 
 app.UseHttpsRedirection();

@@ -205,5 +205,17 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             return View(qual);
         }
 
+        [HttpGet]
+        public IActionResult CompareQualifications(string[] QualificationNumbers)
+        {
+            if (!QualificationNumbers.Any() && QualificationNumbers.Count() < 2)
+            {
+
+            }
+
+            return RedirectToAction($"Compare/{QualificationNumbers[0]}/{QualificationNumbers[1]}");
+            //return NotFound();
+        }
+
     }
 }
