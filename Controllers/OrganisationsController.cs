@@ -3,6 +3,8 @@ using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using Refit;
+using System.Net;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -53,7 +55,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
-            var orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
+            APIResponseList<OrganisationListViewModel> orgs;
+
+            try
+            {
+                orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+            }
 
             var model = new SearchResultViewModel<OrganisationListViewModel>
             {
@@ -75,9 +86,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("Organisations/{number}")]
         public async Task<IActionResult> Organisation(string number)
         {
-            var org = await _registerAPIClient.GetOrganisationAsync(number);
-
-            return View(org);
+            try
+            {
+                var org = await _registerAPIClient.GetOrganisationAsync(number);
+                return View(org);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+            }
         }
 
     }

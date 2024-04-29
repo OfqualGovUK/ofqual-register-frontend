@@ -47,6 +47,7 @@ app.Use(async (ctx, next) =>
         await next();
     }
 });
+app.UseStatusCodePagesWithRedirects("/error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
