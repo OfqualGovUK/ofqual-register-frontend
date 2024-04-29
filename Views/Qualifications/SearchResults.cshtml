@@ -633,81 +633,86 @@
 
         @if (Model.List.Results != null && Model.List.Results.Count() > 0)
         {
-            <ul id="action-buttons-row" class="ofq-action-buttons--list">
-                <li class="ofq-action-buttons--item">
-                    <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
-                        Compare selected
-                    </a>
-                </li>
-                <li class="ofq-action-buttons--item">
-                    <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
-                        Download results as CSV
-                    </a>
-                </li>
-            </ul>
+            <form action="CompareQualifications" method="get">
+                <ul id="action-buttons-row" class="ofq-action-buttons--list">
+                    <li class="ofq-action-buttons--item">
+                        @*                         <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
+                    Compare selected
+                    </a> *@
+                        <button draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
+                            Compare selected
+                        </button>
+                    </li>
+                    <li class="ofq-action-buttons--item">
+                        <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
+                            Download results as CSV
+                        </a>
+                    </li>
+                </ul>
 
-            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-            @foreach (var item in Model.List.Results)
-            {
-                <div class="app-application-cards" aria-live="polite">
-                    <section class="app-application-card">
-                        <header class="app-application-card__header">
-                            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="@item.QualificationNumber" name="@item.QualificationNumber" type="checkbox" value="@item.QualificationNumber">
-                                    <label class="govuk-label govuk-checkboxes__label" for="@item.QualificationNumber">
-                                        @item.Title
+                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                @foreach (var item in Model.List.Results)
+                {
+                    <div class="app-application-cards" aria-live="polite">
+                        <section class="app-application-card">
+                            <header class="app-application-card__header">
+                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input" id="qualificationTypes_@item.QualificationNumber" name="QualificationNumbers" type="checkbox" value="@item.QualificationNumber">
+                                        <label class="govuk-label govuk-checkboxes__label" for="QualificationNumbers">
+                                            @item.Title
                                         </label>
+                                    </div>
+                                </div>
+                            </header>
+
+                            <div class="govuk-grid-row app-grid-row--flex">
+                                <div class="govuk-grid-column-two-thirds">
+                                    <dl class="app-application-card__list">
+                                        <dd class="govuk-body-m">
+                                            <a href="@item.QualificationNumber">View qualification details</a>
+                                        </dd>
+                                        <br>
+                                        <dt class="govuk-visually-hidden">Availability</dt>
+                                        @switch (item.Status?.ToLower())
+                                        {
+                                            case "available to learners":
+                                                <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                                    Available to learners
+                                                </dd>
+                                                break;
+                                            case "not yet available to learners":
+                                                <dd class="govuk-tag govuk-tag--blue govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                                    Not yet available to learners
+                                                </dd>
+                                                break;
+                                            case "no longer available to new learners":
+                                                <dd class="govuk-tag govuk-tag--yellow govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                                    No longer available to new learners
+                                                </dd>
+                                                break;
+                                            case "no longer awarded":
+                                                <dd class="govuk-tag govuk-tag--grey govuk-!-margin-bottom-1 govuk-!-font-size-14">
+                                                    No longer awarded
+                                                </dd>
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        <dt class="govuk-visually-hidden">Organisation</dt>
+                                        <dd class="govuk-body-s govuk-!-margin-bottom-1">@item.OrganisationName</dd>
+                                        <dt class="govuk-visually-hidden">Level</dt>
+                                        <dd class="govuk-body-s govuk-!-font-size-16">
+                                            @item.Level
+                                        </dd>
+                                    </dl>
                                 </div>
                             </div>
-                        </header>
+                        </section>
+                    </div>
+                }
 
-                        <div class="govuk-grid-row app-grid-row--flex">
-                            <div class="govuk-grid-column-two-thirds">
-                                <dl class="app-application-card__list">
-                                    <dd class="govuk-body-m">
-                                        <a href="@item.QualificationNumber">View qualification details</a>
-                                    </dd>
-                                    <br>
-                                    <dt class="govuk-visually-hidden">Availability</dt>
-                                    @switch (item.Status?.ToLower())
-                                    {
-                                        case "available to learners":
-                                            <dd class="govuk-tag govuk-tag--green govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                Available to learners
-                                            </dd>
-                                            break;
-                                        case "not yet available to learners":
-                                            <dd class="govuk-tag govuk-tag--blue govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                Not yet available to learners
-                                            </dd>
-                                            break;
-                                        case "no longer available to new learners":
-                                            <dd class="govuk-tag govuk-tag--yellow govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                No longer available to new learners
-                                            </dd>
-                                            break;
-                                        case "no longer awarded":
-                                            <dd class="govuk-tag govuk-tag--grey govuk-!-margin-bottom-1 govuk-!-font-size-14">
-                                                No longer awarded
-                                            </dd>
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    <dt class="govuk-visually-hidden">Organisation</dt>
-                                    <dd class="govuk-body-s govuk-!-margin-bottom-1">@item.OrganisationName</dd>
-                                    <dt class="govuk-visually-hidden">Level</dt>
-                                    <dd class="govuk-body-s govuk-!-font-size-16">
-                                        @item.Level
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
-            }
+            </form>
         }
 
         <partial name="/Views/Shared/_PagingPartial.cshtml" model="Model.Paging" />
@@ -732,10 +737,14 @@
         queryFiltersForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => { queryFiltersForm.submit() }
         });
+        @if (appliedFilters.FiltersApplied)
+        {
+            <text>
+                document.getElementById('selectedFilters').style.display = 'block';
+            </text>
+        }
 
-        document.getElementById('selectedFilters').style.display = 'block';
-
-        var selectedFilters = document.getElementsByClassName("removeFilter");
+                var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {

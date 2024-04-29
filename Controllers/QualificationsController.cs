@@ -95,13 +95,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 pagingURL += $"&title={title}";
             }
 
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, assessmentMethods);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, gradingTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, awardingOrganisations);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, availability);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, qualificationTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nationalAvailability);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, sectorSubjectAreas);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(assessmentMethods), assessmentMethods);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(gradingTypes), gradingTypes);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(awardingOrganisations), awardingOrganisations);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(availability), availability);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(qualificationTypes), qualificationTypes);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(nationalAvailability), nationalAvailability);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(sectorSubjectAreas), sectorSubjectAreas);
 
             if (minTotalQualificationTime != null)
             {
@@ -227,6 +227,17 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult CompareQualifications(string[] QualificationNumbers)
+        {
+            if (!QualificationNumbers.Any() && QualificationNumbers.Count() < 2)
+            {
+
+            }
+
+            return RedirectToAction($"Compare/{QualificationNumbers[0]}/{QualificationNumbers[1]}");
+            //return NotFound();
+        }
 
         #region Helper methods
 
@@ -257,11 +268,11 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         // Helper method to append filter to the paging URL if the filter value is not null or empty
-        void AppendFilterToPaging(ref string url, ref bool filtersApplied, string? param)
+        void AppendFilterToPaging(ref string url, ref bool filtersApplied, string paramName, string? param)
         {
             if (param != null && param.GetSubStrings() != null)
             {
-                url += $"&{nameof(param)}={param}";
+                url += $"&{paramName}={param}";
                 filtersApplied = true;
             }
         }
