@@ -633,12 +633,9 @@
 
         @if (Model.List.Results != null && Model.List.Results.Count() > 0)
         {
-            <form action="CompareQualifications" method="get">
+            <form action="CompareQualifications" id="compareQualifications" method="get">
                 <ul id="action-buttons-row" class="ofq-action-buttons--list">
                     <li class="ofq-action-buttons--item">
-                        @*                         <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button">
-                    Compare selected
-                    </a> *@
                         <button draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
                             Compare selected
                         </button>
@@ -659,7 +656,7 @@
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
                                     <div class="govuk-checkboxes__item">
                                         <input class="govuk-checkboxes__input" id="qualificationTypes_@item.QualificationNumber" name="QualificationNumbers" type="checkbox" value="@item.QualificationNumber">
-                                        <label class="govuk-label govuk-checkboxes__label" for="QualificationNumbers">
+                                        <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes_@item.QualificationNumber">
                                             @item.Title
                                         </label>
                                     </div>
@@ -744,7 +741,7 @@
             </text>
         }
 
-                var selectedFilters = document.getElementsByClassName("removeFilter");
+                                                                                 var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -758,6 +755,29 @@
                 queryFiltersForm.submit()
             }, false);
         }
+
+        var compareQualsForm = document.querySelector('#compareQualifications');
+
+        var compareQuals = new Set();
+
+        if (localStorage.getItem("compareQuals")) {
+            compareQualsArr = JSON.parse(localStorage.getItem("compareQuals"));
+            compareQuals = new Set([...compareQualsArr]);
+
+            compareQualsArr.forEach((i) => {
+                var cbx = document.getElementById("qualificationTypes_" + i);
+                if (cbx) {
+                    cbx.checked = true;
+                }
+            });
+        }
+
+        compareQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
+            i.onchange = () => {
+                i.checked ? compareQuals.add(i.value) : compareQuals.delete(i.value);
+                localStorage.setItem("compareQuals", JSON.stringify([...compareQuals]));
+            }
+        });
 
     </script>
 
