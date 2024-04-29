@@ -3,15 +3,21 @@ using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using Refit;
+using System.Net;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
-    public class OrganisationsController : Controller
+    public partial class OrganisationsController : Controller
     {
         private readonly ILogger<OrganisationsController> _logger;
         private readonly IRegisterAPIClient _registerAPIClient;
         private readonly IConfiguration _config;
 
+        [GeneratedRegex(@"(RN)?(rn)?\d+")]
+        private static partial Regex OrgNumberRegex();
 
         public OrganisationsController(ILogger<OrganisationsController> logger, IRegisterAPIClient registerAPIClient, IConfiguration config)
         {
@@ -36,13 +42,34 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("Organisations/SearchResults")]
         public async Task<IActionResult> SearchResults(string name, int page = 1)
         {
+            //if search term is an org recognition number, show the org details page
+            if (!string.IsNullOrEmpty(name) && OrgNumberRegex().IsMatch(name))
+            {
+                if (!name.Substring(0, 2).ToLower().Equals("rn"))
+                {
+                    name = $"RN{name}";
+                }
+
+                return RedirectToAction("Organisation", new { number = name.ToUpper() });
+            }
+
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
 
-            var orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
+            APIResponseList<OrganisationListViewModel> orgs;
 
-            var model = new SearchResultViewModel<OrganisationListViewModel> { 
-                List = orgs, 
-                Title = name, 
+            try
+            {
+                orgs = await _registerAPIClient.GetOrganisationsListAsync(name, page, pagingLimit);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+            }
+
+            var model = new SearchResultViewModel<OrganisationListViewModel>
+            {
+                List = orgs,
+                Title = name,
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
@@ -59,9 +86,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("Organisations/{number}")]
         public async Task<IActionResult> Organisation(string number)
         {
-            var org = await _registerAPIClient.GetOrganisationAsync(number);
-
-            return View(org);
+            try
+            {
+                var org = await _registerAPIClient.GetOrganisationAsync(number);
+                return View(org);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+            }
         }
 
     }
