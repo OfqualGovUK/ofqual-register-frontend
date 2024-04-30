@@ -1,19 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json.Linq;
-using NuGet.Packaging;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
-using System.Diagnostics;
+using System.Linq;
 using System.Net;
-using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
@@ -228,15 +223,172 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        public IActionResult CompareQualifications(string[] QualificationNumbers)
+        ///selectedQuals if JS is enabled - will retain all quals selected across pages
+        ///QualificationNumber is JS is disabled - will only retain the quals selected for this page
+        public IActionResult CompareQualifications(string? selectedQuals, string[] QualificationNumbers)
         {
-            if (!QualificationNumbers.Any() && QualificationNumbers.Count() < 2)
-            {
+            var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
 
+            if (compareArr.Length >= 2)
+            {
+                //first two will be compared
+                var selected = $"{compareArr[0]},{compareArr[1]}";
+
+                //rest will be unselected
+                string unselected = "";
+
+                //start from the 3rd item (index 2)
+                for (int i = 2; i < compareArr.Length; i++)
+                {
+                    unselected += compareArr[i] + (i != (compareArr.Length - 1) ? "," : "");
+                }
+
+                return RedirectToAction("Compare", new { selected, unselected });
             }
 
-            return RedirectToAction($"Compare/{QualificationNumbers[0]}/{QualificationNumbers[1]}");
-            //return NotFound();
+            return RedirectToAction("Search");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Compare(string selected, string? unselected)
+        {
+            if (string.IsNullOrEmpty(selected))
+            {
+                return RedirectToAction("Search");
+            }
+
+            var selectedQuals = selected.Split(",");
+
+            var left = await _registerAPIClient.GetQualificationAsync(selectedQuals[0]);
+            var right = await _registerAPIClient.GetQualificationAsync(selectedQuals[1]);
+
+            var differing = new Dictionary<string, string[]>();
+
+            DiffValues(left.Type, right.Type, "Qualification type", ref differing);
+            DiffValues(left.Level, right.Level, "Qualification level", ref differing);
+            DiffValues(left.QualificationNumber, right.QualificationNumber, "Qualification number", ref differing);
+            DiffValues(left.GLH.ToString(), right.GLH.ToString(), "Guided learning hours", ref differing);
+            DiffValues(left.TQT.ToString(), right.TQT.ToString(), "Total qualification time", ref differing);
+
+            var leftAssessmentMethods = left.AssessmentMethods == null ? null : string.Join("<br />", left.AssessmentMethods);
+            var rightAssessmentMethods = right.AssessmentMethods == null ? null : string.Join("<br />", right.AssessmentMethods);
+
+            DiffValues(leftAssessmentMethods, rightAssessmentMethods, "Assessment methods", ref differing);
+
+            DiffValues(left.LinkToSpecification, right.LinkToSpecification, "Specification", ref differing);
+            DiffValues(left.SSA, right.SSA, "Sector subject area", ref differing);
+            DiffValues(left.GradingScale, right.GradingScale, "Grading scale", ref differing);
+            DiffValues($"{left.ApprenticeshipStandardTitle} ({left.ApprenticeshipStandardReferenceNumber})", $"{right.ApprenticeshipStandardTitle} ({right.ApprenticeshipStandardReferenceNumber})", "End-point assessment standard", ref differing);
+            DiffValues(left.OrganisationName, right.OrganisationName, "Awarding Organisation", ref differing);
+            DiffValues(left.GradingType, right.GradingType, "Grading type", ref differing);
+            DiffValues(left.Specialism, right.Specialism, "Specialisms", ref differing);
+            DiffValues(left.QualificationNumberNoObliques, right.QualificationNumberNoObliques, "Funding in England", ref differing);
+            DiffValues(left.Status, right.Status, "Status", ref differing);
+
+            //national availability
+            var leftNationalAvailability = "";
+            if (left.OfferedInEngland ?? false)
+            {
+                leftNationalAvailability += "England, ";
+            }
+            if (left.OfferedInNorthernIreland ?? false)
+            {
+                leftNationalAvailability += "Northern Ireland, ";
+            }
+            if (left.OfferedInternationally ?? false)
+            {
+                leftNationalAvailability += "International";
+            }
+
+            var rightNationalAvailability = "";
+            if (right.OfferedInEngland ?? false)
+            {
+                rightNationalAvailability += "England, ";
+            }
+            if (right.OfferedInNorthernIreland ?? false)
+            {
+                rightNationalAvailability += "Northern Ireland, ";
+            }
+            if (right.OfferedInternationally ?? false)
+            {
+                rightNationalAvailability += "International";
+            }
+
+            DiffValues(leftNationalAvailability, rightNationalAvailability, "National availability", ref differing);
+            DiffValues(left.OfferedInNorthernIreland.ToString(), right.OfferedInNorthernIreland.ToString(), "Available in Northern Ireland", ref differing);
+
+            DiffValues(left.RegulationStartDate.ToString("dd MMMM yyyy"), right.RegulationStartDate.ToString("dd MMMM yyyy"), "Regulation start date", ref differing);
+            DiffValues(left.OperationalStartDate.ToString("dd MMMM yyyy"), right.OperationalStartDate.ToString("dd MMMM yyyy"), "Operational start date", ref differing);
+            DiffValues(left.OperationalEndDate?.ToString("dd MMMM yyyy"), right.OperationalEndDate?.ToString("dd MMMM yyyy"), "Operational end date", ref differing);
+            DiffValues(left.CertificationEndDate?.ToString("dd MMMM yyyy"), right.CertificationEndDate?.ToString("dd MMMM yyyy"), "Certification end date", ref differing);
+            DiffValues(left.EQFLevel, right.EQFLevel, "European qualification level", ref differing);
+            DiffValues(left.Pathways, right.Pathways, "Optional Routes", ref differing);
+
+            var model = new CompareQualsModel
+            {
+                Left = left,
+                Right = right,
+                SelectedQuals = selected,
+                UnselectedQuals = unselected,
+                Differing = differing,
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("Qualifications/Compare/Change")]
+        public async Task<IActionResult> ChangeCompare(string current, string selected, string unselected)
+        {
+            if (string.IsNullOrEmpty(current))
+            {
+                return RedirectToAction("Search");
+            }
+
+            var quals = selected.Split(",");
+
+            if (!string.IsNullOrEmpty(unselected))
+            {
+                quals = quals.Concat(unselected.Split(",")).ToArray();
+            }
+
+            var qualDetails = new Dictionary<string, string>();
+
+            var unselectedQuals = !string.IsNullOrEmpty(unselected) ? unselected.Split(",") : [];
+
+            if (unselectedQuals.Length > 0)
+            {
+                foreach (var item in unselectedQuals)
+                {
+                    var qual = await _registerAPIClient.GetQualificationAsync(item);
+                    qualDetails.Add(item, qual.Title);
+                }
+            }
+
+            return View(qualDetails);
+        }
+
+
+        [HttpPost]
+        [Route("Qualifications/Compare/Change")]
+        public IActionResult SubmitChangeCompare(string changeQualification, string current, string selected, string unselected)
+        {
+            if (string.IsNullOrEmpty(unselected))
+            {
+                return RedirectToAction("Compare", new { selected, unselected = "" });
+            }
+
+            if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current) || string.IsNullOrEmpty(changeQualification))
+            {
+                return RedirectToAction("Search");
+            }
+
+            selected = selected.Replace(current, changeQualification);
+
+            unselected = unselected.Replace(changeQualification, current);
+
+
+            return RedirectToAction("Compare", new { selected, unselected });
         }
 
         #region Helper methods
@@ -274,6 +426,18 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             {
                 url += $"&{paramName}={param}";
                 filtersApplied = true;
+            }
+        }
+
+        // Helper method to compare and add differing fields in the quals compare
+        private static void DiffValues(string? left, string? right, string fieldName, ref Dictionary<string, string[]> differing)
+        {
+            left = string.IsNullOrEmpty(left) ? null : left;
+            right = string.IsNullOrEmpty(right) ? null : right;
+
+            if (left != right)
+            {
+                differing.Add(fieldName, [left ?? "-", right ?? "-"]);
             }
         }
         #endregion

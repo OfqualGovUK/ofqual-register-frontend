@@ -1,0 +1,46 @@
+﻿@model Dictionary<string, string>
+
+@{
+    ViewData["Title"] = "Register of Regulated Qualifications";
+}
+<div class="govuk-grid-row">
+    <form class="form" method="post">
+        <div class="govuk-grid-column-three-quarters">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="changeQualification-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Change qualification
+                        </h1>
+                    </legend>
+                    <div id="changeQualification-hint" class="govuk-hint">
+                        Choose a qualification that you previously selected
+                    </div>
+
+                    <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                        @foreach (var item in Model)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="@item.Key" name="changeQualification" type="radio" value="@item.Key">
+                                <label class="govuk-label govuk-radios__label" for="@item.Key">
+                                    @item.Value
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+
+
+            <div class="govuk-inset-text">
+                If the qualification you want to compare isn't listed, <a href="/Qualifications/Search">search for more qualifications</a>.
+            </div>
+
+        </div>
+    </form>
+
+</div>

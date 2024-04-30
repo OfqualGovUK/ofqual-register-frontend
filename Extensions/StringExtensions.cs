@@ -39,5 +39,10 @@ namespace Ofqual.Common.RegisterFrontend.Extensions
             return value != null;
         }
 
+        public static string GetCompareValue(this string? value)
+        {
+            return value ?? "-";
+        }
+
     }
 }

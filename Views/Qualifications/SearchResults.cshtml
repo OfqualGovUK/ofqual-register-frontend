@@ -633,7 +633,7 @@
 
         @if (Model.List.Results != null && Model.List.Results.Count() > 0)
         {
-            <form action="CompareQualifications" id="compareQualifications" method="get">
+            <form action="CompareQualifications" id="compareQualifications" method="get" onsubmit="appendSelectedQuals()">
                 <ul id="action-buttons-row" class="ofq-action-buttons--list">
                     <li class="ofq-action-buttons--item">
                         <button draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
@@ -642,10 +642,12 @@
                     </li>
                     <li class="ofq-action-buttons--item">
                         <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
-                            Download results as CSV
+                            Download selected results as CSV
                         </a>
                     </li>
                 </ul>
+
+                <input type="hidden" id="selectedQuals" name="selectedQuals" value="" />
 
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                 @foreach (var item in Model.List.Results)
@@ -708,7 +710,6 @@
                         </section>
                     </div>
                 }
-
             </form>
         }
 
@@ -741,7 +742,7 @@
             </text>
         }
 
-                                                                                 var selectedFilters = document.getElementsByClassName("removeFilter");
+                 var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -756,15 +757,15 @@
             }, false);
         }
 
-        var compareQualsForm = document.querySelector('#compareQualifications');
+        var selectedQualsForm = document.querySelector('#compareQualifications');
 
-        var compareQuals = new Set();
+        var selectedQuals = new Set();
 
-        if (localStorage.getItem("compareQuals")) {
-            compareQualsArr = JSON.parse(localStorage.getItem("compareQuals"));
-            compareQuals = new Set([...compareQualsArr]);
+        if (localStorage.getItem("selectedQuals")) {
+            selectedQualsArr = JSON.parse(localStorage.getItem("selectedQuals"));
+            selectedQuals = new Set([...selectedQualsArr]);
 
-            compareQualsArr.forEach((i) => {
+            selectedQualsArr.forEach((i) => {
                 var cbx = document.getElementById("qualificationTypes_" + i);
                 if (cbx) {
                     cbx.checked = true;
@@ -772,12 +773,20 @@
             });
         }
 
-        compareQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
+        selectedQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => {
-                i.checked ? compareQuals.add(i.value) : compareQuals.delete(i.value);
-                localStorage.setItem("compareQuals", JSON.stringify([...compareQuals]));
+                i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
+                localStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
             }
         });
+
+        function appendSelectedQuals() {
+            var selectedCompareQuals = document.getElementById("selectedQuals");
+
+            selectedCompareQuals.value = JSON.parse(localStorage.getItem("selectedQuals"));
+
+            console.log(selectedCompareQuals);
+        }
 
     </script>
 
