@@ -1,9 +1,14 @@
+using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
+using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
+using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -94,6 +99,36 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             catch (ApiException ex)
             {
                 return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+            }
+        }
+
+        [HttpGet]
+        [Route("Organisations/DownloadCSV")]
+        public async Task<IActionResult> DownloadCSV(string? name)
+        {
+            APIResponseList<Organisation> orgs;
+
+            name = string.IsNullOrEmpty(name) ? "" : "_" + name;
+
+            string fileName = $"Organisations{name}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            byte[] fileBytes = [];
+
+            try
+            {
+                orgs = await _registerAPIClient.GetOrganisationsDetailListAsync(name, 1, 500);
+
+                using var memoryStream = new MemoryStream();
+                using (var streamWriter = new StreamWriter(memoryStream))
+                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                {
+                    csvWriter.WriteRecords(orgs.Results);
+                }
+
+                return File(memoryStream.ToArray(), "text/csv", fileName);
+            }
+            catch (ApiException ex)
+            {
+                return File(fileBytes, "text/csv", fileName);
             }
         }
 

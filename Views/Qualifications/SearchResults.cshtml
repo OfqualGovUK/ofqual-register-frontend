@@ -636,17 +636,17 @@
             <form action="CompareQualifications" id="compareQualifications" method="get" onsubmit="appendSelectedQuals()">
                 <ul id="action-buttons-row" class="ofq-action-buttons--list">
                     <li class="ofq-action-buttons--item">
-                        <button draggable="false" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
+                        <button draggable="false" name="Compare" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
                             Compare selected
                         </button>
                     </li>
                     <li class="ofq-action-buttons--item">
-                        <a href="#!" role="button" draggable="false" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button">
+                        <button draggable="false" name="CSV" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button" type="submit">
                             Download selected results as CSV
-                        </a>
+                        </button>
                     </li>
                 </ul>
-
+                <input type="hidden" id="title" name="title" value="@Model.Title" />
                 <input type="hidden" id="selectedQuals" name="selectedQuals" value="" />
 
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -742,7 +742,7 @@
             </text>
         }
 
-                 var selectedFilters = document.getElementsByClassName("removeFilter");
+                                 var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {

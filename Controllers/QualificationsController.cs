@@ -1,3 +1,4 @@
+using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
@@ -5,10 +6,12 @@ using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
@@ -72,7 +75,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     });
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(bav))
+            else if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
             {
                 availability = "Available to learners";
             }
@@ -225,8 +228,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [HttpGet]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
         ///QualificationNumber is JS is disabled - will only retain the quals selected for this page
-        public IActionResult CompareQualifications(string? selectedQuals, string[] QualificationNumbers)
+        public IActionResult CompareQualifications(string title, string? selectedQuals, string[] QualificationNumbers)
         {
+            if (Request.Query["CSV"].Count != 0)
+            {
+                return RedirectToAction("DownloadCSV", new { title, selectedQuals, QualificationNumbers });
+            }
+
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
 
             if (compareArr.Length >= 2)
@@ -389,6 +397,41 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
 
             return RedirectToAction("Compare", new { selected, unselected });
+        }
+
+        [HttpGet]
+        [Route("Qualifications/DownloadCSV")]
+        public async Task<IActionResult> DownloadCSV(string title, string? selectedQuals, string[] QualificationNumbers)
+        {
+            title = string.IsNullOrEmpty(title) ? "" : "_" + title;
+
+            string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            byte[] fileBytes = [];
+
+            try
+            {
+                var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
+
+                var qualsDetails = new List<Qualification>();
+
+                foreach (var item in quals)
+                {
+                    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
+                }
+
+                using var memoryStream = new MemoryStream();
+                using (var streamWriter = new StreamWriter(memoryStream))
+                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                {
+                    csvWriter.WriteRecords(qualsDetails);
+                }
+
+                return File(memoryStream.ToArray(), "text/csv", fileName);
+            }
+            catch (ApiException ex)
+            {
+                return File(fileBytes, "text/csv", fileName);
+            }
         }
 
         #region Helper methods
