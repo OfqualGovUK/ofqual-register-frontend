@@ -4,7 +4,30 @@
 @{
     ViewData["Title"] = "Find a regulated qualification";
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
+
+    var availabilityAccordion = appliedFilters.Availability != null && appliedFilters.Availability.Any() ? "is-open" : "";
+    var typeAccordion = appliedFilters.QualificationTypes != null && appliedFilters.QualificationTypes.Any() ? "is-open" : "";
+    var levelAccordion = appliedFilters.QualificationLevels != null && appliedFilters.QualificationLevels.Any() ? "is-open" : "";
+    var orgAccordion = appliedFilters.AwardingOrganisations != null && appliedFilters.AwardingOrganisations.Any() ? "is-open" : "";
+    var ssaAccordion = appliedFilters.SectorSubjectAreas != null && appliedFilters.SectorSubjectAreas.Any() ? "is-open" : "";
+    var gradingTypeAccordion = appliedFilters.GradingTypes != null && appliedFilters.GradingTypes.Any() ? "is-open" : "";
+    var assessAccordion = appliedFilters.AssessmentMethods != null && appliedFilters.AssessmentMethods.Any() ? "is-open" : "";
+    var nationalAccordion = appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any() ? "is-open" : "";
+    var glhAccordion = appliedFilters.MinGuidedLearninghours != null || appliedFilters.MaxGuidedLearninghours != null ? "is-open" : "";
+    var tqtAccordion = appliedFilters.MinTotalQualificationTime != null || appliedFilters.MaxTotalQualificationTime != null ? "is-open" : "";
+
 }
+
+@section Head {
+    <noscript>
+        <style>
+            .accordionTitle + .accordionContent {
+                display: block;
+            }
+        </style>
+    </noscript>
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-width-container">
         <h1 class="govuk-heading-l">Qualification search</h1>
@@ -142,6 +165,42 @@
 
                         </ul>
                     }
+
+                    @if (appliedFilters.MinGuidedLearninghours != null)
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Minimum guided learning hours</h4>
+                        <ul class="app-filter-tags">
+
+                            <li><a class="app-filter__tag removeIntFilter" data-box="minGuidedLearninghours" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @appliedFilters.MinGuidedLearninghours</a></li>
+                        </ul>
+                    }
+
+                    @if (appliedFilters.MaxGuidedLearninghours != null)
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Maximum guided learning hours</h4>
+                        <ul class="app-filter-tags">
+
+                            <li><a class="app-filter__tag removeIntFilter" data-box="maxGuidedLearninghours" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @appliedFilters.MaxGuidedLearninghours</a></li>
+                        </ul>
+                    }
+
+                    @if (appliedFilters.MinTotalQualificationTime != null)
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Minimum total qualifiction time</h4>
+                        <ul class="app-filter-tags">
+
+                            <li><a class="app-filter__tag removeIntFilter" data-box="minTotalQualificationTime" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @appliedFilters.MinTotalQualificationTime</a></li>
+                        </ul>
+                    }
+
+                    @if (appliedFilters.MaxTotalQualificationTime != null)
+                    {
+                        <h4 class="govuk-heading-s govuk-!-margin-bottom-0">Maximum total qualifiction time</h4>
+                        <ul class="app-filter-tags">
+
+                            <li><a class="app-filter__tag removeIntFilter" data-box="maxTotalQualificationTime" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @appliedFilters.MaxTotalQualificationTime</a></li>
+                        </ul>
+                    }
                 </div>
 
             </div>
@@ -150,8 +209,9 @@
             <input type="hidden" id="title" name="title" value="@Model.Title">
 
             <div class="accordionExpander">
-                <div class="accordionItem is-open">
-                    <h3 class="accordionTitle is-open" id="availability">
+                <div class="accordionItem @availabilityAccordion">
+                    <h3 class="accordionTitle @availabilityAccordion" id="availability">
+
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Availability</button>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -210,8 +270,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="qual-type">
+                <div class="accordionItem @typeAccordion">
+                    <h3 class="accordionTitle @typeAccordion" id="qual-type">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Qualification type</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
@@ -251,8 +311,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="qualification-level">
+                <div class="accordionItem @levelAccordion">
+                    <h3 class="accordionTitle @levelAccordion" id="qualification-level">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Qualification level</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
@@ -292,8 +352,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="organisation">
+                <div class="accordionItem @orgAccordion">
+                    <h3 class="accordionTitle @orgAccordion" id="organisation">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Organisation</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -331,8 +391,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="sector subject area">
+                <div class="accordionItem @ssaAccordion">
+                    <h3 class="accordionTitle @ssaAccordion" id="sector subject area">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Sector subject area</button>
                         <div class="selected-counter"><span id="selected">1</span> selected</div>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -374,8 +434,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="grading">
+                <div class="accordionItem @gradingTypeAccordion">
+                    <h3 class="accordionTitle @gradingTypeAccordion" id="grading">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Grading type</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -421,8 +481,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="assessment-method">
+                <div class="accordionItem @assessAccordion">
+                    <h3 class="accordionTitle @assessAccordion" id="assessment-method">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Assessment method</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
@@ -463,8 +523,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="national-availability">
+                <div class="accordionItem @nationalAccordion">
+                    <h3 class="accordionTitle @nationalAccordion" id="national-availability">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">National availability</button>
                         <div class="selected-counter"><span id="selected">0</span> selected</div>
@@ -526,8 +586,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="glh">
+                <div class="accordionItem @glhAccordion">
+                    <h3 class="accordionTitle @glhAccordion" id="glh">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Guided learning hours</button>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -541,15 +601,15 @@
                     </h3>
                     <div class="accordionContent">
                         @{
-                            int minglh = default, maxglh = default;
+                            string minglh = "", maxglh = "";
                             @if (appliedFilters.MinGuidedLearninghours != null)
                             {
-                                minglh = appliedFilters.MinGuidedLearninghours ?? default;
+                                minglh = appliedFilters.MinGuidedLearninghours?.ToString();
                             }
 
                             @if (appliedFilters.MaxGuidedLearninghours != null)
                             {
-                                maxglh = appliedFilters.MaxGuidedLearninghours ?? default;
+                                maxglh = appliedFilters.MaxGuidedLearninghours?.ToString();
                             }
                         }
 
@@ -557,13 +617,13 @@
                             <label class="govuk-label govuk-label--s" for="minGuidedLearninghours">
                                 Minimum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input" id="minGuidedLearninghours" name="minGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@minglh">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minGuidedLearninghours" name="minGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@minglh">
                         </div>
                         <div class="govuk-form-group">
                             <label class="govuk-label govuk-label--s" for="maxGuidedLearninghours">
                                 Maximum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input" id="maxGuidedLearninghours" name="maxGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@maxglh">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxGuidedLearninghours" name="maxGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@maxglh">
                         </div>
 
                     </div>
@@ -571,8 +631,8 @@
             </div>
 
             <div class="accordionExpander">
-                <div class="accordionItem">
-                    <h3 class="accordionTitle" id="tqt">
+                <div class="accordionItem @tqtAccordion">
+                    <h3 class="accordionTitle @tqtAccordion" id="tqt">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Total qualification time</button>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
@@ -586,14 +646,14 @@
                     </h3>
                     <div class="accordionContent">
                         @{
-                            int mintqt = default, maxtqt = default;
+                            string mintqt = "", maxtqt = "";
                             @if (appliedFilters.MinTotalQualificationTime != null)
                             {
-                                mintqt = appliedFilters.MinGuidedLearninghours ?? default;
+                                mintqt = appliedFilters.MinTotalQualificationTime?.ToString();
                             }
                             @if (appliedFilters.MaxTotalQualificationTime != null)
                             {
-                                maxtqt = appliedFilters.MaxTotalQualificationTime ?? default;
+                                maxtqt = appliedFilters.MaxTotalQualificationTime?.ToString();
                             }
                         }
 
@@ -601,13 +661,13 @@
                             <label class="govuk-label govuk-label--s" for="minTotalQualificationTime">
                                 Minimum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input" id="minTotalQualificationTime" name="minTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@mintqt">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minTotalQualificationTime" name="minTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@mintqt">
                         </div>
                         <div class="govuk-form-group">
                             <label class="govuk-label govuk-label--s" for="maxTotalQualificationTime">
                                 Maximum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input" id="maxTotalQualificationTime" name="maxTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@maxtqt">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxTotalQualificationTime" name="maxTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@maxtqt">
                         </div>
                     </div>
                 </div>
@@ -616,6 +676,7 @@
                 <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
                     Search
                 </button>
+                <a class="govuk-button govuk-button--secondary ofq-button-row-element" href="SearchResults?title=@Model.Title&page=@Model.Paging.CurrentPage">Clear filters</a>
             </noscript>
         </form>
     </div>
@@ -735,6 +796,7 @@
         queryFiltersForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => { queryFiltersForm.submit() }
         });
+
         @if (appliedFilters.FiltersApplied)
         {
             <text>
@@ -742,7 +804,7 @@
             </text>
         }
 
-                                 var selectedFilters = document.getElementsByClassName("removeFilter");
+                var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -753,6 +815,24 @@
                 } else {
                     cBox.checked = true;
                 }
+                queryFiltersForm.submit()
+            }, false);
+        }
+
+        var selectedIntFilters = document.getElementsByClassName("removeIntFilter");
+
+        for (var i = 0; i < selectedIntFilters.length; i++) {
+            selectedIntFilters[i].addEventListener('click', function () {
+                var box = document.getElementById(this.getAttribute("data-box"));
+                box.value = "";
+                queryFiltersForm.submit()
+            }, false);
+        }
+
+        var focusOutElements = document.getElementsByClassName("focusOutFilters");
+
+        for (var i = 0; i < focusOutElements.length; i++) {
+            focusOutElements[i].addEventListener('focusout', function () {
                 queryFiltersForm.submit()
             }, false);
         }
