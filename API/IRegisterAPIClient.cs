@@ -14,8 +14,8 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
         [Get("/api/organisations?search={search}&page={page}&limit={limit}")]
         Task<APIResponseList<OrganisationListViewModel>> GetOrganisationsListAsync(string? search, int page, int limit);
 
-        [Get("/api/organisations?search={search}&page={page}&limit={limit}")]
-        Task<APIResponseList<Organisation>> GetOrganisationsDetailListAsync(string? search, int page, int limit);
+        [Get("/api/organisations?search={search}")]
+        Task<APIResponseList<Organisation>> GetOrganisationsDetailListAsync(string? search);
 
 
         [Get("/api/qualifications?title={title}&page={page}&limit={limit}&assessmentMethods={assessmentMethods}&gradingTypes={gradingTypes}&awardingOrganisations={awardingOrganisations}&availability={availability}&qualificationTypes={qualificationTypes}&qualificationLevels={qualificationLevels}&nationalAvailability={nationalAvailability}&sectorSubjectAreas={sectorSubjectAreas}&minTotalQualificationTime={minTotalQualificationTime}&maxTotalQualificationTime={maxTotalQualificationTime}&minGuidedLearninghours={minGuidedLearninghours}&maxGuidedLearninghours={maxGuidedLearninghours}")]

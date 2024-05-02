@@ -12,7 +12,7 @@
             @Model.Name
         </h1>
 
-        <a href="/Qualifications/SearchResults?awardingOrganisations=@Model.Name&page=1" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
+        <a href="/qualifications?awardingOrganisations=@Model.Name" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
 
         @if (!(Model.Website == null && Model.ContactEmail == null))
         {
