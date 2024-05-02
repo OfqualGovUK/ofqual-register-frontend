@@ -21,7 +21,13 @@
     <link rel="stylesheet" href="~/css/site.css" />
 
     @await RenderSectionAsync("Head", required: false)
-
+    <noscript>
+        <style>
+            .jsonly {
+                display: none;
+            }
+        </style>
+    </noscript>
 
 </head>
 <body class="govuk-template__body">
@@ -35,7 +41,7 @@
         <partial name="/Views/Shared/_PhaseBannerPartial.cshtml" />
         @if (controllerName != null && !controllerName.StartsWith("Home"))
         {
-            <p id="back" class="govuk-back-link">Back</p>
+            <p id="back" class="govuk-back-link jsonly">Back</p>
         }
 
         <main class="govuk-main-wrapper" id="main-content" role="main">

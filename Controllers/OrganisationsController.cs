@@ -31,20 +31,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             _config = config;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
-        [Route("Organisations/Search")]
+        [Route("find-regulated-organisations")]
         public IActionResult Search()
         {
             return View();
         }
 
         [HttpGet]
-        [Route("Organisations/SearchResults")]
+        [Route("organisations")]
         public async Task<IActionResult> SearchResults(string name, int page = 1)
         {
             //if search term is an org recognition number, show the org details page
@@ -55,7 +50,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     name = $"RN{name}";
                 }
 
-                return RedirectToAction("Organisation", new { number = name.ToUpper() });
+                return RedirectToAction("organisations", new { number = name.ToUpper() });
             }
 
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
@@ -78,7 +73,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
-                    PagingURL = $"SearchResults?name={name}&page=||_page_||",
+                    PagingURL = $"organisations?name={name}&page=||_page_||",
                     CurrentPage = orgs.CurrentPage
                 }
             };
@@ -88,7 +83,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
 
         [HttpGet]
-        [Route("Organisations/{number}")]
+        [Route("organisations/{number}")]
         public async Task<IActionResult> Organisation(string number)
         {
             try
@@ -103,19 +98,19 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        [Route("Organisations/DownloadCSV")]
+        [Route("Organisations/download-CSV")]
         public async Task<IActionResult> DownloadCSV(string? name)
         {
             APIResponseList<Organisation> orgs;
 
-            name = string.IsNullOrEmpty(name) ? "" : "_" + name;
+            var nm = string.IsNullOrEmpty(name) ? "" : "_" + name;
 
-            string fileName = $"Organisations{name}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            string fileName = $"Organisations{nm}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
 
             try
             {
-                orgs = await _registerAPIClient.GetOrganisationsDetailListAsync(name, 1, 500);
+                orgs = await _registerAPIClient.GetOrganisationsDetailListAsync(name);
 
                 using var memoryStream = new MemoryStream();
                 using (var streamWriter = new StreamWriter(memoryStream))

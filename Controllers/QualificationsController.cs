@@ -36,18 +36,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             _config = config;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
+        [Route("find-regulated-qualifications")]
         public IActionResult Search()
         {
             return View();
         }
 
         [HttpGet]
+        [Route("qualifications")]
         public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
         {
             #region Qual Detail
@@ -82,7 +79,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             #endregion
 
             #region Paging Url
-            var pagingURL = $"SearchResults?page=||_page_||";
+            var pagingURL = $"qualifications?page=||_page_||";
 
             //to show the filters applied section on the page
             var filtersApplied = false;
@@ -93,13 +90,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 pagingURL += $"&title={title}";
             }
 
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(assessmentMethods), assessmentMethods);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(gradingTypes), gradingTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(awardingOrganisations), awardingOrganisations);
             AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(availability), availability);
             AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(qualificationTypes), qualificationTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(nationalAvailability), nationalAvailability);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(qualificationLevels), qualificationLevels);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(awardingOrganisations), awardingOrganisations);
             AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(sectorSubjectAreas), sectorSubjectAreas);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(gradingTypes), gradingTypes);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(assessmentMethods), assessmentMethods);
+            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(nationalAvailability), nationalAvailability);
 
             if (minTotalQualificationTime != null)
             {
@@ -212,7 +210,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        [Route("Qualifications/{number1}/{number2}/{number3}")]
+        [Route("qualifications/{number1}/{number2}/{number3}")]
         public async Task<IActionResult> Qualification(string number1, string number2, string number3)
         {
             try
@@ -227,7 +225,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        [Route("Qualifications/DownloadCSV")]
+        [Route("qualifications/download-CSV")]
         public async Task<IActionResult> DownloadCSV(string title, string? selectedQuals, string[] QualificationNumbers)
         {
             title = string.IsNullOrEmpty(title) ? "" : "_" + title;
@@ -264,13 +262,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         #region Compare
 
         [HttpGet]
+        [Route("qualifications/compare-qualifications")]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
         ///QualificationNumber is JS is disabled - will only retain the quals selected for this page
         public IActionResult CompareQualifications(string title, string? selectedQuals, string[] QualificationNumbers)
         {
             if (Request.Query["CSV"].Count != 0)
             {
-                return RedirectToAction("DownloadCSV", new { title, selectedQuals, QualificationNumbers });
+                return RedirectToAction("download-CSV", new { title, selectedQuals, QualificationNumbers });
             }
 
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
@@ -289,13 +288,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     unselected += compareArr[i] + (i != (compareArr.Length - 1) ? "," : "");
                 }
 
-                return RedirectToAction("Compare", new { selected, unselected });
+                return RedirectToAction("compare", new { selected, unselected });
             }
 
             return RedirectToAction("Search");
         }
 
         [HttpGet]
+        [Route("qualifications/compare")]
         public async Task<IActionResult> Compare(string selected, string? unselected)
         {
             if (string.IsNullOrEmpty(selected))
@@ -383,7 +383,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        [Route("Qualifications/Compare/Change")]
+        [Route("qualifications/compare/change")]
         public async Task<IActionResult> ChangeCompare(string current, string selected, string unselected)
         {
             if (string.IsNullOrEmpty(current))
