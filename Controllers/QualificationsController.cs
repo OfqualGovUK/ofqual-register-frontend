@@ -190,6 +190,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
 
         [HttpGet]
+        //to update the filters on the go from the selected filters on the side
         public IActionResult Filters(string title, string[] assessmentMethods, string[] gradingTypes, string[] awardingOrganisations, string[] availability, string[] qualificationTypes, string[] qualificationLevels, string[] nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours, string[] sectorSubjectAreas)
         {
             return RedirectToAction(nameof(SearchResults), new
@@ -224,6 +225,43 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Route("Qualifications/DownloadCSV")]
+        public async Task<IActionResult> DownloadCSV(string title, string? selectedQuals, string[] QualificationNumbers)
+        {
+            title = string.IsNullOrEmpty(title) ? "" : "_" + title;
+
+            string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            byte[] fileBytes = [];
+
+            try
+            {
+                var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
+
+                var qualsDetails = new List<Qualification>();
+
+                foreach (var item in quals)
+                {
+                    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
+                }
+
+                using var memoryStream = new MemoryStream();
+                using (var streamWriter = new StreamWriter(memoryStream))
+                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                {
+                    csvWriter.WriteRecords(qualsDetails);
+                }
+
+                return File(memoryStream.ToArray(), "text/csv", fileName);
+            }
+            catch (ApiException ex)
+            {
+                return File(fileBytes, "text/csv", fileName);
+            }
+        }
+
+        #region Compare
 
         [HttpGet]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
@@ -376,7 +414,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             return View(qualDetails);
         }
 
-
         [HttpPost]
         [Route("Qualifications/Compare/Change")]
         public IActionResult SubmitChangeCompare(string changeQualification, string current, string selected, string unselected)
@@ -399,40 +436,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             return RedirectToAction("Compare", new { selected, unselected });
         }
 
-        [HttpGet]
-        [Route("Qualifications/DownloadCSV")]
-        public async Task<IActionResult> DownloadCSV(string title, string? selectedQuals, string[] QualificationNumbers)
-        {
-            title = string.IsNullOrEmpty(title) ? "" : "_" + title;
-
-            string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
-            byte[] fileBytes = [];
-
-            try
-            {
-                var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
-
-                var qualsDetails = new List<Qualification>();
-
-                foreach (var item in quals)
-                {
-                    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
-                }
-
-                using var memoryStream = new MemoryStream();
-                using (var streamWriter = new StreamWriter(memoryStream))
-                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
-                {
-                    csvWriter.WriteRecords(qualsDetails);
-                }
-
-                return File(memoryStream.ToArray(), "text/csv", fileName);
-            }
-            catch (ApiException ex)
-            {
-                return File(fileBytes, "text/csv", fileName);
-            }
-        }
+        #endregion
 
         #region Helper methods
 
