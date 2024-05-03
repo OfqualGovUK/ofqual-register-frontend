@@ -189,6 +189,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
 
         [HttpGet]
+        [Route("qualifications/filters")]
         //to update the filters on the go from the selected filters on the side
         public IActionResult Filters(string title, string[] assessmentMethods, string[] gradingTypes, string[] awardingOrganisations, string[] availability, string[] qualificationTypes, string[] qualificationLevels, string[] nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours, string[] sectorSubjectAreas)
         {
