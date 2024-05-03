@@ -3,6 +3,8 @@
 
 @{
     ViewData["Title"] = "Find a regulated qualification";
+    ViewData["HomePage"] = "find-regulated-qualifications";
+
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
 
     var availabilityAccordion = appliedFilters.Availability != null && appliedFilters.Availability.Any() ? "is-open" : "";
@@ -15,7 +17,6 @@
     var nationalAccordion = appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any() ? "is-open" : "";
     var glhAccordion = appliedFilters.MinGuidedLearninghours != null || appliedFilters.MaxGuidedLearninghours != null ? "is-open" : "";
     var tqtAccordion = appliedFilters.MinTotalQualificationTime != null || appliedFilters.MaxTotalQualificationTime != null ? "is-open" : "";
-
 }
 
 @section Head {
@@ -82,7 +83,7 @@
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
-                                    </li>
+                                </li>
                             }
                         </ul>
                     }
@@ -93,7 +94,8 @@
                         <ul class="app-filter-tags">
                             @foreach (var item in appliedFilters.QualificationTypes)
                             {
-                                <li><a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                <li>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -863,7 +865,7 @@
             </text>
         }
 
-                var selectedFilters = document.getElementsByClassName("removeFilter");
+                                        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -914,7 +916,15 @@
 
         selectedQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => {
-                i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
+                if (i.checked) {
+                    var qualsArr = [...selectedQuals];
+                    qualsArr.splice(0, 0, i.value);
+                    selectedQuals = [...qualsArr]
+                } else {
+                    selectedQuals.delete(i.value);
+                }
+
+                //i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
                 localStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
             }
         });
@@ -923,8 +933,6 @@
             var selectedCompareQuals = document.getElementById("selectedQuals");
 
             selectedCompareQuals.value = JSON.parse(localStorage.getItem("selectedQuals"));
-
-            console.log(selectedCompareQuals);
         }
 
     </script>

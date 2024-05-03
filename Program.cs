@@ -15,13 +15,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRefitClient<IRegisterAPIClient>().ConfigureHttpClient(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["RegisterAPIUrl"]!);
-    
+
 });
 
 builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["RefDataAPIUrl"]!);
-    
+
 });
 
 var app = builder.Build();
@@ -56,7 +56,7 @@ app.Use(async (ctx, next) =>
         await next();
     }
 });
-app.UseStatusCodePagesWithRedirects("/error/{0}");
+//app.UseStatusCodePagesWithRedirects("/error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -69,6 +69,6 @@ app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Qualifications}/{action=Search}/{id?}");
+    pattern: "/find-regulated-qualifications");
 
 app.Run();

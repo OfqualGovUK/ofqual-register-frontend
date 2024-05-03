@@ -3,6 +3,7 @@
 @model Organisation
 @{
     ViewData["Title"] = "Find a regulated awarding organisation";
+    ViewData["HomePage"] = "find-regulated-organisations";
 }
 
 <div class="govuk-grid-row">
@@ -305,10 +306,10 @@
                             </li>
                         </ul>
                     }
-                    @*
-                <a href="/download/download-sor" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Download scope of recognition CSV file
-                </a> *@
+
+                    <a href="/Organisations/download-scopes-CSV/@Model.RecognitionNumber" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                        Download scope of recognition CSV file
+                    </a>
 
                 </div>
             </div>

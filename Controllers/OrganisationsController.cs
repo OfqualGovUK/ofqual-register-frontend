@@ -1,17 +1,13 @@
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.Globalization;
-using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
@@ -107,8 +103,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("Organisations/download-CSV")]
         public async Task<IActionResult> DownloadCSV(string? name)
         {
-            APIResponseList<Organisation> orgs;
-
             var nm = string.IsNullOrEmpty(name) ? "" : "_" + name;
 
             string fileName = $"Organisations{nm}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
@@ -116,6 +110,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             try
             {
+                APIResponseList<Organisation> orgs;
                 orgs = await _registerAPIClient.GetOrganisationsDetailListAsync(name);
 
                 using var memoryStream = new MemoryStream();
@@ -123,6 +118,32 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
                     csvWriter.WriteRecords(orgs.Results);
+                }
+
+                return File(memoryStream.ToArray(), "text/csv", fileName);
+            }
+            catch (ApiException ex)
+            {
+                return File(fileBytes, "text/csv", fileName);
+            }
+        }
+
+        [HttpGet]
+        [Route("Organisations/download-scopes-CSV/{recognitionNumber}")]
+        public async Task<IActionResult> DownloadScopesCSV(string recognitionNumber)
+        {
+            string fileName = $"{recognitionNumber}_Scope_of_recognition_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            byte[] fileBytes = [];
+
+            try
+            {
+                var scopes = await _registerAPIClient.GetOrganisationsScopes(recognitionNumber);
+
+                using var memoryStream = new MemoryStream();
+                using (var streamWriter = new StreamWriter(memoryStream))
+                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                {
+                    csvWriter.WriteRecords(scopes.Inclusions.Concat(scopes.Exclusions));
                 }
 
                 return File(memoryStream.ToArray(), "text/csv", fileName);
