@@ -271,7 +271,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             if (Request.Query["CSV"].Count != 0)
             {
-                return RedirectToAction("download-CSV", new { title, selectedQuals, QualificationNumbers });
+                return RedirectToAction("DownloadCSV", new { title, selectedQuals, QualificationNumbers });
             }
 
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;

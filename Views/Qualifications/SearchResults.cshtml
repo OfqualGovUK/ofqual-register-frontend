@@ -869,7 +869,7 @@
             </text>
         }
 
-                                                                                                        var selectedFilters = document.getElementsByClassName("removeFilter");
+        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -959,9 +959,7 @@
             } else {
                 document.getElementById("csvButton").setAttribute("disabled", "true");
                 document.getElementById("csvButton").setAttribute("aria-disabled", "true");
-
             }
-
         }
     </script>
 
