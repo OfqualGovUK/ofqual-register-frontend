@@ -1,5 +1,6 @@
 ﻿using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Refit;
 using System.Net;
@@ -16,6 +17,9 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
 
         [Get("/api/organisations?search={search}")]
         Task<APIResponseList<Organisation>> GetOrganisationsDetailListAsync(string? search);
+
+        [Get("/api/scopes/{recognitionNumber}")]
+        Task<RecognitionScope> GetOrganisationsScopes(string recognitionNumber);
 
 
         [Get("/api/qualifications?title={title}&page={page}&limit={limit}&assessmentMethods={assessmentMethods}&gradingTypes={gradingTypes}&awardingOrganisations={awardingOrganisations}&availability={availability}&qualificationTypes={qualificationTypes}&qualificationLevels={qualificationLevels}&nationalAvailability={nationalAvailability}&sectorSubjectAreas={sectorSubjectAreas}&minTotalQualificationTime={minTotalQualificationTime}&maxTotalQualificationTime={maxTotalQualificationTime}&minGuidedLearninghours={minGuidedLearninghours}&maxGuidedLearninghours={maxGuidedLearninghours}")]
