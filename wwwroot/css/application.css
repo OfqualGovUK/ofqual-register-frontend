@@ -8504,3 +8504,167 @@ p + .govuk-heading-s,
   list-style: none;
   padding-right: 8px;
 }
+
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%
+}
+
+    table td, table th {
+        font-family: "GDS Transport",arial,sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-weight: 400;
+        font-size: 16px;
+        font-size: 1rem;
+        line-height: 1.25;
+        padding: .6315789474em 1.0526315789em .4736842105em 0;
+        text-align: left;
+        border-bottom: 1px solid #b1b4b6
+    }
+
+@media print {
+    table td, table th {
+        font-family: sans-serif
+    }
+}
+
+@media (min-width: 40.0625em) {
+    table td, table th {
+        font-size: 19px;
+        font-size: 1.1875rem;
+        line-height: 1.3157894737
+    }
+}
+
+@media print {
+    table td, table th {
+        font-size: 14pt;
+        line-height: 1.15
+    }
+}
+
+table thead th {
+    font-weight: 700
+}
+
+table td:last-child, table th:last-child {
+    padding-right: 0
+}
+
+table .numeric {
+    text-align: right
+}
+
+table td.numeric {
+    font-family: "GDS Transport",arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-feature-settings: "tnum" 1;
+    font-feature-settings: "tnum" 1;
+    font-weight: 400;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.25
+}
+
+@media print {
+    table td.numeric {
+        font-family: sans-serif
+    }
+}
+
+@supports (font-variant-numeric: tabular-nums) {
+    table td.numeric {
+        -webkit-font-feature-settings: normal;
+        font-feature-settings: normal;
+        font-variant-numeric: tabular-nums
+    }
+}
+
+@media (min-width: 40.0625em) {
+    table td.numeric {
+        font-size: 19px;
+        font-size: 1.1875rem;
+        line-height: 1.3157894737
+    }
+}
+
+@media print {
+    table td.numeric {
+        font-size: 14pt;
+        line-height: 1.15
+    }
+}
+
+table caption {
+    text-align: left
+}
+
+.table-font-xsmall th {
+    font-family: "GDS Transport",arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 14px;
+    font-size: .875rem;
+    line-height: 1.1428571429
+}
+
+@media print {
+    .table-font-xsmall th {
+        font-family: sans-serif
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .table-font-xsmall th {
+        font-size: 16px;
+        font-size: 1rem;
+        line-height: 1.25
+    }
+}
+
+@media print {
+    .table-font-xsmall th {
+        font-size: 14pt;
+        line-height: 1.2
+    }
+}
+
+.table-font-xsmall td {
+    font-family: "GDS Transport",arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 14px;
+    font-size: .875rem;
+    line-height: 1.1428571429
+}
+
+@media print {
+    .table-font-xsmall td {
+        font-family: sans-serif
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .table-font-xsmall td {
+        font-size: 16px;
+        font-size: 1rem;
+        line-height: 1.25
+    }
+}
+
+@media print {
+    .table-font-xsmall td {
+        font-size: 14pt;
+        line-height: 1.2
+    }
+}
+
+.table-font-xsmall td, .table-font-xsmall th {
+    padding: .75em 1.25em .5625em 0
+}
