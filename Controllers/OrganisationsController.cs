@@ -45,8 +45,11 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 {
                     name = $"RN{name}";
                 }
-
-                return RedirectToAction("organisations", new { number = name.ToUpper() });
+                
+                return RedirectToAction("Organisation", new
+                {
+                    number = name.ToUpper()
+                });
             }
 
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
