@@ -1,4 +1,4 @@
-﻿<form action="/form-handler" method="post" novalidate class="jsonly">
+﻿<div class="jsonly" id="analyticsBanner" style="display:none;">
     <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Cookies on [name of service]">
         <div class="govuk-cookie-banner__message govuk-width-container">
             <div class="govuk-grid-row">
@@ -13,14 +13,14 @@
                 </div>
             </div>
             <div class="govuk-button-group">
-                <button value="yes" type="submit" name="cookies[analytics]" class="govuk-button" data-module="govuk-button">
+                <button type="submit" onclick="acceptAnalytics()" class="govuk-button" data-module="govuk-button">
                     Accept analytics cookies
                 </button>
-                <button value="no" type="submit" name="cookies[analytics]" class="govuk-button" data-module="govuk-button">
+                <button type="submit" onclick="rejectAnalytics()" class="govuk-button" data-module="govuk-button">
                     Reject analytics cookies
                 </button>
                 <a class="govuk-link" href="/Cookies">View cookies</a>
             </div>
         </div>
     </div>
-</form>
+</div>

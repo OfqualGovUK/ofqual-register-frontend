@@ -1,11 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "Register of Regulated Qualifications";
+    ViewData["Title"] = "Cookies - Register of Regulated Qualifications";
     Layout = "_LayoutCookie.cshtml";
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <div class="cookie-settings__confirmation banner banner-with-tick" data-cookie-confirmation="true" role="group" tabindex="-1">
+        <div id="cookieSubmitted" class="cookie-settings__confirmation banner banner-with-tick" data-cookie-confirmation="true" role="group" tabindex="-1" style="display:none;">
             <h2 class="govuk-heading-m">Your cookie settings were saved</h2>
             <a id="back" class="govuk_link cookie-settings__prev-page govuk-!-margin-top-1" href="#" data-notify-module="track-click" data-track-category="cookieSettings" data-track-action="Back to previous page">
                 Go back to the page you were looking at
@@ -45,7 +45,7 @@
             </tbody>
         </table>
 
-        <h2 class="govuk-heading-m" id="analytics-cookies">Analytics cookies (optional)</h2>
+        <h2 class="govuk-heading-m" id="analytics-cookies" style="margin-top:30px">Analytics cookies (optional)</h2>
         <p class="govuk-body">
             With your permission, we use Google Analytics to collect data about how you use Notify. This information helps us to improve our service.
         </p>
@@ -103,7 +103,7 @@
             </ul>
         </div>
         <div class="cookie-settings__form-wrapper">
-            <form data-notify-module="cookie-settings">
+            <div data-notify-module="cookie-settings">
                 <div class="govuk-form-group govuk-!-margin-top-6">
                     <fieldset class="govuk-fieldset" aria-describedby="changed-name-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -117,7 +117,7 @@
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="cookies-analytics-no" name="cookies-analytics" type="radio" value="off">
+                                <input class="govuk-radios__input" id="cookies-analytics-no" name="cookies-analytics" type="radio" value="off" checked>
                                 <label class="govuk-label govuk-radios__label" for="cookies-analytics-no">
                                     No
                                 </label>
@@ -126,17 +126,27 @@
                     </fieldset>
                 </div>
 
-
-
-
-
-
-
-                <button class="govuk-button" data-module="govuk-button">
+                <button class="govuk-button" data-module="govuk-button" onclick="submitCookieForm()">
                     Save cookie settings
                 </button>
-
-            </form>
+            </div>
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        function submitCookieForm() {
+            var val = document.querySelector('input[name="cookies-analytics"]:checked').value
+
+            if (val == "on") {
+                setMatomoCookie("enabled");
+            } else {
+                setMatomoCookie("disabled");
+            }
+
+            document.getElementById("cookieSubmitted").style.display = "block";
+        }
+    </script>
+}

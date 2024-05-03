@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="~/css/govuk-frontend.min.css">
     <link rel="stylesheet" href="~/css/application.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script type="text/javascript" src="~/js/analytics.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Head", required: false)
     <noscript>
@@ -44,7 +45,6 @@
 
     <partial name="/Views/Shared/_FooterPartial.cshtml" />
 
-    @await RenderSectionAsync("Scripts", required: false)
     <script type="module" src="~/js/govuk-frontend.min.js" asp-append-version="true"></script>
     <script type="module">
         import { initAll } from '/js/govuk-frontend.min.js'
@@ -56,6 +56,7 @@
             history.back();
         });
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>

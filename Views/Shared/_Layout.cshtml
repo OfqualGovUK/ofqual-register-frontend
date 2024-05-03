@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="~/css/govuk-frontend.min.css">
     <link rel="stylesheet" href="~/css/application.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <script type="text/javascript" src="~/js/analytics.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Head", required: false)
     <noscript>
@@ -30,17 +31,19 @@
 
     <!-- Matomo -->
     <script>
-        var _paq = window._paq = window._paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function () {
-            var u = "https://ofqual.matomo.cloud/";
-            _paq.push(['setTrackerUrl', u + 'matomo.php']);
-            _paq.push(['setSiteId', '9']);
-            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-            g.async = true; g.src = 'https://cdn.matomo.cloud/ofqual.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g, s);
-        })();
+        if (analyticsEnabled()) {
+            var _paq = window._paq = window._paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "https://ofqual.matomo.cloud/";
+                _paq.push(['setTrackerUrl', u + 'matomo.php']);
+                _paq.push(['setSiteId', '9']);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.async = true; g.src = 'https://cdn.matomo.cloud/ofqual.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g, s);
+            })();
+        }
     </script>
     <!-- End Matomo Code -->
 
@@ -80,6 +83,8 @@
         document.getElementById("back").addEventListener("click", () => {
             history.back();
         });
+
+        checkMatomoCookie();
     </script>
 </body>
 
