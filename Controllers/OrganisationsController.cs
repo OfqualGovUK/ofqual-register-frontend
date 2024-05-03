@@ -89,6 +89,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             try
             {
                 var org = await _registerAPIClient.GetOrganisationAsync(number);
+
+                if (org != null)
+                {
+                    org.RecognitionScope = await _registerAPIClient.GetOrganisationsScopes(number);
+                }
+
                 return View(org);
             }
             catch (ApiException ex)

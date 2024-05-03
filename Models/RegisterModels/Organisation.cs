@@ -1,4 +1,6 @@
-﻿namespace Ofqual.Common.RegisterFrontend.Models.APIModels
+﻿using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
+
+namespace Ofqual.Common.RegisterFrontend.Models.APIModels
 {
     public class Organisation
     {
@@ -53,5 +55,7 @@
         public DateTime LastUpdatedDate { get; set; }
 
         public string? CanonicalUrl { get; set; }
+
+        public RecognitionScope? RecognitionScope { get; set; }
     }
 }
