@@ -38,6 +38,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("find-regulated-qualifications")]
+        //[Route("Qualifications/Search")]
         public IActionResult Search()
         {
             return View();

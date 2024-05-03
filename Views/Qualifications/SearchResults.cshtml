@@ -865,7 +865,7 @@
             </text>
         }
 
-                        var selectedFilters = document.getElementsByClassName("removeFilter");
+                                        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -916,7 +916,15 @@
 
         selectedQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => {
-                i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
+                if (i.checked) {
+                    var qualsArr = [...selectedQuals];
+                    qualsArr.splice(0, 0, i.value);
+                    selectedQuals = [...qualsArr]
+                } else {
+                    selectedQuals.delete(i.value);
+                }
+
+                //i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
                 localStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
             }
         });
@@ -925,8 +933,6 @@
             var selectedCompareQuals = document.getElementById("selectedQuals");
 
             selectedCompareQuals.value = JSON.parse(localStorage.getItem("selectedQuals"));
-
-            console.log(selectedCompareQuals);
         }
 
     </script>
