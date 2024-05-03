@@ -33,7 +33,11 @@
     <div class="govuk-width-container">
         <h1 class="govuk-heading-l">Qualification search</h1>
         <p class="govuk-body">Select all the qualifications you want to compare.</p>
-
+        <noscript>
+            <div class="govuk-inset-text">
+                Enable JavaScript to allow you to compare results from different pages.
+            </div>
+        </noscript>
         <div class="app-search govuk-!-margin-bottom-4">
             <form action="qualifications" method="get" novalidate="">
                 <div class="govuk-form-group">
@@ -758,12 +762,12 @@
             <form action="/qualifications/compare-qualifications" id="compareQualifications" method="get" onsubmit="appendSelectedQuals()">
                 <ul id="action-buttons-row" class="ofq-action-buttons--list">
                     <li class="ofq-action-buttons--item">
-                        <button draggable="false" name="Compare" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
+                        <button draggable="false" name="Compare" id="compareButton" class="govuk-button govuk-button--primary" data-module="govuk-button" type="submit">
                             Compare selected
                         </button>
                     </li>
                     <li class="ofq-action-buttons--item">
-                        <button draggable="false" name="CSV" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button" type="submit">
+                        <button draggable="false" name="CSV" id="csvButton" class="govuk-button govuk-button--secondary ofq-button-row-element" data-module="govuk-button" type="submit">
                             Download selected results as CSV
                         </button>
                     </li>
@@ -865,7 +869,7 @@
             </text>
         }
 
-                                        var selectedFilters = document.getElementsByClassName("removeFilter");
+                                                                                                        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
@@ -914,18 +918,21 @@
             });
         }
 
+        disableCompareBtn();
+
         selectedQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
             i.onchange = () => {
                 if (i.checked) {
                     var qualsArr = [...selectedQuals];
                     qualsArr.splice(0, 0, i.value);
-                    selectedQuals = [...qualsArr]
+                    selectedQuals = new Set([...qualsArr]);
                 } else {
                     selectedQuals.delete(i.value);
                 }
 
-                //i.checked ? selectedQuals.add(i.value) : selectedQuals.delete(i.value);
                 localStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
+
+                disableCompareBtn();
             }
         });
 
@@ -935,6 +942,27 @@
             selectedCompareQuals.value = JSON.parse(localStorage.getItem("selectedQuals"));
         }
 
+
+        function disableCompareBtn() {
+            if (selectedQuals.size < 2) {
+                document.getElementById("compareButton").setAttribute("disabled", "true");
+                document.getElementById("compareButton").setAttribute("aria-disabled", "true");
+            }
+            else {
+                document.getElementById("compareButton").removeAttribute("disabled");
+                document.getElementById("compareButton").removeAttribute("aria-disabled");
+            }
+
+            if (selectedQuals.size >= 1) {
+                document.getElementById("csvButton").removeAttribute("disabled");
+                document.getElementById("csvButton").removeAttribute("aria-disabled");
+            } else {
+                document.getElementById("csvButton").setAttribute("disabled", "true");
+                document.getElementById("csvButton").setAttribute("aria-disabled", "true");
+
+            }
+
+        }
     </script>
 
 }
