@@ -291,15 +291,9 @@
                                         Unregulated qualifications
                                     </summary>
                                     <ul id="x-Unregulatedqualifications-list">
-                                        @foreach (var item in Model.RecognitionScope.Exclusions)
+                                        @foreach (var qual in Model.RecognitionScope.Exclusions)
                                         {
-                                            @foreach (var level in item.Levels)
-                                            {
-                                                @foreach (var recognition in level.Recognitions)
-                                                {
-                                                    <li class="govuk-body"><div role="treeitem">@recognition</div></li>
-                                                }
-                                            }
+                                            <li class="govuk-body"><div role="treeitem">@qual</div></li>
                                         }
                                     </ul>
                                 </details>

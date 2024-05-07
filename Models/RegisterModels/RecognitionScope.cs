@@ -3,7 +3,7 @@
     public class RecognitionScope
     {
         public required List<ScopeType> Inclusions { get; set; }
-        public required List<ScopeType> Exclusions { get; set; }
+        public required List<string> Exclusions { get; set; }
     }
 
     public class ScopeType

@@ -2,11 +2,13 @@ using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.Globalization;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
@@ -45,7 +47,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 {
                     name = $"RN{name}";
                 }
-                
+
                 return RedirectToAction("Organisation", new
                 {
                     number = name.ToUpper()
@@ -140,13 +142,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             try
             {
+                var org = await _registerAPIClient.GetOrganisationAsync(recognitionNumber);
                 var scopes = await _registerAPIClient.GetOrganisationsScopes(recognitionNumber);
+
+                fileName = $"{org.Name}_{recognitionNumber}_Scope_of_recognition_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
 
                 using var memoryStream = new MemoryStream();
                 using (var streamWriter = new StreamWriter(memoryStream))
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
-                    csvWriter.WriteRecords(scopes.Inclusions.Concat(scopes.Exclusions));
+                    csvWriter.WriteRecords(CreateScopesCSV(scopes, recognitionNumber, org.Name));
                 }
 
                 return File(memoryStream.ToArray(), "text/csv", fileName);
@@ -155,6 +160,45 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             {
                 return File(fileBytes, "text/csv", fileName);
             }
+        }
+
+        private List<RecognitionScopeCSVModel> CreateScopesCSV(RecognitionScope scope, string recognitionNumber, string orgName)
+        {
+            var list = new List<RecognitionScopeCSVModel>();
+
+            foreach (var type in scope.Inclusions)
+            {
+                foreach (var level in type.Levels)
+                {
+                    foreach (var qual in level.Recognitions)
+                    {
+                        list.Add(new RecognitionScopeCSVModel
+                        {
+                            RecognitionNumber = recognitionNumber,
+                            OrganisationName = orgName,
+                            Level = level.Level,
+                            Regulated = true,
+                            Title = qual,
+                            Type = type.Type
+                        });
+                    }
+                }
+            }
+
+            foreach (var unregulated in scope.Exclusions)
+            {
+                list.Add(new RecognitionScopeCSVModel
+                {
+                    RecognitionNumber = recognitionNumber,
+                    OrganisationName = orgName,
+                    Level = string.Empty,
+                    Regulated = false,
+                    Title = unregulated,
+                    Type = string.Empty
+                });
+            }
+
+            return list;
         }
 
     }
