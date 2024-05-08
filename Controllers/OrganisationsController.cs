@@ -19,7 +19,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         private readonly IRegisterAPIClient _registerAPIClient;
         private readonly IConfiguration _config;
 
-        [GeneratedRegex(@"(RN)?(rn)?\d+")]
+        [GeneratedRegex(@"(RN)?(rn)?\d+$")]
         private static partial Regex OrgNumberRegex();
 
         public OrganisationsController(ILogger<OrganisationsController> logger, IRegisterAPIClient registerAPIClient, IConfiguration config)
