@@ -906,8 +906,8 @@
 
         var selectedQuals = new Set();
 
-        if (localStorage.getItem("selectedQuals")) {
-            selectedQualsArr = JSON.parse(localStorage.getItem("selectedQuals"));
+        if (sessionStorage.getItem("selectedQuals")) {
+            selectedQualsArr = JSON.parse(sessionStorage.getItem("selectedQuals"));
             selectedQuals = new Set([...selectedQualsArr]);
 
             selectedQualsArr.forEach((i) => {
@@ -930,7 +930,7 @@
                     selectedQuals.delete(i.value);
                 }
 
-                localStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
+                sessionStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
 
                 disableCompareBtn();
             }
@@ -939,7 +939,7 @@
         function appendSelectedQuals() {
             var selectedCompareQuals = document.getElementById("selectedQuals");
 
-            selectedCompareQuals.value = JSON.parse(localStorage.getItem("selectedQuals"));
+            selectedCompareQuals.value = JSON.parse(sessionStorage.getItem("selectedQuals"));
         }
 
 
