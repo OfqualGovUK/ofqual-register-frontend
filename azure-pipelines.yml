@@ -3,7 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- dev
+  branches:
+   include:
+     - main
+     - dev
 
 resources:
 - repo: self
@@ -15,6 +18,8 @@ variables:
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+
+  imgRepo: $(imageRepository)
 
 stages:
 - stage: Build
@@ -29,7 +34,7 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imageRepository)
+        repository: $(imgRepo)
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
