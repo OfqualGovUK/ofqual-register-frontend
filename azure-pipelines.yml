@@ -19,13 +19,6 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
- # ${{ if endsWith( variables['Build.SourceBranchName'], '/main' ) }}: 
- #   imgRepo: $(imageRepositoryProd)
- #   dockerRSC: $(dockerRegistryServiceConnectionProd)
- # ${{ else }}: 
- #   imgRepo: $(imageRepository)
- #   dockerRSC: $(dockerRegistryServiceConnection)
-
 stages:
 - stage: Build
   displayName: Build and push stage
@@ -35,11 +28,20 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    - task: PowerShell@2
+      displayName: current branch name
+      inputs:
+        targetType: 'inline'
+        script: |
+          write-host $env:BUILD_SOURCEBRANCH
+          write-host $env:BUILD_SOURCEBRANCHNAME
+        pwsh: true
+
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        ${{ if endsWith( variables['Build.SourceBranchName'], '/main' ) }}:
+        ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
           repository: $(imageRepositoryProd)
           containerRegistry: $(dockerRegistryServiceConnectionProd)
         ${{ else }}:
