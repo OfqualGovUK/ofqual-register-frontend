@@ -417,7 +417,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpPost]
-        [Route("Qualifications/Compare/Change")]
+        [Route("qualifications/compare/change")]
         public IActionResult SubmitChangeCompare(string changeQualification, string current, string selected, string unselected)
         {
             if (string.IsNullOrEmpty(unselected))

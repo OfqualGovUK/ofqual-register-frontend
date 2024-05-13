@@ -76,6 +76,11 @@
         initAll()
     </script>
     <script type="text/javascript">
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            checkMatomoCookie();
+        });
+
         if (window.history.length < 2) {
             document.getElementById("back").style.display = "none";
         }

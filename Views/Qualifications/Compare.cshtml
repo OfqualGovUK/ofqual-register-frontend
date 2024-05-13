@@ -3,7 +3,8 @@
 @model CompareQualsModel;
 
 @{
-    ViewData["Title"] = "Register of Regulated Qualifications";
+    ViewData["Title"] = "Compare qualifications - Find a regulated qualification";
+    ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
     var left = Model.Left;
@@ -29,7 +30,7 @@
 
         <h2 class="govuk-heading-s ofq-comparison-title" id="@left.QualificationNumber">@left.Title</h2>
 
-        <a href="Compare/Change?current=@left.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+        <a href="compare/change?current=@left.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
             Change qualification
         </a>
         @if (Model.Differing.Any())

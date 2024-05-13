@@ -2,7 +2,8 @@
 @model SearchResultViewModel<QualificationListViewModel>
 
 @{
-    ViewData["Title"] = "Find a regulated qualification";
+    ViewData["Title"] = $"'{Model.Title}' - Search results - Find a regulated qualification";
+    ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
@@ -856,6 +857,7 @@
         document.addEventListener("DOMContentLoaded", function (event) {
             disableCompareBtn();
             updateSelectedStats();
+            checkMatomoCookie();
         });
 
         accordionTitles.forEach(accordionTitle => {
@@ -878,7 +880,7 @@
             </text>
         }
 
-                var selectedFilters = document.getElementsByClassName("removeFilter");
+                        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {

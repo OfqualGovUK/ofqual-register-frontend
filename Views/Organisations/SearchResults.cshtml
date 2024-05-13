@@ -1,7 +1,8 @@
 ﻿@model Ofqual.Common.RegisterFrontend.Models.SearchViewModels.SearchResultViewModel<Ofqual.Common.RegisterFrontend.Models.SearchViewModels.OrganisationListViewModel>
 
 @{
-    ViewData["Title"] = "Find a regulated awarding organisation";
+    ViewData["Title"] = $"'{Model.Title}' - Find a regulated awarding organisation";
+    ViewData["HeaderTitle"] = "Find a regulated awarding organisation";
     ViewData["HomePage"] = "find-regulated-organisations";
 }
 <div class="govuk-grid-row">

@@ -35,16 +35,33 @@ function checkMatomoCookie() {
 
 function acceptAnalytics() {
     setMatomoCookie("enabled");
-    checkMatomoCookie();
+    //checkMatomoCookie();
+
+    let elem = document.getElementById("acceptedCookies")
+    elem.removeAttribute("hidden");
+
+    let contentElem = document.getElementById("analyticsContent")
+    contentElem.setAttribute("hidden", "");
 }
 
 function rejectAnalytics() {
     setMatomoCookie("disabled");
-    checkMatomoCookie();
+    //checkMatomoCookie();
+
+    let elem = document.getElementById("rejectedCookies")
+    elem.removeAttribute("hidden");
+
+    let contentElem = document.getElementById("analyticsContent")
+    contentElem.setAttribute("hidden", "");
 }
 
 function analyticsEnabled() {
     let analytics = getCookie("cookie_policy");
 
     return analytics == "enabled";
+}
+
+function hideAnalytics() {
+    let elem = document.getElementById("analyticsBanner")
+    elem.style.display = "none";
 }
