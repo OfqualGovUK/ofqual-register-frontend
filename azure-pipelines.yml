@@ -24,7 +24,7 @@ variables:
     dockerRSC: $(dockerRegistryServiceConnectionProd)
   ${{ else }}: 
     imgRepo: $(imageRepository)
-    dockerRSC: $(dockerRegistryServiceConnectionProd)
+    dockerRSC: $(dockerRegistryServiceConnection)
 
 stages:
 - stage: Build
