@@ -19,12 +19,12 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
-  ${{ if endsWith( variables['Build.SourceBranchName'], '/main' ) }}: 
-    imgRepo: $(imageRepositoryProd)
-    dockerRSC: $(dockerRegistryServiceConnectionProd)
-  ${{ else }}: 
-    imgRepo: $(imageRepository)
-    dockerRSC: $(dockerRegistryServiceConnection)
+ # ${{ if endsWith( variables['Build.SourceBranchName'], '/main' ) }}: 
+ #   imgRepo: $(imageRepositoryProd)
+ #   dockerRSC: $(dockerRegistryServiceConnectionProd)
+ # ${{ else }}: 
+ #   imgRepo: $(imageRepository)
+ #   dockerRSC: $(dockerRegistryServiceConnection)
 
 stages:
 - stage: Build
@@ -39,9 +39,13 @@ stages:
       displayName: Build and push an image to container registry
       inputs:
         command: buildAndPush
-        repository: $(imgRepo)
+        ${{ if endsWith( variables['Build.SourceBranchName'], '/main' ) }}:
+          repository: $(imageRepositoryProd)
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          repository: $(imageRepository)
+          containerRegistry: $(dockerRegistryServiceConnection)
         dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRSC)
         tags: |
           latest
           $(tag)
