@@ -1,5 +1,6 @@
 ﻿@{
     var controllerName = this.ViewContext.RouteData.Values["controller"]?.ToString();
+    var matomoId = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" ? 10 : 9;
 }
 
 <!DOCTYPE html>
@@ -39,7 +40,7 @@
             (function () {
                 var u = "https://ofqual.matomo.cloud/";
                 _paq.push(['setTrackerUrl', u + 'matomo.php']);
-                _paq.push(['setSiteId', '9']);
+                _paq.push(['setSiteId', '@matomoId']);
                 var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
                 g.async = true; g.src = 'https://cdn.matomo.cloud/ofqual.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g, s);
             })();
@@ -60,6 +61,11 @@
         @if (controllerName != null && !controllerName.StartsWith("Home"))
         {
             <p id="back" class="govuk-back-link jsonly">Back</p>
+        }
+        else
+        {
+            <p id="back" class="govuk-back-link jsonly" hidden>Back</p>
+
         }
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
