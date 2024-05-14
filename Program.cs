@@ -56,7 +56,7 @@ app.Use(async (ctx, next) =>
         await next();
     }
 });
-//app.UseStatusCodePagesWithRedirects("/error/{0}");
+app.UseStatusCodePagesWithRedirects("/error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -69,6 +69,6 @@ app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "/find-regulated-qualifications");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
