@@ -79,7 +79,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     });
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
+            
+            if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
             {
                 availability = "Available to learners";
             }
