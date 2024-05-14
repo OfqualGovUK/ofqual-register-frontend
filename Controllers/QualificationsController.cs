@@ -37,15 +37,21 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
+        [Route("find-regulated-qualifications/start")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
         [Route("find-regulated-qualifications")]
-        //[Route("Qualifications/Search")]
         public IActionResult Search()
         {
             return View();
         }
 
         [HttpGet]
-        [Route("qualifications")]
+        [Route("/qualifications")]
         public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
         {
             #region Qual Detail

@@ -30,6 +30,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
+        [Route("find-regulated-organisations/start")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
         [Route("find-regulated-organisations")]
         public IActionResult Search()
         {
