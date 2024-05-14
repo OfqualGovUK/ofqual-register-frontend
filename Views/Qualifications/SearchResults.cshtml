@@ -6,6 +6,10 @@
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
+    var compareError = TempData["CompareError"] != null ? true : false;
+
+    var compareErrorClass = compareError ? "govuk-form-group govuk-form-group--error" : "";
+
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
 
     var availabilityAccordion = appliedFilters.Availability != null && appliedFilters.Availability.Any() ? "is-open" : "";
@@ -29,9 +33,25 @@
         </style>
     </noscript>
 }
-
 <div class="govuk-grid-row">
     <div class="govuk-width-container">
+        @if (compareError)
+        {
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#compare-error">Select at least 2 qualifications to compare</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
         <h1 class="govuk-heading-l">Qualification search</h1>
         <p class="govuk-body">Select all the qualifications you want to compare.</p>
         <noscript>
@@ -779,9 +799,16 @@
                     <span id="numSelected">0 qualifications selected. </span> <span class="govuk-link govuk-link--no-visited-state" onclick="clearSelection()" style="color: #1d70b8; cursor:pointer">Clear selection</span>
                 </div>
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                @foreach (var item in Model.List.Results)
+                @if (compareError)
                 {
-                    <div class="app-application-cards" aria-live="polite">
+                    <p id="compare-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> Select at least 2 qualifications to compare
+                    </p>
+                }
+
+                <div class="app-application-cards @compareErrorClass" aria-live="polite">
+                    @foreach (var item in Model.List.Results)
+                    {
                         <section class="app-application-card">
                             <header class="app-application-card__header">
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -837,13 +864,12 @@
                                 </div>
                             </div>
                         </section>
-                    </div>
-                }
+                    }
+                </div>
             </form>
         }
 
         <partial name="/Views/Shared/_PagingPartial.cshtml" model="Model.Paging" />
-
     </div>
 </div>
 
@@ -880,7 +906,7 @@
             </text>
         }
 
-                        var selectedFilters = document.getElementsByClassName("removeFilter");
+                                                                        var selectedFilters = document.getElementsByClassName("removeFilter");
 
         for (var i = 0; i < selectedFilters.length; i++) {
             selectedFilters[i].addEventListener('click', function () {
