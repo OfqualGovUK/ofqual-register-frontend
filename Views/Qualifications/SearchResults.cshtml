@@ -6,6 +6,10 @@
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
+    var compareError = TempData["CompareError"] != null ? true : false;
+
+    var compareErrorClass = compareError ? "govuk-form-group govuk-form-group--error" : "";
+
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
 
     var availabilityAccordion = appliedFilters.Availability != null && appliedFilters.Availability.Any() ? "is-open" : "";
@@ -29,9 +33,25 @@
         </style>
     </noscript>
 }
-
 <div class="govuk-grid-row">
     <div class="govuk-width-container">
+        @if (compareError)
+        {
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#compare-error">Select at least 2 qualifications to compare</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
         <h1 class="govuk-heading-l">Qualification search</h1>
         <p class="govuk-body">Select all the qualifications you want to compare.</p>
         <noscript>
@@ -779,9 +799,16 @@
                     <span id="numSelected">0 qualifications selected. </span> <span class="govuk-link govuk-link--no-visited-state" onclick="clearSelection()" style="color: #1d70b8; cursor:pointer">Clear selection</span>
                 </div>
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                @foreach (var item in Model.List.Results)
+                @if (compareError)
                 {
-                    <div class="app-application-cards" aria-live="polite">
+                    <p id="compare-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> Select at least 2 qualifications to compare
+                    </p>
+                }
+
+                <div class="app-application-cards @compareErrorClass" aria-live="polite">
+                    @foreach (var item in Model.List.Results)
+                    {
                         <section class="app-application-card">
                             <header class="app-application-card__header">
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -837,176 +864,21 @@
                                 </div>
                             </div>
                         </section>
-                    </div>
-                }
+                    }
+                </div>
             </form>
         }
 
         <partial name="/Views/Shared/_PagingPartial.cshtml" model="Model.Paging" />
-
     </div>
 </div>
 
 @section Scripts {
-
-    <script type="text/javascript">
-        const accordionTitles = document.querySelectorAll(".accordionTitle");
-
-        let numSelected = 0;
-
-        document.addEventListener("DOMContentLoaded", function (event) {
-            disableCompareBtn();
-            updateSelectedStats();
-            checkMatomoCookie();
-        });
-
-        accordionTitles.forEach(accordionTitle => {
-            accordionTitle.addEventListener("click", () => {
-                accordionTitle.classList.toggle("is-open");
-                accordionTitle.parentElement.classList.toggle("is-open")
-            })
-        })
-
-        var queryFiltersForm = document.querySelector('#qualificationsFilterForm')
-
-        queryFiltersForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
-            i.onchange = () => { queryFiltersForm.submit() }
-        });
-
-        @if (appliedFilters.FiltersApplied)
-        {
-            <text>
-                document.getElementById('selectedFilters').style.display = 'block';
-            </text>
-        }
-
-                        var selectedFilters = document.getElementsByClassName("removeFilter");
-
-        for (var i = 0; i < selectedFilters.length; i++) {
-            selectedFilters[i].addEventListener('click', function () {
-                var cBox = document.getElementById(this.getAttribute("data-checkbox"));
-
-                if (cBox.checked) {
-                    cBox.checked = false;
-                } else {
-                    cBox.checked = true;
-                }
-                queryFiltersForm.submit()
-            }, false);
-        }
-
-        var selectedIntFilters = document.getElementsByClassName("removeIntFilter");
-
-        for (var i = 0; i < selectedIntFilters.length; i++) {
-            selectedIntFilters[i].addEventListener('click', function () {
-                var box = document.getElementById(this.getAttribute("data-box"));
-                box.value = "";
-                queryFiltersForm.submit()
-            }, false);
-        }
-
-        var focusOutElements = document.getElementsByClassName("focusOutFilters");
-
-        for (var i = 0; i < focusOutElements.length; i++) {
-            focusOutElements[i].addEventListener('focusout', function () {
-                queryFiltersForm.submit()
-            }, false);
-        }
-
-        var selectedQualsForm = document.querySelector('#compareQualifications');
-
-        var selectedQuals = new Set();
-
-        if (sessionStorage.getItem("selectedQuals")) {
-            selectedQualsArr = JSON.parse(sessionStorage.getItem("selectedQuals"));
-            selectedQuals = new Set([...selectedQualsArr]);
-
-            selectedQualsArr.forEach((i) => {
-                var cbx = document.getElementById("qualification_" + i);
-                if (cbx) {
-                    cbx.checked = true;
-                }
-            });
-
-            numSelected = selectedQualsArr.length;
-            updateSelectedStats();
-        }
-
-        selectedQualsForm.querySelectorAll('input[type="checkbox"]').forEach(i => {
-            i.onchange = () => {
-                if (i.checked) {
-                    var qualsArr = [...selectedQuals];
-                    qualsArr.splice(0, 0, i.value);
-                    selectedQuals = new Set([...qualsArr]);
-                    numSelected++;
-                } else {
-                    selectedQuals.delete(i.value);
-                    numSelected--;
-                }
-
-                sessionStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
-
-                disableCompareBtn();
-                updateSelectedStats();
-            }
-        });
-
-        function appendSelectedQuals() {
-            var selectedCompareQuals = document.getElementById("selectedQuals");
-
-            selectedCompareQuals.value = JSON.parse(sessionStorage.getItem("selectedQuals"));
-        }
-
-
-        function disableCompareBtn() {
-            if (selectedQuals.size < 2) {
-                document.getElementById("compareButton").setAttribute("disabled", "true");
-                document.getElementById("compareButton").setAttribute("aria-disabled", "true");
-            }
-            else {
-                document.getElementById("compareButton").removeAttribute("disabled");
-                document.getElementById("compareButton").removeAttribute("aria-disabled");
-            }
-
-            if (selectedQuals.size >= 1) {
-                document.getElementById("csvButton").removeAttribute("disabled");
-                document.getElementById("csvButton").removeAttribute("aria-disabled");
-            } else {
-                document.getElementById("csvButton").setAttribute("disabled", "true");
-                document.getElementById("csvButton").setAttribute("aria-disabled", "true");
-            }
-        }
-
-        function clearSelection() {
-            selectedQuals = new Set();
-            sessionStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
-
-            let qualCbxs = document.getElementsByName("QualificationNumbers");
-
-            qualCbxs.forEach((i) => {
-                i.checked = false;
-            });
-
-            numSelected = 0;
-
-            updateSelectedStats();
-        }
-
-        function updateSelectedStats() {
-            let selectedInfo = document.getElementById("numSelected");
-            let selectedInfoElem = document.getElementById("selectedStats");
-
-            if (numSelected > 0) {
-                selectedInfo.innerText = numSelected == 1 ? "1 Qualification selected." : numSelected + " Qualifications selected.";
-                selectedInfoElem.style.display = "block";
-            } else {
-                selectedInfoElem.style.display = "none";
-                disableCompareBtn();
-                selectedInfo.innerText = "0 Qualifications selected.";
-            }
-
-        }
-
-    </script>
-
+    @if (appliedFilters.FiltersApplied)
+    {
+        <text>
+            document.getElementById('selectedFilters').style.display = 'block';
+        </text>
+    }
+    <script type="text/javascript" src="~/js/qualSearchResults.js" asp-append-version="true"></script>
 }

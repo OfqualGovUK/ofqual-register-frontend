@@ -5,7 +5,7 @@ namespace Ofqual.Common.RegisterFrontend.Models
     public class CompareQualsModel
     {
         public string SelectedQuals { get; set; }
-        public string UnselectedQuals { get; set; }
+        public string? UnselectedQuals { get; set; }
 
         public Qualification Left { get; set; }
         public Qualification Right { get; set; }

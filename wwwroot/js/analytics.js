@@ -1,3 +1,4 @@
+//sets the analytics (matomo) cookie to expire in 365 days
 function setMatomoCookie(cvalue) {
     const d = new Date();
     const days = 365;
@@ -6,22 +7,8 @@ function setMatomoCookie(cvalue) {
     document.cookie = "cookie_policy=" + cvalue + ";" + expires + ";path=/";
 }
 
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
 
+//checks if the cookie_policy is set and hides/shows the banner
 function checkMatomoCookie() {
     let analytics = getCookie("cookie_policy");
     let banner = document.getElementById("analyticsBanner");
@@ -35,7 +22,6 @@ function checkMatomoCookie() {
 
 function acceptAnalytics() {
     setMatomoCookie("enabled");
-    //checkMatomoCookie();
 
     let elem = document.getElementById("acceptedCookies")
     elem.removeAttribute("hidden");
@@ -46,7 +32,6 @@ function acceptAnalytics() {
 
 function rejectAnalytics() {
     setMatomoCookie("disabled");
-    //checkMatomoCookie();
 
     let elem = document.getElementById("rejectedCookies")
     elem.removeAttribute("hidden");
@@ -55,13 +40,34 @@ function rejectAnalytics() {
     contentElem.setAttribute("hidden", "");
 }
 
+//checks if the cookie_policy is set and enabled
+//returns false if cookie_policy is not set and not enabled
 function analyticsEnabled() {
     let analytics = getCookie("cookie_policy");
 
     return analytics == "enabled";
 }
 
+//hides the analytics banner
 function hideAnalytics() {
     let elem = document.getElementById("analyticsBanner")
     elem.style.display = "none";
+}
+
+
+//helper function to get any cookie
+function getCookie(cName) {
+    let name = cName + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }

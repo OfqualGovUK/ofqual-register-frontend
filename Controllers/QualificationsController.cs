@@ -79,7 +79,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     });
                 }
             }
-            else if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
+            
+            if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
             {
                 availability = "Available to learners";
             }
@@ -240,7 +241,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
-
             try
             {
                 var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
@@ -263,7 +263,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return File(fileBytes, "text/csv", fileName);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
         }
 
@@ -275,12 +275,21 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         ///QualificationNumber is JS is disabled - will only retain the quals selected for this page
         public IActionResult CompareQualifications(string title, string? selectedQuals, string[] QualificationNumbers)
         {
+            var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
+
+            // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
+            if (compareArr == null || compareArr.Length < 2) 
+            {
+                TempData["CompareError"] = true;
+                return Redirect(Request.Headers.Referer);
+            }
+
+            //if the button press was for CSV download for the selected quals
             if (Request.Query["CSV"].Count != 0)
             {
                 return RedirectToAction("DownloadCSV", new { title, selectedQuals, QualificationNumbers });
             }
 
-            var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
 
             if (compareArr.Length >= 2)
             {
@@ -431,9 +440,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 return RedirectToAction("Compare", new { selected, unselected = "" });
             }
 
-            if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current) || string.IsNullOrEmpty(changeQualification))
+            if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current))
             {
                 return RedirectToAction("Search");
+            }
+
+            if (string.IsNullOrEmpty(changeQualification))
+            {
+                return RedirectToAction("Compare", new { selected, unselected });
             }
 
             selected = selected.Replace(current, changeQualification);
