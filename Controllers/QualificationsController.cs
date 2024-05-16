@@ -241,7 +241,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
-
             try
             {
                 var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
@@ -264,7 +263,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return File(fileBytes, "text/csv", fileName);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
         }
 
@@ -441,9 +440,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 return RedirectToAction("Compare", new { selected, unselected = "" });
             }
 
-            if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current) || string.IsNullOrEmpty(changeQualification))
+            if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current))
             {
                 return RedirectToAction("Search");
+            }
+
+            if (string.IsNullOrEmpty(changeQualification))
+            {
+                return RedirectToAction("Compare", new { selected, unselected });
             }
 
             selected = selected.Replace(current, changeQualification);

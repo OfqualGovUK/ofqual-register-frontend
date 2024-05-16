@@ -7,22 +7,21 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//builder.Services.AddHttpClient("OfqualRegisterAPI", httpClient =>
-//{
-//    httpClient.BaseAddress = new Uri(Environment.GetEnvironmentVariable("APIUrl")!);
-//});
-
+// Add register API 
 builder.Services.AddRefitClient<IRegisterAPIClient>().ConfigureHttpClient(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["RegisterAPIUrl"]!);
 
 });
 
+// Add Ref Data API
 builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpClient =>
 {
     httpClient.BaseAddress = new Uri(builder.Configuration["RefDataAPIUrl"]!);
 
 });
+
+builder.Services.AddWebOptimizer();
 
 var app = builder.Build();
 
@@ -32,6 +31,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/error/500");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    builder.Services.AddWebOptimizer(minifyJavaScript: false, minifyCss: false);
 }
 
 app.Use(async (ctx, next) =>
@@ -60,6 +64,9 @@ app.Use(async (ctx, next) =>
 app.UseStatusCodePagesWithRedirects("/error/{0}");
 
 app.UseHttpsRedirection();
+
+app.UseWebOptimizer();
+
 app.UseStaticFiles();
 
 app.UseRouting();

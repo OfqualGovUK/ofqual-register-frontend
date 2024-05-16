@@ -35,12 +35,14 @@
         if (analyticsEnabled()) {
             var _paq = window._paq = window._paq || [];
             /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(["setDomains", ["*.find-a-qualification.services.ofqual.gov.uk", "*.find-a-qualification.services.ofqual.gov.uk", "*.find-an-awarding-organisation.services.ofqual.gov.uk", "*.find-an-awarding-organisation.services.ofqual.gov.uk", "*.ofq-prod-register-frontend.azurewebsites.net"]]);
+            _paq.push(["setDoNotTrack", true]);
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
             (function () {
                 var u = "https://ofqual.matomo.cloud/";
                 _paq.push(['setTrackerUrl', u + 'matomo.php']);
-                _paq.push(['setSiteId', '@matomoId']);
+                _paq.push(['setSiteId', '10']);
                 var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
                 g.async = true; g.src = 'https://cdn.matomo.cloud/ofqual.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g, s);
             })();

@@ -119,7 +119,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             string fileName = $"Organisations{nm}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
-
             try
             {
                 APIResponseList<Organisation> orgs;
@@ -136,7 +135,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return File(fileBytes, "text/csv", fileName);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
         }
 
@@ -146,7 +145,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             string fileName = $"{recognitionNumber}_Scope_of_recognition_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
-
             try
             {
                 var org = await _registerAPIClient.GetOrganisationAsync(recognitionNumber);
@@ -165,7 +163,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return File(fileBytes, "text/csv", fileName);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
         }
 
