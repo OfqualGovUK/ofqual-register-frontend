@@ -1,5 +1,6 @@
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
@@ -81,7 +82,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
-                    PagingURL = $"organisations?name={name}&page=||_page_||",
+                    PagingURL = $"organisations?name={name.ToURL()}&page=||_page_||",
                     CurrentPage = orgs.CurrentPage
                 }
             };

@@ -1,4 +1,5 @@
 ﻿@using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
+@using Ofqual.Common.RegisterFrontend.Extensions;
 @model SearchResultViewModel<QualificationListViewModel>
 
 @{
@@ -93,7 +94,7 @@
                     <div class="app-filter__selected-heading">
                         <div class="app-filter__heading-title">
                             <h3 class="govuk-heading-m govuk-!-margin-bottom-1">Selected filters</h3>
-                            <p class="govuk-body jsonly"><a class="govuk-link govuk-link--no-visited-state" href="qualifications?title=@Model.Title&page=@Model.Paging.CurrentPage">Clear filters</a></p>
+                            <p class="govuk-body jsonly"><a class="govuk-link govuk-link--no-visited-state" href="qualifications?title=@Model.Title.ToURL()&page=@Model.Paging.CurrentPage">Clear filters</a></p>
                         </div>
                     </div>
 
@@ -104,7 +105,7 @@
                             @foreach (var item in appliedFilters.Availability)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="availability_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="availability-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -120,7 +121,7 @@
                             @foreach (var item in appliedFilters.QualificationTypes)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationTypes-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -137,7 +138,7 @@
                             @foreach (var item in appliedFilters.QualificationLevels)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationLevels_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="qualificationLevels-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -154,7 +155,7 @@
                             @foreach (var item in appliedFilters.AwardingOrganisations)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="awardingOrganisations_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="awardingOrganisations-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -171,7 +172,7 @@
                             @foreach (var item in appliedFilters.SectorSubjectAreas)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="sectorSubjectAreas_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="sectorSubjectAreas-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -188,7 +189,7 @@
                             @foreach (var item in appliedFilters.GradingTypes)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="gradingTypes_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="gradingTypes-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -205,7 +206,7 @@
                             @foreach (var item in appliedFilters.AssessmentMethods)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="assessmentMethods_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="assessmentMethods-@item..Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -222,7 +223,7 @@
                             @foreach (var item in appliedFilters.NationalAvailability)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="nationalAvailability_@item.Replace(' ', '_')" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="nationalAvailability-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -292,7 +293,7 @@
             </div>
         }
         <form id="qualificationsFilterForm" action="qualifications/filters" method="get">
-            <input type="hidden" id="title" name="title" value="@Model.Title">
+            <input type="hidden" id="searchTitle" name="searchTitle" value="@Model.Title">
 
             <div class="accordionExpander">
                 <div class="accordionItem @availabilityAccordion">
@@ -325,26 +326,26 @@
                                     }
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_Available_to_learners" name="availability" type="checkbox" value="Available to learners" @available>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_Available_to_learners">
+                                        <input class="govuk-checkboxes__input" id="availability-Available-to-learners" name="availability" type="checkbox" value="Available to learners" @available>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability-Available-to-learners">
                                             Available to learners
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_No_longer_awarded" name="availability" type="checkbox" value="No longer awarded" @notAwarded>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_No_longer_awarded">
+                                        <input class="govuk-checkboxes__input" id="availability-No-longer-awarded" name="availability" type="checkbox" value="No longer awarded" @notAwarded>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability-No-longer-awarded">
                                             No longer awarded
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_No_longer_available_to_new_learners" name="availability" type="checkbox" value="No longer available to new learners" @notAvailable>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_No_longer_available_to_new_learners">
+                                        <input class="govuk-checkboxes__input" id="availability-No-longer-available-to-new-learners" name="availability" type="checkbox" value="No longer available to new learners" @notAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability-No-longer-available-to-new-learners">
                                             No longer available to new learners
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="availability_Not_yet_available_to_learners" name="availability" type="checkbox" value="Not yet available to learners" @notYetAvailable>
-                                        <label class="govuk-label govuk-checkboxes__label" for="availability_Not_yet_available_to_learners">
+                                        <input class="govuk-checkboxes__input" id="availability-Not-yet-available-to-learners" name="availability" type="checkbox" value="Not yet available to learners" @notYetAvailable>
+                                        <label class="govuk-label govuk-checkboxes__label" for="availability-Not-yet-available-to-learners">
                                             Not yet available to learners
                                         </label>
                                     </div>
@@ -360,7 +361,7 @@
                     <h3 class="accordionTitle @typeAccordion" id="qual-type">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Qualification type</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -383,8 +384,8 @@
                                         }
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="qualificationTypes_@item.Replace(' ', '_')" name="qualificationTypes" type="checkbox" value="@item" @qapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes_@item.Replace(' ', '_')">
+                                            <input class="govuk-checkboxes__input" id="qualificationTypes-@item.Hiphenate()" name="qualificationTypes" type="checkbox" value="@item" @qapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationTypes-@item.Hiphenate()">
                                                 @item
                                             </label>
                                         </div>
@@ -401,7 +402,7 @@
                     <h3 class="accordionTitle @levelAccordion" id="qualification-level">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Qualification level</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -424,8 +425,8 @@
                                         }
 
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="qualificationLevels_@item.Replace(' ', '_')" name="qualificationLevels" type="checkbox" value="@item" @qlapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationLevels_@item.Replace(' ', '_')">
+                                            <input class="govuk-checkboxes__input" id="qualificationLevels-@item.Hiphenate()" name="qualificationLevels" type="checkbox" value="@item" @qlapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="qualificationLevels-@item.Hiphenate()">
                                                 @item
                                             </label>
                                         </div>
@@ -441,7 +442,7 @@
                 <div class="accordionItem @orgAccordion">
                     <h3 class="accordionTitle @orgAccordion" id="organisation">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Organisation</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -463,8 +464,8 @@
                                             oapplied = appliedFilters.AwardingOrganisations.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="awardingOrganisations_@item.Replace(' ', '_')" name="awardingOrganisations" type="checkbox" value="@item" @oapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="awardingOrganisations_@item.Replace(' ', '_')">
+                                            <input class="govuk-checkboxes__input" id="awardingOrganisations-@item.Hiphenate()" name="awardingOrganisations" type="checkbox" value="@item" @oapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="awardingOrganisations-@item.Hiphenate()">
                                                 @item
                                             </label>
                                         </div>
@@ -478,9 +479,8 @@
 
             <div class="accordionExpander">
                 <div class="accordionItem @ssaAccordion">
-                    <h3 class="accordionTitle @ssaAccordion" id="sector subject area">
+                    <h3 class="accordionTitle @ssaAccordion" id="sector-subject-area">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Sector subject area</button>
-                        <div class="selected-counter"><span id="selected">1</span> selected</div>
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -502,8 +502,8 @@
                                             ssaapplied = appliedFilters.SectorSubjectAreas.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="sectorSubjectAreas_@item.Replace(' ', '_')" name="sectorSubjectAreas" type="checkbox" value="@item" @ssaapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="sectorSubjectAreas_@item.Replace(' ', '_')">
+                                            <input class="govuk-checkboxes__input" id="sectorSubjectAreas-@item.Hiphenate()" name="sectorSubjectAreas" type="checkbox" value="@item" @ssaapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="sectorSubjectAreas-@item.Hiphenate()">
                                                 @item
                                             </label>
                                         </div>
@@ -523,7 +523,7 @@
                 <div class="accordionItem @gradingTypeAccordion">
                     <h3 class="accordionTitle @gradingTypeAccordion" id="grading">
                         <span class="govuk-visually-hidden">Select filters for </span><button class="accordionItem__button" type="button">Grading type</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -548,14 +548,14 @@
 
                                     }
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="gradingTypes_Graded" name="gradingTypes" type="checkbox" value="Graded" @graded>
-                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes_Graded">
+                                        <input class="govuk-checkboxes__input" id="gradingTypes-Graded" name="gradingTypes" type="checkbox" value="Graded" @graded>
+                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes-Graded">
                                             Graded
                                         </label>
                                     </div>
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="gradingTypes_Pass/Fail" name="gradingTypes" type="checkbox" value="Pass/Fail" @passfail>
-                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes_Pass/Fail">
+                                        <input class="govuk-checkboxes__input" id="gradingTypes-Pass/Fail" name="gradingTypes" type="checkbox" value="Pass/Fail" @passfail>
+                                        <label class="govuk-label govuk-checkboxes__label" for="gradingTypes-Pass/Fail">
                                             Pass/Fail
                                         </label>
                                     </div>
@@ -571,7 +571,7 @@
                     <h3 class="accordionTitle @assessAccordion" id="assessment-method">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">Assessment method</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -595,8 +595,8 @@
                                             assmapplied = appliedFilters.AssessmentMethods.Contains(item) ? "checked" : "";
                                         }
                                         <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="assessmentMethods_@item.Replace(' ', '_')" name="assessmentMethods" type="checkbox" value="@item" @assmapplied>
-                                            <label class="govuk-label govuk-checkboxes__label" for="assessmentMethods_@item.Replace(' ', '_')">
+                                            <input class="govuk-checkboxes__input" id="assessmentMethods-@item.Hiphenate()" name="assessmentMethods" type="checkbox" value="@item" @assmapplied>
+                                            <label class="govuk-label govuk-checkboxes__label" for="assessmentMethods-@item.Hiphenate()">
                                                 @item
                                             </label>
                                         </div>
@@ -613,7 +613,7 @@
                     <h3 class="accordionTitle @nationalAccordion" id="national-availability">
                         <span class="govuk-visually-hidden">Select filters for </span>
                         <button class="accordionItem__button" type="button">National availability</button>
-                        <div class="selected-counter"><span id="selected">0</span> selected</div>
+
                         <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="0" height="0" class="accordionItem__accordion-icon" aria-hidden="true" focusable="false">
                             <path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z">
                             </path>
@@ -639,24 +639,24 @@
 
                                     }
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_England" name="nationalAvailability" type="checkbox" value="England" @eng>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_England">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability-England" name="nationalAvailability" type="checkbox" value="England" @eng>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability-England">
                                             England
                                         </label>
 
                                     </div>
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_Northern_Ireland" name="nationalAvailability" type="checkbox" value="Northern Ireland" @ni>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_Northern_Ireland">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability-Northern-Ireland" name="nationalAvailability" type="checkbox" value="Northern Ireland" @ni>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability-Northern-Ireland">
                                             Northern Ireland
                                         </label>
 
                                     </div>
 
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="nationalAvailability_International" name="nationalAvailability" type="checkbox" value="International" @inter>
-                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability_International">
+                                        <input class="govuk-checkboxes__input" id="nationalAvailability-International" name="nationalAvailability" type="checkbox" value="International" @inter>
+                                        <label class="govuk-label govuk-checkboxes__label" for="nationalAvailability-International">
                                             International
                                         </label>
 
@@ -703,13 +703,13 @@
                             <label class="govuk-label govuk-label--s" for="minGuidedLearninghours">
                                 Minimum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minGuidedLearninghours" name="minGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@minglh">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minGuidedLearninghours" name="minGuidedLearninghours" type="number" inputmode="numeric" value="@minglh">
                         </div>
                         <div class="govuk-form-group">
                             <label class="govuk-label govuk-label--s" for="maxGuidedLearninghours">
                                 Maximum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxGuidedLearninghours" name="maxGuidedLearninghours" type="number" inputmode="numeric" size="3" value="@maxglh">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxGuidedLearninghours" name="maxGuidedLearninghours" type="number" inputmode="numeric" value="@maxglh">
                         </div>
 
                     </div>
@@ -747,13 +747,13 @@
                             <label class="govuk-label govuk-label--s" for="minTotalQualificationTime">
                                 Minimum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minTotalQualificationTime" name="minTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@mintqt">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="minTotalQualificationTime" name="minTotalQualificationTime" type="number" inputmode="numeric" value="@mintqt">
                         </div>
                         <div class="govuk-form-group">
                             <label class="govuk-label govuk-label--s" for="maxTotalQualificationTime">
                                 Maximum hours
                             </label>
-                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxTotalQualificationTime" name="maxTotalQualificationTime" type="number" inputmode="numeric" size="3" maxlength="3" value="@maxtqt">
+                            <input class="govuk-input ofq-filters-small-input focusOutFilters" id="maxTotalQualificationTime" name="maxTotalQualificationTime" type="number" inputmode="numeric" value="@maxtqt">
                         </div>
                     </div>
                 </div>
@@ -762,7 +762,7 @@
                 <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
                     Search
                 </button>
-                <a class="govuk-button govuk-button--secondary ofq-button-row-element" href="qualifications?title=@Model.Title&page=@Model.Paging.CurrentPage">Clear filters</a>
+                <a class="govuk-button govuk-button--secondary ofq-button-row-element" href="qualifications?title=@Model.Title.ToURL()&page=@Model.Paging.CurrentPage">Clear filters</a>
             </noscript>
         </form>
     </div>
@@ -793,7 +793,7 @@
                         </button>
                     </li>
                 </ul>
-                <input type="hidden" id="title" name="title" value="@Model.Title" />
+                <input type="hidden" id="csvTitle" name="csvTitle" value="@Model.Title" />
                 <input type="hidden" id="selectedQuals" name="selectedQuals" value="" />
                 <div class="govuk-body jsonly" id="selectedStats" style="display:none">
                     <span id="numSelected">0 qualifications selected. </span> <span class="govuk-link govuk-link--no-visited-state" onclick="clearSelection()" style="color: #1d70b8; cursor:pointer">Clear selection</span>
@@ -813,8 +813,8 @@
                             <header class="app-application-card__header">
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="qualification_@item.QualificationNumber" name="QualificationNumbers" type="checkbox" value="@item.QualificationNumber">
-                                        <label class="govuk-label govuk-checkboxes__label" for="qualification_@item.QualificationNumber">
+                                        <input class="govuk-checkboxes__input" id="qualification-@item.QualificationNumber" name="QualificationNumbers" type="checkbox" value="@item.QualificationNumber">
+                                        <label class="govuk-label govuk-checkboxes__label" for="qualification-@item.QualificationNumber">
                                             @item.Title
                                         </label>
                                     </div>
@@ -824,10 +824,10 @@
                             <div class="govuk-grid-row app-grid-row--flex">
                                 <div class="govuk-grid-column-two-thirds">
                                     <dl class="app-application-card__list">
-                                        <dd class="govuk-body-m">
+                                        <div class="govuk-body-m">
                                             <a href="qualifications/@item.QualificationNumber">View qualification details</a>
-                                        </dd>
-                                        <br>
+                                            <br>
+                                        </div>
                                         <dt class="govuk-visually-hidden">Availability</dt>
                                         @switch (item.Status?.ToLower())
                                         {

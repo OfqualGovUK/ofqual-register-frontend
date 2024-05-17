@@ -198,11 +198,11 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [HttpGet]
         [Route("qualifications/filters")]
         //to update the filters on the go from the selected filters on the side
-        public IActionResult Filters(string title, string[] assessmentMethods, string[] gradingTypes, string[] awardingOrganisations, string[] availability, string[] qualificationTypes, string[] qualificationLevels, string[] nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours, string[] sectorSubjectAreas)
+        public IActionResult Filters(string searchTitle, string[] assessmentMethods, string[] gradingTypes, string[] awardingOrganisations, string[] availability, string[] qualificationTypes, string[] qualificationLevels, string[] nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours, string[] sectorSubjectAreas)
         {
             return RedirectToAction(nameof(SearchResults), new
             {
-                title,
+                title=searchTitle,
                 assessmentMethods = string.Join(',', assessmentMethods),
                 gradingTypes = string.Join(',', gradingTypes),
                 awardingOrganisations = string.Join(',', awardingOrganisations),
@@ -272,8 +272,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [HttpGet]
         [Route("qualifications/compare-qualifications")]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
-        ///QualificationNumber is JS is disabled - will only retain the quals selected for this page
-        public IActionResult CompareQualifications(string title, string? selectedQuals, string[] QualificationNumbers)
+        ///QualificationNumber if JS is disabled - will only retain the quals selected for this page
+        public IActionResult CompareQualifications(string csvTitle, string? selectedQuals, string[] QualificationNumbers)
         {
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
 
@@ -287,7 +287,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             //if the button press was for CSV download for the selected quals
             if (Request.Query["CSV"].Count != 0)
             {
-                return RedirectToAction("DownloadCSV", new { title, selectedQuals, QualificationNumbers });
+                return RedirectToAction("DownloadCSV", new { csvTitle, selectedQuals, QualificationNumbers });
             }
 
 
@@ -493,7 +493,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             if (param != null && param.GetSubStrings() != null)
             {
-                url += $"&{paramName}={param}";
+                url += $"&{paramName.ToURL()}={param.ToURL()}";
                 filtersApplied = true;
             }
         }

@@ -14,7 +14,7 @@
             @Model.Name
         </h1>
 
-        <a href="/qualifications?awardingOrganisations=@Model.Name&availability=Available to learners" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
+        <a href="/qualifications?awardingOrganisations=@Model.Name.ToURL()&availability=@("Available to learners".ToURL())" class="govuk-button" data-module="govuk-button">Find all @Model.Acronym qualifications</a>
 
         @if (!(Model.Website == null && Model.ContactEmail == null))
         {
@@ -250,25 +250,25 @@
                         <h3 id="sor-title" class="govuk-heading-s">@Model.Name is recognised to award the following regulated qualifications</h3>
                         <ul class="ofq-tree" id="scope-tree" role="tree" aria-labelledby="sor-title">
 
-                            @foreach (var item in Model.RecognitionScope.Inclusions)
+                            @foreach (var type in Model.RecognitionScope.Inclusions)
                             {
-                                <li>
+                                <li role="treeitem">
                                     <details>
-                                        <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="@item.Type-list" role="treeitem">
-                                            @item.Type
+                                        <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="@type.Type.Hiphenate()-list" aria-owns="@type.Type.Hiphenate()-list">
+                                            @type.Type
                                         </summary>
-                                        <ul id="@item.Type-list">
-                                            @foreach (var level in item.Levels)
+                                        <ul id="@type.Type.Hiphenate()-list" role="group">
+                                            @foreach (var level in type.Levels)
                                             {
-                                                <li>
+                                                <li role="treeitem">
                                                     <details>
-                                                        <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="@item.Type-@level.Level-list" role="treeitem">
+                                                        <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list" aria-owns="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list">
                                                             @level.Level
                                                         </summary>
                                                         @foreach (var recognition in level.Recognitions)
                                                         {
-                                                            <ul id="@item.Type-@level.Level-list">
-                                                                <li class="govuk-body"><div role="treeitem">@recognition</div></li>
+                                                            <ul id="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list">
+                                                                <li class="govuk-body" role="treeitem">@recognition</li>
                                                             </ul>
                                                         }
                                                     </details>
