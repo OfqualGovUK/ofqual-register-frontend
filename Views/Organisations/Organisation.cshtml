@@ -265,12 +265,12 @@
                                                         <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list" aria-owns="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list">
                                                             @level.Level
                                                         </summary>
-                                                        @foreach (var recognition in level.Recognitions)
-                                                        {
-                                                            <ul id="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list">
+                                                        <ul id="@type.Type.Hiphenate()-@level.Level.EscapeSpaces()-list">
+                                                            @foreach (var recognition in level.Recognitions)
+                                                            {
                                                                 <li class="govuk-body" role="treeitem">@recognition</li>
-                                                            </ul>
-                                                        }
+                                                            }
+                                                        </ul>
                                                     </details>
                                                 </li>
                                             }
