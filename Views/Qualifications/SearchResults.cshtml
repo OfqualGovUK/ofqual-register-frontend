@@ -8,8 +8,9 @@
     ViewData["HomePage"] = "find-regulated-qualifications";
 
     var compareError = TempData["CompareError"] != null ? true : false;
+    var csvError = TempData["CSVError"] != null ? true : false;
 
-    var compareErrorClass = compareError ? "govuk-form-group govuk-form-group--error" : "";
+    var errorClass = compareError || csvError ? "govuk-form-group govuk-form-group--error" : "";
 
     var appliedFilters = (QualificationAppliedFilterModel)Model.AppliedFilters!;
 
@@ -47,6 +48,24 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             <li>
                                 <a href="#compare-error">Select at least 2 qualifications to compare</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }        
+        
+        @if (csvError)
+        {
+            <div class="govuk-error-summary" data-module="govuk-error-summary">
+                <div role="alert">
+                    <h2 class="govuk-error-summary__title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#csv-error">Select at least 1 qualification to download CSV</a>
                             </li>
                         </ul>
                     </div>
@@ -805,15 +824,22 @@
                         <span class="govuk-visually-hidden">Error:</span> Select at least 2 qualifications to compare
                     </p>
                 }
+                
+                @if (csvError)
+                {
+                    <p id="csv-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> Select at least 1 qualification to download CSV
+                    </p>
+                }
 
-                <div class="app-application-cards @compareErrorClass" aria-live="polite">
+                <div class="app-application-cards @errorClass" aria-live="polite">
                     @foreach (var item in Model.List.Results)
                     {
-                        <section class="app-application-card">
+                        <div class="app-application-card">
                             <header class="app-application-card__header">
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="qualification-@item.QualificationNumber" name="QualificationNumbers" type="checkbox" value="@item.QualificationNumber">
+                                        <input class="govuk-checkboxes__input" id="qualification-@item.QualificationNumber" name="qualificationNumbers" type="checkbox" value="@item.QualificationNumber">
                                         <label class="govuk-label govuk-checkboxes__label" for="qualification-@item.QualificationNumber">
                                             @item.Title
                                         </label>
@@ -862,7 +888,7 @@
                                     </dl>
                                 </div>
                             </div>
-                        </section>
+                        </div>
                     }
                 </div>
             </form>

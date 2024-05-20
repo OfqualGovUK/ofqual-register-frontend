@@ -79,7 +79,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     });
                 }
             }
-            
+
             if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
             {
                 availability = "Available to learners";
@@ -202,7 +202,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             return RedirectToAction(nameof(SearchResults), new
             {
-                title=searchTitle,
+                title = searchTitle,
                 assessmentMethods = string.Join(',', assessmentMethods),
                 gradingTypes = string.Join(',', gradingTypes),
                 awardingOrganisations = string.Join(',', awardingOrganisations),
@@ -273,21 +273,23 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("qualifications/compare-qualifications")]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
         ///QualificationNumber if JS is disabled - will only retain the quals selected for this page
-        public IActionResult CompareQualifications(string csvTitle, string? selectedQuals, string[] QualificationNumbers)
+        public IActionResult CompareQualifications(string csvTitle, string? selectedQuals, string[] qualificationNumbers)
         {
-            var compareArr = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
+            var compareArr = selectedQuals != null ? selectedQuals.Split(',') : qualificationNumbers;
+
+            //if the form submit was for CSV download
+            if (compareArr != null && Request.Query["CSV"].Count != 0 )
+            {
+                TempData["CSVError"] = true;
+                return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction("DownloadCSV", new { csvTitle, selectedQuals, qualificationNumbers });
+            }
 
             // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
-            if (compareArr == null || compareArr.Length < 2) 
+            // go back to the search results page and show an error
+            if (compareArr == null || compareArr.Length < 2)
             {
                 TempData["CompareError"] = true;
                 return Redirect(Request.Headers.Referer);
-            }
-
-            //if the button press was for CSV download for the selected quals
-            if (Request.Query["CSV"].Count != 0)
-            {
-                return RedirectToAction("DownloadCSV", new { csvTitle, selectedQuals, QualificationNumbers });
             }
 
 
