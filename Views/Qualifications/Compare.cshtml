@@ -407,7 +407,7 @@
                             Regulation start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@left.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@left.RegulationStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@left.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@left.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -415,7 +415,7 @@
                             Operational start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@left.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@left.OperationalStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@left.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@left.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                         </dd>
                     </div>
                     @if (left.OperationalEndDate != null || right.OperationalEndDate != null)
@@ -428,7 +428,7 @@
                                 @if (left.OperationalEndDate != null)
                                 {
                                     <time datetime="@left.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @left.OperationalEndDate?.ToString("dd MMMM yyyy")
+                                        @left.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
                                     </time>
                                 }
                                 else
@@ -447,7 +447,7 @@
                                 @if (left.CertificationEndDate != null)
                                 {
                                     <time datetime="@left.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @left.CertificationEndDate?.ToString("dd MMMM yyyy")
+                                        @left.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
                                     </time>
                                 }
                                 else
@@ -496,7 +496,7 @@
         {
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="differences1">Differing information</h3>
+                    <h3 class="govuk-summary-card__title" id="differences2">Differing information</h3>
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
@@ -698,7 +698,7 @@
 
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="org1">Organisation</h3>
+                <h3 class="govuk-summary-card__title" id="org2">Organisation</h3>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -865,7 +865,7 @@
                             Regulation start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@right.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@right.RegulationStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@right.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@right.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -873,7 +873,7 @@
                             Operational start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@right.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@right.OperationalStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@right.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@right.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                         </dd>
                     </div>
                     @if (right.OperationalEndDate != null || left.OperationalEndDate != null)
@@ -886,7 +886,7 @@
                                 @if (right.OperationalEndDate != null)
                                 {
                                     <time datetime="@right.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @right.OperationalEndDate?.ToString("dd MMMM yyyy")
+                                        @right.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
                                     </time>
                                 }
                                 else
@@ -905,7 +905,7 @@
                                 @if (right.CertificationEndDate != null)
                                 {
                                     <time datetime="@right.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @right.CertificationEndDate?.ToString("dd MMMM yyyy")
+                                        @right.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
                                     </time>
                                 }
                                 else
@@ -939,15 +939,6 @@
                     }
                 </dl>
             </div>
-        </div>
-    </div>
-
-    <div class="govuk-grid-column-full">
-        <h2 class="govuk-heading-s">Information about fees</h2>
-        <div class="govuk-body-s" id="info-fees">
-            The fee listed is the standard quoted fee from the awarding organisation.
-            It does not necessarily mean that this is the fee you will pay as
-            awarding organisations may offer discount schemes or other pricing models.
         </div>
     </div>
 

@@ -296,7 +296,7 @@
                             Regulation start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@Model.RegulationStartDate.ToString("dd-MM-yyyy")" lang="en">@Model.RegulationStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@Model.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@Model.RegulationStartDate.ToString("dd MMMM yyyy")</time>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -304,7 +304,7 @@
                             Operational start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <time datetime="@Model.OperationalStartDate.ToString("dd-MM-yyyy")" lang="en">@Model.OperationalStartDate.ToString("dd MMMM yyyy")</time>
+                            <time datetime="@Model.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@Model.OperationalStartDate.ToString("dd MMMM yyyy")</time>
                         </dd>
                     </div>
                     @if (Model.OperationalEndDate != null)
@@ -314,7 +314,7 @@
                                 Operational end date
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                <time datetime="@Model.OperationalEndDate?.ToString("dd-MM-yyyy")" lang="en">@Model.OperationalEndDate?.ToString("dd MMMM yyyy")</time>
+                                <time datetime="@Model.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">@Model.OperationalEndDate?.ToString("dd MMMM yyyy")</time>
                             </dd>
                         </div>
                     }
@@ -325,7 +325,7 @@
                                 Final certification date
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                <time datetime="@Model.CertificationEndDate?.ToString("dd-MM-yyyy")" lang="en">@Model.CertificationEndDate?.ToString("dd MMMM yyyy")</time>
+                                <time datetime="@Model.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">@Model.CertificationEndDate?.ToString("dd MMMM yyyy")</time>
                             </dd>
                         </div>
                     }

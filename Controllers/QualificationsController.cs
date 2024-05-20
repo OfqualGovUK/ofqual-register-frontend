@@ -338,14 +338,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             DiffValues(leftAssessmentMethods, rightAssessmentMethods, "Assessment methods", ref differing);
 
-            DiffValues(left.LinkToSpecification, right.LinkToSpecification, "Specification", ref differing);
             DiffValues(left.SSA, right.SSA, "Sector subject area", ref differing);
             DiffValues(left.GradingScale, right.GradingScale, "Grading scale", ref differing);
             DiffValues($"{left.ApprenticeshipStandardTitle} ({left.ApprenticeshipStandardReferenceNumber})", $"{right.ApprenticeshipStandardTitle} ({right.ApprenticeshipStandardReferenceNumber})", "End-point assessment standard", ref differing);
             DiffValues(left.OrganisationName, right.OrganisationName, "Awarding Organisation", ref differing);
             DiffValues(left.GradingType, right.GradingType, "Grading type", ref differing);
             DiffValues(left.Specialism, right.Specialism, "Specialisms", ref differing);
-            DiffValues(left.QualificationNumberNoObliques, right.QualificationNumberNoObliques, "Funding in England", ref differing);
             DiffValues(left.Status, right.Status, "Status", ref differing);
 
             //national availability
@@ -380,10 +378,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             DiffValues(leftNationalAvailability, rightNationalAvailability, "National availability", ref differing);
             DiffValues(left.OfferedInNorthernIreland.ToString(), right.OfferedInNorthernIreland.ToString(), "Available in Northern Ireland", ref differing);
 
-            DiffValues(left.RegulationStartDate.ToString("dd MMMM yyyy"), right.RegulationStartDate.ToString("dd MMMM yyyy"), "Regulation start date", ref differing);
-            DiffValues(left.OperationalStartDate.ToString("dd MMMM yyyy"), right.OperationalStartDate.ToString("dd MMMM yyyy"), "Operational start date", ref differing);
-            DiffValues(left.OperationalEndDate?.ToString("dd MMMM yyyy"), right.OperationalEndDate?.ToString("dd MMMM yyyy"), "Operational end date", ref differing);
-            DiffValues(left.CertificationEndDate?.ToString("dd MMMM yyyy"), right.CertificationEndDate?.ToString("dd MMMM yyyy"), "Certification end date", ref differing);
+            DiffValues(left.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), right.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), "Regulation start date", ref differing);
+            DiffValues(left.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), right.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), "Operational start date", ref differing);
+            DiffValues(left.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), right.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), "Operational end date", ref differing);
+            DiffValues(left.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), right.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), "Certification end date", ref differing);
             DiffValues(left.EQFLevel, right.EQFLevel, "European qualification level", ref differing);
             DiffValues(left.Pathways, right.Pathways, "Optional Routes", ref differing);
 

@@ -59,5 +59,10 @@ namespace Ofqual.Common.RegisterFrontend.Extensions
         {
             return value != null ? value.Replace(" ", string.Empty) : "";
         }
+
+        public static string StripLeadingZeros(this string? value)
+        {
+            return value != null ? value.StartsWith('0') ? value.Remove(0, 1) : value : "";
+        }
     }
 }
