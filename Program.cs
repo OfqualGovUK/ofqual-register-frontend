@@ -1,5 +1,7 @@
 using Microsoft.Net.Http.Headers;
+using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
 using Refit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,11 @@ builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpCli
     httpClient.BaseAddress = new Uri(builder.Configuration["RefDataAPIUrl"]!);
 
 });
+
+builder.Services.AddSingleton<IRefDataCache, RefDataCache>();
+
+//usecases
+builder.Services.AddScoped<IQualificationsUseCases, QualificationsUseCases>();
 
 builder.Services.AddWebOptimizer();
 

@@ -9,7 +9,6 @@ using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.Globalization;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
@@ -56,7 +55,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     name = $"RN{name}";
                 }
 
-                return RedirectToAction("Organisation", new
+                return RedirectToAction(nameof(Organisation), new
                 {
                     number = name.ToUpper()
                 });

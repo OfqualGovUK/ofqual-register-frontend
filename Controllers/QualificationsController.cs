@@ -1,17 +1,17 @@
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
 using Refit;
 using System.Globalization;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
+using static Ofqual.Common.RegisterFrontend.Models.Constants;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
 {
@@ -19,7 +19,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
     {
         private readonly ILogger<QualificationsController> _logger;
         private readonly IRegisterAPIClient _registerAPIClient;
-        private readonly IRefDataAPIClient _refDataAPIClient;
+        private readonly IRefDataCache _refDataCache;
+        private readonly IQualificationsUseCases _qualificationsUseCases;
         private readonly IConfiguration _config;
 
         [GeneratedRegex("\\b\\d{3}\\/\\d{4}\\/\\w\\b")]
@@ -28,11 +29,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [GeneratedRegex("\\b\\d{7}\\w\\b")]
         private static partial Regex QualificationNumNoObliquesRegex();
 
-        public QualificationsController(ILogger<QualificationsController> logger, IRegisterAPIClient registerAPIClient, IRefDataAPIClient refDataAPIClient, IConfiguration config)
+        public QualificationsController(ILogger<QualificationsController> logger, IRegisterAPIClient registerAPIClient, IConfiguration config, IRefDataCache refDataCache, IQualificationsUseCases qualificationsUseCases)
         {
             _logger = logger;
             _registerAPIClient = registerAPIClient;
-            _refDataAPIClient = refDataAPIClient;
+            _refDataCache = refDataCache;
+            _qualificationsUseCases = qualificationsUseCases;
             _config = config;
         }
 
@@ -61,7 +63,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 if (QualificationNumRegex().IsMatch(title))
                 {
                     var qualNumber = title.Split('/');
-                    return RedirectToAction("Qualification", new
+                    return RedirectToAction(nameof(Qualification), new
                     {
                         number1 = qualNumber[0],
                         number2 = qualNumber[1],
@@ -71,7 +73,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
                 if (QualificationNumNoObliquesRegex().IsMatch(title))
                 {
-                    return RedirectToAction("Qualification", new
+                    return RedirectToAction(nameof(Qualification), new
                     {
                         number1 = title[..3],
                         number2 = title[3..7],
@@ -80,17 +82,19 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 }
             }
 
+            //if quals are searched by any search term, apply the Available to learners filter by default
             if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(bav))
             {
-                availability = "Available to learners";
+                availability = AVAILABILITY_AVAILABLE_TO_LEARNERS;
             }
             #endregion
 
-            #region Paging Url
             var pagingURL = $"qualifications?page=||_page_||";
 
+            var pagedFilters = _qualificationsUseCases.CreatePagedFilters(title, availability, qualificationTypes, qualificationLevels, awardingOrganisations, sectorSubjectAreas, gradingTypes, assessmentMethods, nationalAvailability, minTotalQualificationTime, maxTotalQualificationTime, minGuidedLearninghours, maxGuidedLearninghours);
+
             //to show the filters applied section on the page
-            var filtersApplied = false;
+            var filtersApplied = !string.IsNullOrEmpty(pagedFilters);
 
             if (!string.IsNullOrEmpty(title))
             {
@@ -98,47 +102,14 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 pagingURL += $"&title={title}";
             }
 
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(availability), availability);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(qualificationTypes), qualificationTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(qualificationLevels), qualificationLevels);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(awardingOrganisations), awardingOrganisations);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(sectorSubjectAreas), sectorSubjectAreas);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(gradingTypes), gradingTypes);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(assessmentMethods), assessmentMethods);
-            AppendFilterToPaging(ref pagingURL, ref filtersApplied, nameof(nationalAvailability), nationalAvailability);
-
-            if (minTotalQualificationTime != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&minTotalQualificationTime={minTotalQualificationTime}";
-            }
-
-            if (maxTotalQualificationTime != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&maxTotalQualificationTime={maxTotalQualificationTime}";
-            }
-
-            if (minGuidedLearninghours != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&minGuidedLearninghours={minGuidedLearninghours}";
-            }
-
-            if (maxGuidedLearninghours != null)
-            {
-                filtersApplied = true;
-                pagingURL += $"&maxGuidedLearninghours={maxGuidedLearninghours}";
-            }
-
-            #endregion
+            pagingURL += pagedFilters;
 
             #region Filter Values
             var filterValues = new QualificationFilterModel();
 
             try
             {
-                filterValues = await GetFilterValues();
+                filterValues = await _qualificationsUseCases.GetFilterValues();
             }
             catch (ApiException ex)
             {
@@ -278,10 +249,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : qualificationNumbers;
 
             //if the form submit was for CSV download
-            if (compareArr != null && Request.Query["CSV"].Count != 0 )
+            if (compareArr != null && Request.Query["CSV"].Count != 0)
             {
                 TempData["CSVError"] = true;
-                return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction("DownloadCSV", new { csvTitle, selectedQuals, qualificationNumbers });
+                return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction(nameof(DownloadCSV), new { csvTitle, selectedQuals, qualificationNumbers });
             }
 
             // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
@@ -307,7 +278,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     unselected += compareArr[i] + (i != (compareArr.Length - 1) ? "," : "");
                 }
 
-                return RedirectToAction("compare", new { selected, unselected });
+                return RedirectToAction(nameof(Compare), new { selected, unselected });
             }
 
             return RedirectToAction("Search");
@@ -319,82 +290,32 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             if (string.IsNullOrEmpty(selected))
             {
-                return RedirectToAction("Search");
+                return RedirectToAction(nameof(Search));
             }
 
             var selectedQuals = selected.Split(",");
+            var model = new CompareQualsModel();
 
-            var left = await _registerAPIClient.GetQualificationAsync(selectedQuals[0]);
-            var right = await _registerAPIClient.GetQualificationAsync(selectedQuals[1]);
-
-            var differing = new Dictionary<string, string[]>();
-
-            DiffValues(left.Type, right.Type, "Qualification type", ref differing);
-            DiffValues(left.Level, right.Level, "Qualification level", ref differing);
-            DiffValues(left.QualificationNumber, right.QualificationNumber, "Qualification number", ref differing);
-            DiffValues(left.GLH.ToString(), right.GLH.ToString(), "Guided learning hours", ref differing);
-            DiffValues(left.TQT.ToString(), right.TQT.ToString(), "Total qualification time", ref differing);
-
-            var leftAssessmentMethods = left.AssessmentMethods == null ? null : string.Join("<br />", left.AssessmentMethods);
-            var rightAssessmentMethods = right.AssessmentMethods == null ? null : string.Join("<br />", right.AssessmentMethods);
-
-            DiffValues(leftAssessmentMethods, rightAssessmentMethods, "Assessment methods", ref differing);
-
-            DiffValues(left.SSA, right.SSA, "Sector subject area", ref differing);
-            DiffValues(left.GradingScale, right.GradingScale, "Grading scale", ref differing);
-            DiffValues($"{left.ApprenticeshipStandardTitle} ({left.ApprenticeshipStandardReferenceNumber})", $"{right.ApprenticeshipStandardTitle} ({right.ApprenticeshipStandardReferenceNumber})", "End-point assessment standard", ref differing);
-            DiffValues(left.OrganisationName, right.OrganisationName, "Awarding Organisation", ref differing);
-            DiffValues(left.GradingType, right.GradingType, "Grading type", ref differing);
-            DiffValues(left.Specialism, right.Specialism, "Specialisms", ref differing);
-            DiffValues(left.Status, right.Status, "Status", ref differing);
-
-            //national availability
-            var leftNationalAvailability = "";
-            if (left.OfferedInEngland ?? false)
+            try
             {
-                leftNationalAvailability += "England, ";
+                var left = await _registerAPIClient.GetQualificationAsync(selectedQuals[0]);
+                var right = await _registerAPIClient.GetQualificationAsync(selectedQuals[1]);
+
+                var differing = _qualificationsUseCases.CompareQuals(left, right);
+
+                model = new CompareQualsModel
+                {
+                    Left = left,
+                    Right = right,
+                    SelectedQuals = selected,
+                    UnselectedQuals = unselected,
+                    Differing = differing,
+                };
             }
-            if (left.OfferedInNorthernIreland ?? false)
+            catch (ApiException ex)
             {
-                leftNationalAvailability += "Northern Ireland, ";
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
             }
-            if (left.OfferedInternationally ?? false)
-            {
-                leftNationalAvailability += "International";
-            }
-
-            var rightNationalAvailability = "";
-            if (right.OfferedInEngland ?? false)
-            {
-                rightNationalAvailability += "England, ";
-            }
-            if (right.OfferedInNorthernIreland ?? false)
-            {
-                rightNationalAvailability += "Northern Ireland, ";
-            }
-            if (right.OfferedInternationally ?? false)
-            {
-                rightNationalAvailability += "International";
-            }
-
-            DiffValues(leftNationalAvailability, rightNationalAvailability, "National availability", ref differing);
-            DiffValues(left.OfferedInNorthernIreland.ToString(), right.OfferedInNorthernIreland.ToString(), "Available in Northern Ireland", ref differing);
-
-            DiffValues(left.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), right.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), "Regulation start date", ref differing);
-            DiffValues(left.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), right.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros(), "Operational start date", ref differing);
-            DiffValues(left.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), right.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), "Operational end date", ref differing);
-            DiffValues(left.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), right.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros(), "Certification end date", ref differing);
-            DiffValues(left.EQFLevel, right.EQFLevel, "European qualification level", ref differing);
-            DiffValues(left.Pathways, right.Pathways, "Optional Routes", ref differing);
-
-            var model = new CompareQualsModel
-            {
-                Left = left,
-                Right = right,
-                SelectedQuals = selected,
-                UnselectedQuals = unselected,
-                Differing = differing,
-            };
 
             return View(model);
         }
@@ -405,7 +326,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             if (string.IsNullOrEmpty(current))
             {
-                return RedirectToAction("Search");
+                return RedirectToAction(nameof(Search));
             }
 
             var quals = selected.Split(",");
@@ -423,8 +344,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             {
                 foreach (var item in unselectedQuals)
                 {
-                    var qual = await _registerAPIClient.GetQualificationAsync(item);
-                    qualDetails.Add(item, qual.Title);
+                    try
+                    {
+                        var qual = await _registerAPIClient.GetQualificationAsync(item);
+                        qualDetails.Add(item, qual.Title);
+                    }
+                    catch (ApiException ex)
+                    {
+                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                    }
                 }
             }
 
@@ -437,17 +365,17 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             if (string.IsNullOrEmpty(unselected))
             {
-                return RedirectToAction("Compare", new { selected, unselected = "" });
+                return RedirectToAction(nameof(Compare), new { selected, unselected = "" });
             }
 
             if (string.IsNullOrEmpty(selected) || string.IsNullOrEmpty(current))
             {
-                return RedirectToAction("Search");
+                return RedirectToAction(nameof(Search));
             }
 
             if (string.IsNullOrEmpty(changeQualification))
             {
-                return RedirectToAction("Compare", new { selected, unselected });
+                return RedirectToAction(nameof(Compare), new { selected, unselected });
             }
 
             selected = selected.Replace(current, changeQualification);
@@ -455,61 +383,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             unselected = unselected.Replace(changeQualification, current);
 
 
-            return RedirectToAction("Compare", new { selected, unselected });
-        }
-
-        #endregion
-
-        #region Helper methods
-
-        //helper method to get the filter values from the different APIs
-        private async Task<QualificationFilterModel> GetFilterValues()
-        {
-
-            List<SSA> ssa = await _refDataAPIClient.GetSSAAsync();
-
-            List<Level> levels = await _refDataAPIClient.GetLevelsAsync();
-
-            List<AssessmentMethod> assessMethods = await _refDataAPIClient.GetAssessmentMethodsAsync();
-
-            List<QualificationType> types = await _refDataAPIClient.GetQualificationTypesAsync();
-
-            APIResponseList<OrganisationListViewModel> organisations = await _registerAPIClient.GetOrganisationsListAsync(null, 1, 500);
-
-
-            return new QualificationFilterModel
-            {
-                AssessmentMethods = assessMethods.OrderBy(e => e.Description).Select(e => e.Description).ToHashSet(),
-                QualificationLevels = levels.OrderBy(e => e.LevelDescription).Select(e => e.LevelDescription).ToHashSet(),
-                QualificationTypes = types.OrderBy(e => e.Description).Select(e => e.Description).ToHashSet(),
-                SSA = ssa.OrderBy(e => e.SsaDescription2).Select(e => e.SsaDescription2).ToHashSet(),
-                Organisations = organisations.Results!.OrderBy(e => e.Name).Select(e => e.Name).ToHashSet()
-            };
-
-        }
-
-        // Helper method to append filter to the paging URL if the filter value is not null or empty
-        void AppendFilterToPaging(ref string url, ref bool filtersApplied, string paramName, string? param)
-        {
-            if (param != null && param.GetSubStrings() != null)
-            {
-                url += $"&{paramName.ToURL()}={param.ToURL()}";
-                filtersApplied = true;
-            }
-        }
-
-        // Helper method to compare and add differing fields in the quals compare
-        private static void DiffValues(string? left, string? right, string fieldName, ref Dictionary<string, string[]> differing)
-        {
-            left = string.IsNullOrEmpty(left) ? null : left;
-            right = string.IsNullOrEmpty(right) ? null : right;
-
-            if (left != right)
-            {
-                differing.Add(fieldName, [left ?? "-", right ?? "-"]);
-            }
+            return RedirectToAction(nameof(Compare), new { selected, unselected });
         }
         #endregion
+
 
     }
 }
