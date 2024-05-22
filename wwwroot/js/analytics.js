@@ -71,3 +71,4 @@ function getCookie(cName) {
     }
     return "";
 }
+
