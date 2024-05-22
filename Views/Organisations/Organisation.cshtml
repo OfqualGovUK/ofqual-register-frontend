@@ -242,12 +242,12 @@
                     <h2 class="govuk-summary-card__title" id="sor">Scope of recognition</h2>
                 </div>
                 <div class="govuk-summary-card__content">
+                    <p class="govuk-body">@Model.Name is recognised to offer regulated qualifications within the following qualification types, levels, and subject areas or apprenticeship standards.</p>
                     <div class="govuk-inset-text">
-                        This expandable list shows the types of qualifications, and subject areas or apprenticeship standards that @Model.Name is recognised to offer as regulated qualifications, as well as qualifications that @Model.Name offers as unregulated qualifications.
+                        You can expand the list by selecting a qualification type
                     </div>
                     @if (Model.RecognitionScope.Inclusions.Any())
                     {
-                        <h3 id="sor-title" class="govuk-heading-s">@Model.Name is recognised to award the following regulated qualifications</h3>
                         <ul class="ofq-tree" id="scope-tree" role="tree" aria-labelledby="sor-title">
 
                             @foreach (var type in Model.RecognitionScope.Inclusions)
