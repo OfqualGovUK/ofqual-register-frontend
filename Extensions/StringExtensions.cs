@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Ofqual.Common.RegisterFrontend.Extensions
 {
@@ -44,5 +45,24 @@ namespace Ofqual.Common.RegisterFrontend.Extensions
             return value ?? "-";
         }
 
+        public static string ToURL(this string? value)
+        {
+            return HttpUtility.UrlEncode(value) ?? "";
+        }
+
+        public static string Hiphenate(this string? value)
+        {
+            return value != null ? value.Replace(" ", "-") : "";
+        }
+
+        public static string EscapeSpaces(this string? value)
+        {
+            return value != null ? value.Replace(" ", string.Empty) : "";
+        }
+
+        public static string StripLeadingZeros(this string? value)
+        {
+            return value != null ? value.StartsWith('0') ? value.Remove(0, 1) : value : "";
+        }
     }
 }

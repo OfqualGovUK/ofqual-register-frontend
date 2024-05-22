@@ -1,4 +1,5 @@
-﻿@model Ofqual.Common.RegisterFrontend.Models.SearchViewModels.SearchResultViewModel<Ofqual.Common.RegisterFrontend.Models.SearchViewModels.OrganisationListViewModel>
+﻿@using Ofqual.Common.RegisterFrontend.Extensions;
+@model Ofqual.Common.RegisterFrontend.Models.SearchViewModels.SearchResultViewModel<Ofqual.Common.RegisterFrontend.Models.SearchViewModels.OrganisationListViewModel>
 
 @{
     ViewData["Title"] = $"'{Model.Title}' - Find a regulated awarding organisation";
@@ -13,7 +14,7 @@
         <div class="app-search govuk-!-margin-bottom-4">
             <form action="/organisations" method="get" novalidate="">
                 <div class="govuk-form-group">
-                    <label class="govuk-label app-search__label govuk-label--s" for="keywords">
+                    <label class="govuk-label app-search__label govuk-label--s" for="name">
                         Search for an organisation
                     </label>
                     <input class="govuk-input app-search__input" id="name" name="name" type="search" value="@Model.Title">
@@ -33,7 +34,7 @@
         }
         else
         {
-            <a href="/organisations/download-csv?name=@Model.Title" role="button" draggable="false" class="govuk-button govuk-button--secondary matomo_download" data-module="govuk-button">
+            <a href="/organisations/download-csv?name=@Model.Title.ToURL()" role="button" draggable="false" class="govuk-button govuk-button--secondary matomo_download" data-module="govuk-button">
                 Download results as CSV
             </a>
 

@@ -3,23 +3,21 @@
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 }
-<search>
-    <form method="get" action="/qualifications">
-        <div class="govuk-form-group">
-            <h1 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l" for="title">
-                    Find a regulated qualification
-                </label>
-            </h1>
-            <input class="govuk-input" id="title" name="title" type="text" autocomplete="search">
-            <input hidden id="page" name="page" type="number" value="1" />
-            <input id="bav" name="bav" type="hidden" value="1">
-        </div>
-        <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
-            Search qualifications
-        </button>
-        <a href="/qualifications" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-            Show all qualifications
-        </a>
-    </form>
-</search>
+<form method="get" action="/qualifications">
+    <div class="govuk-form-group">
+        <h1 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--l" for="title">
+                Find a regulated qualification
+            </label>
+        </h1>
+        <input class="govuk-input" id="title" name="title" type="text" autocomplete="on">
+        <input hidden id="page" name="page" type="number" value="1" />
+        <input id="bav" name="bav" type="hidden" value="1">
+    </div>
+    <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
+        Search qualifications
+    </button>
+    <a href="/qualifications" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+        Show all qualifications
+    </a>
+</form>

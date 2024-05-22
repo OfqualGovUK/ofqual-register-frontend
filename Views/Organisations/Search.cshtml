@@ -3,7 +3,6 @@
     ViewData["HeaderTitle"] = "Find a regulated awarding organisation";
     ViewData["HomePage"] = "find-regulated-organisations";
 }
-<search>
     <form method="get" action="/organisations" role="search">
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">
@@ -11,7 +10,7 @@
                     Find a regulated awarding organisation
                 </label>
             </h1>
-            <input class="govuk-input" id="name" name="name" type="text" autocomplete="search">
+            <input class="govuk-input" id="name" name="name" type="text" autocomplete="on">
             <input hidden id="page" name="page" type="number" value="1" />
         </div>
         <button type="submit" class="govuk-button govuk-!-margin-right-2" data-module="govuk-button">
@@ -21,4 +20,3 @@
             Show all organisations
         </a>
     </form>
-</search>

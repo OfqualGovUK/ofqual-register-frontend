@@ -1,5 +1,6 @@
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.Models.APIModels;
 using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
@@ -8,7 +9,6 @@ using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.Globalization;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
@@ -55,7 +55,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     name = $"RN{name}";
                 }
 
-                return RedirectToAction("Organisation", new
+                return RedirectToAction(nameof(Organisation), new
                 {
                     number = name.ToUpper()
                 });
@@ -81,7 +81,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
-                    PagingURL = $"organisations?name={name}&page=||_page_||",
+                    PagingURL = $"organisations?name={name.ToURL()}&page=||_page_||",
                     CurrentPage = orgs.CurrentPage
                 }
             };
