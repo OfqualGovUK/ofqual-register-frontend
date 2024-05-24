@@ -2,8 +2,8 @@
 
 The Ofqual Register of Regulated Qualifications frontend allows users to:
 
--Find a regulated qualification
--Find a regulated awarding organisation
+- Find a regulated qualification
+- Find a regulated awarding organisation
 
 ## Provider 
 [The Office of Qualifications and Examinations Regulation](https://www.gov.uk/government/organisations/ofqual)
