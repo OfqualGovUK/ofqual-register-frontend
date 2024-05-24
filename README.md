@@ -18,7 +18,7 @@ This project is a ASP.NET Core 8 web app with the MVC architecture utilizing Doc
 
 
 ## Architecture
-![frontend](https://github.com/OfqualGovUK/ofqual-register-frontend/blob/main/API_Arch.jpg?raw=true)
+![frontend](https://github.com/OfqualGovUK/ofqual-register-frontend/blob/main/Frontend_Arch.jpg?raw=true)
 
 ## Environment Variables / App settings
 Variables set in the Function Apps config on Azure
