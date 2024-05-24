@@ -42,4 +42,4 @@ Variables set in the Function Apps config on Azure
 
 ## Deployment
 
-A pipeline is set on DevOps to automatically deploy the Web App to an Azure container registry (`azure-pipelines`). A webhook is setup to pull the container image into an App Service for continuous deployment.
+A pipeline (`azure-pipelines.yml`) is set on DevOps to automatically deploy the Web App to an Azure container registry . A webhook is setup to pull the container image into an App Service for continuous deployment.
