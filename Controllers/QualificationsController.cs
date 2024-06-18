@@ -1,5 +1,6 @@
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
@@ -206,7 +207,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("qualifications/download-CSV")]
-        public async Task<IActionResult> DownloadCSV(string title, string? selectedQuals, string[] QualificationNumbers)
+        public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
             title = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
@@ -214,14 +215,26 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             byte[] fileBytes = [];
             try
             {
-                var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
 
-                var qualsDetails = new List<Qualification>();
+                APIResponseList<QualificationListViewModel> quals;
 
-                foreach (var item in quals)
+                try
                 {
-                    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
+                    quals = await _registerAPIClient.GetQualificationsListAsync(title, page:1, limit:0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
                 }
+                catch (ApiException ex)
+                {
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                }
+
+                //var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
+
+                var qualsDetails = quals.Results;
+
+                //foreach (var item in quals)
+                //{
+                //    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
+                //}
 
                 using var memoryStream = new MemoryStream();
                 using (var streamWriter = new StreamWriter(memoryStream))
@@ -244,16 +257,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("qualifications/compare-qualifications")]
         ///selectedQuals if JS is enabled - will retain all quals selected across pages
         ///QualificationNumber if JS is disabled - will only retain the quals selected for this page
-        public IActionResult CompareQualifications(string csvTitle, string? selectedQuals, string[] qualificationNumbers)
+        public IActionResult CompareQualifications(string? selectedQuals, string[] qualificationNumbers)
         {
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : qualificationNumbers;
 
-            //if the form submit was for CSV download
-            if (compareArr != null && Request.Query["CSV"].Count != 0)
-            {
-                TempData["CSVError"] = true;
-                return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction(nameof(DownloadCSV), new { csvTitle, selectedQuals, qualificationNumbers });
-            }
+            ////if the form submit was for CSV download
+            //if (compareArr != null && Request.Query["CSV"].Count != 0)
+            //{
+            //    TempData["CSVError"] = true;
+            //    return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction(nameof(DownloadCSV), new { csvTitle, selectedQuals, qualificationNumbers });
+            //}
 
             // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
             // go back to the search results page and show an error

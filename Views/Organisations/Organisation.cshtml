@@ -21,7 +21,7 @@
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Contact details</h2></div>
 
-                <div class="govuk-summary-card__content">
+                <div class="govuk-summary-card__content">``
                     <dl class="govuk-summary-list">
                         @if (Model.ContactEmail.IsNotNull())
                         {
@@ -112,6 +112,12 @@
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 <time datetime="@Model.OfqualRecognisedOn?.ToString("yyyy-MM-dd")" lang="en">@Model.OfqualRecognisedOn?.ToString("dd MMMM yyyy")</time>
+                                @if (Model.OfqualRecognisedTo is not null)
+                                {
+                                    <text> to </text>
+                                    <time datetime="@Model.OfqualRecognisedTo?.ToString("yyyy-MM-dd")" lang="en">@Model.OfqualRecognisedTo?.ToString("dd MMMM yyyy")</time>
+
+                                }
                             </dd>
 
                         </div>
@@ -178,7 +184,7 @@
                     }
 
 
-                    @if (Model.CceaOrganisationStatus != null)
+                    @if (Model.CceaRecognisedOn != null)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -186,6 +192,12 @@
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 <time datetime="@Model.CceaRecognisedOn?.ToString("yyyy-MM-dd")" lang="en">@Model.CceaRecognisedOn?.ToString("dd MMMM yyyy")</time>
+                                @if (Model.CceaRecognisedTo is not null)
+                                {
+                                    <text> to </text>
+                                    <time datetime="@Model.CceaRecognisedTo?.ToString("yyyy-MM-dd")" lang="en">@Model.CceaRecognisedTo?.ToString("dd MMMM yyyy")</time>
+
+                                }
                             </dd>
                         </div>
                     }

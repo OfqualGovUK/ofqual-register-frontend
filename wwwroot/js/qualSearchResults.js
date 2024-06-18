@@ -78,7 +78,7 @@ if (sessionStorage.getItem("selectedQuals")) {
 
     //check the session stored qual checkboxes
     selectedQualsArr.forEach((i) => {
-        let cbx = document.getElementById("qualification_" + i);
+        let cbx = document.getElementById("qualification-" + i);
         if (cbx) {
             cbx.checked = true;
         }
@@ -118,7 +118,7 @@ function appendSelectedQuals() {
 //disables/enables the compare and csv btns based on how many quals are selected
 function disableCompareBtn() {
     let compareBtn = document.getElementById("compareButton");
-    let csvBtn = document.getElementById("csvButton");
+    //let csvBtn = document.getElementById("csvButton");
 
     if (selectedQuals.size < 2) {
         compareBtn.setAttribute("disabled", "true");
@@ -128,22 +128,13 @@ function disableCompareBtn() {
         compareBtn.removeAttribute("disabled");
         compareBtn.removeAttribute("aria-disabled");
     }
-
-    if (selectedQuals.size >= 1) {
-        csvBtn.removeAttribute("disabled");
-        csvBtn.removeAttribute("aria-disabled");
-    }
-    else {
-        csvBtn.setAttribute("disabled", "true");
-        csvBtn.setAttribute("aria-disabled", "true");
-    }
 }
 
 function clearSelection() {
     selectedQuals = new Set();
     sessionStorage.setItem("selectedQuals", JSON.stringify([...selectedQuals]));
 
-    let qualCbxs = document.getElementsByName("QualificationNumbers");
+    let qualCbxs = document.getElementsByName("qualificationNumbers");
 
     qualCbxs.forEach((i) => {
         i.checked = false;

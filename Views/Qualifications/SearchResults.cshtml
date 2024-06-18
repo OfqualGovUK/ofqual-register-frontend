@@ -24,6 +24,11 @@
     var nationalAccordion = appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any() ? "is-open" : "";
     var glhAccordion = appliedFilters.MinGuidedLearninghours != null || appliedFilters.MaxGuidedLearninghours != null ? "is-open" : "";
     var tqtAccordion = appliedFilters.MinTotalQualificationTime != null || appliedFilters.MaxTotalQualificationTime != null ? "is-open" : "";
+
+    //format to the download csv link from the paging url, as all filters are available in the paging link
+    var csvLink = "";
+    csvLink = Model.Paging.PagingURL!.Remove(0, "qualifications?page=||_page_||".Length);
+    //csvLink = csvLink.Replace("||_page_||&", "");
 }
 
 @section Head {
@@ -53,8 +58,8 @@
                     </div>
                 </div>
             </div>
-        }        
-        
+        }
+
         @if (csvError)
         {
             <div class="govuk-error-summary" data-module="govuk-error-summary">
@@ -797,6 +802,7 @@
             </p>
         }
 
+
         @if (Model.List.Results != null && Model.List.Results.Count() > 0)
         {
             <form action="/qualifications/compare-qualifications" id="compareQualifications" method="get" onsubmit="appendSelectedQuals()">
@@ -807,9 +813,9 @@
                         </button>
                     </li>
                     <li class="ofq-action-buttons--item">
-                        <button draggable="false" name="CSV" id="csvButton" class="govuk-button govuk-button--secondary ofq-button-row-element matomo_download" data-module="govuk-button" type="submit">
-                            Download selected results as CSV
-                        </button>
+                        <a href="/qualifications/download-csv?@csvLink" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                            Download results as CSV
+                        </a>
                     </li>
                 </ul>
                 <input type="hidden" id="csvTitle" name="csvTitle" value="@Model.Title" />
@@ -824,7 +830,7 @@
                         <span class="govuk-visually-hidden">Error:</span> Select at least 2 qualifications to compare
                     </p>
                 }
-                
+
                 @if (csvError)
                 {
                     <p id="csv-error" class="govuk-error-message">
