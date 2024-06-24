@@ -1,6 +1,4 @@
-﻿using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
-
-namespace Ofqual.Common.RegisterFrontend.Models.APIModels
+﻿namespace Ofqual.Common.RegisterFrontend.Models.RegisterModels
 {
     public class Organisation
     {

@@ -1,5 +1,5 @@
 ﻿using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.RefDataModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 
 namespace Ofqual.Common.RegisterFrontend.Cache

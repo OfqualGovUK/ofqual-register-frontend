@@ -1,5 +1,5 @@
 ﻿using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV;
 using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Refit;
@@ -18,6 +18,10 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
         [Get("/api/organisations?search={search}")]
         Task<APIResponseList<Organisation>> GetOrganisationsDetailListAsync(string? search);
 
+
+        [Get("/api/organisations")]
+        Task<APIResponseList<OrganisationCSV>> GetFullOrganisationsDataSetAsync();
+
         [Get("/api/scopes/{recognitionNumber}")]
         Task<RecognitionScope> GetOrganisationsScopes(string recognitionNumber);
 
@@ -27,5 +31,9 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
 
         [Get("/api/qualifications/{number1}/{number2}/{number3}")]
         Task<Qualification> GetQualificationAsync(string number1, string? number2 = null, string? number3 = null);
+
+
+        [Get("/api/qualifications")]
+        Task<APIResponseList<QualificationCSV>> GetFullQualificationsDataSetAsync();
     }
 }
