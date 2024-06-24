@@ -2,6 +2,6 @@
 {
     public interface IBlobService
     {
-        Task UploadBlob(string blobName, string blobContent);
+        Task UploadBlob(string blobName, Stream blobContent);
     }
 }
