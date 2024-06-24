@@ -37,7 +37,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 APIResponseList<OrganisationCSV> orgs;
                 orgs = await _registerAPIClient.GetFullOrganisationsDataSetAsync();
 
-                var stream =  CreateCSVStream(orgs.Results!);
+                var stream = CreateCSVStream(orgs.Results!);
+                stream.Position = 0;
 
                 await _blobService.UploadBlob("Orgs", stream);
 
@@ -72,12 +73,12 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         private MemoryStream CreateCSVStream(object results)
         {
-            using var memoryStream = new MemoryStream();
-            using (var streamWriter = new StreamWriter(memoryStream))
-            using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
-            {
-                csvWriter.WriteRecords((System.Collections.IEnumerable)results);
-            }
+            var memoryStream = new MemoryStream();
+            var streamWriter = new StreamWriter(memoryStream);
+            var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+
+            csvWriter.WriteRecords((System.Collections.IEnumerable)results);
+
 
             return memoryStream;
         }

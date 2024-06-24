@@ -1,4 +1,6 @@
-using Microsoft.Net.Http.Headers;
+using Azure.Identity;
+using Microsoft.Extensions.Azure;
+using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
@@ -23,7 +25,14 @@ builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpCli
 
 });
 
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(new Uri(builder.Configuration["StorageContainerUrl"]!));
+    clientBuilder.UseCredential(new DefaultAzureCredential());
+});
+
 builder.Services.AddSingleton<IRefDataCache, RefDataCache>();
+builder.Services.AddSingleton<IBlobService, BlobService>();
 
 //usecases
 builder.Services.AddScoped<IQualificationsUseCases, QualificationsUseCases>();
