@@ -38,7 +38,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 //check if the blob is newer than 24 hrs
                 if ((DateTime.Now - properties.CreatedOn).TotalHours > 24)
                 {
-                    await FetchUploadOrganisationsFullDataset();                    
+                    await FetchUploadOrganisationsFullDataset();
                 }
             }
             else
@@ -147,13 +147,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             APIResponseList<QualificationCSV> quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(1, 1);
 
-            var loop = quals.Count / 10000;
+            int pages = Convert.ToInt32(Math.Ceiling(44787m / 10000m));
 
             var allQuals = new List<QualificationCSV>();
 
-            for (int i = 1; i <= loop; i++)
+            for (int i = 1; i <= pages; i++)
             {
-                quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(i, 10000);
+                quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(page: i, limit: 10000);
 
                 allQuals.AddRange(quals.Results!);
             }
