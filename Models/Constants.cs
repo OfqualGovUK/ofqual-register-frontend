@@ -49,5 +49,9 @@
         public const string KEY_QUAL_TYPES = "qual_types";
         public const string KEY_SSA = "ssa";
         public const string KEY_ORGS = "organisations";
+
+        //CSV Full Dataset download
+        public const string BLOBNAME_ORGANISATIONS = "organisations.csv";
+        public const string BLOBNAME_QUALIFICATIONS = "qualifications.csv";
     }
 }

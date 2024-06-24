@@ -1,5 +1,8 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using System.ComponentModel;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace Ofqual.Common.RegisterFrontend.BlobStorage
@@ -20,13 +23,55 @@ namespace Ofqual.Common.RegisterFrontend.BlobStorage
         {
             try
             {
-                // Upload text to a new block blob.
-                //byte[] byteArray = Encoding.ASCII.GetBytes(blobContents);
+                await _blobContainerClient.UploadBlobAsync(blobName, blobContents);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
-                //using (MemoryStream stream = new MemoryStream(byteArray))
-                //{
-                    await _blobContainerClient.UploadBlobAsync(blobName, blobContents);
-                //}
+        public bool BlobExists(string blobname)
+        {
+            try
+            {
+                var blobClient = _blobContainerClient.GetBlobClient(blobname);
+
+                return blobClient.Exists();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<BlobProperties> BlobProperties(string blobname)
+        {
+            try
+            {
+                var blobClient = _blobContainerClient.GetBlobClient(blobname);
+
+                return await blobClient.GetPropertiesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task<MemoryStream> DownloadBlob(string blobname)
+        {
+            try
+            {
+                var blobClient = _blobContainerClient.GetBlobClient(blobname);
+
+                var stream = await blobClient.OpenReadAsync();
+
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+
+                return memoryStream;
             }
             catch (Exception e)
             {

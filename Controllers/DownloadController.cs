@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
+﻿using Microsoft.AspNetCore.Mvc;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.Globalization;
 using System.Net;
-using System.Xml.Linq;
 using Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV;
 using CsvHelper;
 using Ofqual.Common.RegisterFrontend.BlobStorage;
+using static Ofqual.Common.RegisterFrontend.Models.Constants;
 using System.IO;
 
 namespace Ofqual.Common.RegisterFrontend.Controllers
@@ -32,22 +30,44 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             string fileName = $"Organisations_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
-            try
+
+            //check if blob exists first
+            if (_blobService.BlobExists(BLOBNAME_ORGANISATIONS))
             {
-                APIResponseList<OrganisationCSV> orgs;
-                orgs = await _registerAPIClient.GetFullOrganisationsDataSetAsync();
+                var properties = await _blobService.BlobProperties(BLOBNAME_ORGANISATIONS);
 
-                var stream = CreateCSVStream(orgs.Results!);
-                stream.Position = 0;
-
-                await _blobService.UploadBlob("Orgs", stream);
-
-                return File(stream.ToArray(), "text/csv", fileName);
+                //check if the blob is newer than 24 hrs
+                if ((DateTime.Now - properties.CreatedOn).TotalHours > 24)
+                {
+                    await FetchOrganisationsUploadBlob();                    
+                }
             }
-            catch (ApiException ex)
+            else
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                try
+                {
+                    await FetchOrganisationsUploadBlob();
+                }
+                catch (ApiException ex)
+                {
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                }
             }
+
+            //download blob to CSV 
+            var memoryStream = await _blobService.DownloadBlob(BLOBNAME_ORGANISATIONS);
+
+            return File(memoryStream.ToArray(), "text/csv", fileName);
+        }
+
+        private async Task FetchOrganisationsUploadBlob()
+        {
+            APIResponseList<OrganisationCSV> orgs = await _registerAPIClient.GetFullOrganisationsDataSetAsync();
+
+            var stream = CreateCSVStream(orgs.Results!);
+            stream.Position = 0;
+
+            await _blobService.UploadBlob(BLOBNAME_ORGANISATIONS, stream);
         }
 
         [HttpGet]
@@ -78,7 +98,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
 
             csvWriter.WriteRecords((System.Collections.IEnumerable)results);
-
 
             return memoryStream;
         }
