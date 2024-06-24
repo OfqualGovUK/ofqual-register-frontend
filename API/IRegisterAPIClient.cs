@@ -33,7 +33,7 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
         Task<Qualification> GetQualificationAsync(string number1, string? number2 = null, string? number3 = null);
 
 
-        [Get("/api/qualifications")]
-        Task<APIResponseList<QualificationCSV>> GetFullQualificationsDataSetAsync();
+        [Get("/api/qualifications?page={page}&limit={limit}")]
+        Task<APIResponseList<QualificationCSV>> GetFullQualificationsDataSetAsync(int? page = null, int? limit = null);
     }
 }
