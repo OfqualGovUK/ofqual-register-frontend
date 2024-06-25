@@ -79,6 +79,33 @@ app.Use(async (ctx, next) =>
 
 app.UseStatusCodePagesWithRedirects("/error/{0}");
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/robots.txt"))
+    {
+        var robotsTxtPath = Path.Combine(app.Environment.ContentRootPath, "robots.txt");
+        string output = "User-agent: *  \nDisallow: /";
+        if (File.Exists(robotsTxtPath))
+        {
+            output = await File.ReadAllTextAsync(robotsTxtPath);
+        }
+        context.Response.ContentType = "text/plain";
+        await context.Response.WriteAsync(output);
+    }
+    else if (context.Request.Path.StartsWithSegments("/sitemap.xml"))
+    {
+        var robotsTxtPath = Path.Combine(app.Environment.ContentRootPath, "sitemap.xml");
+        string output = "User-agent: *  \nDisallow: /";
+        if (File.Exists(robotsTxtPath))
+        {
+            output = await File.ReadAllTextAsync(robotsTxtPath);
+        }
+        context.Response.ContentType = "application/xml";
+        await context.Response.WriteAsync(output);
+    }
+    else await next();
+});
+
 app.UseHttpsRedirection();
 
 app.UseWebOptimizer();
@@ -94,5 +121,6 @@ app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();
