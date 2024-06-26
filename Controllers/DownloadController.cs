@@ -36,9 +36,16 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 var properties = await _blobService.BlobProperties(BLOBNAME_ORGANISATIONS);
 
                 //check if the blob is newer than 24 hrs
-                if ((DateTime.Now - properties.CreatedOn).TotalHours > 24)
+                if ((DateTime.Now - properties.LastModified).TotalHours > 24)
                 {
-                    await FetchUploadOrganisationsFullDataset();
+                    try
+                    {
+                        await FetchUploadOrganisationsFullDataset();
+                    }
+                    catch (ApiException ex)
+                    {
+                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
+                    }
                 }
             }
             else
