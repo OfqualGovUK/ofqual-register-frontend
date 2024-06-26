@@ -114,7 +114,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
             #endregion
 
@@ -129,7 +129,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
 
             #endregion
@@ -201,7 +201,22 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
+            }
+        }
+
+        [HttpGet]
+        [Route("qualifications/{number1}")]
+        public async Task<IActionResult> QualificationNoObliques(string number1)
+        {
+            try
+            {
+                var qual = await _registerAPIClient.GetQualificationAsync(number1);
+                return View("Qualification", qual);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -224,7 +239,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 }
                 catch (ApiException ex)
                 {
-                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                 }
 
                 //var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
@@ -247,7 +262,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -261,13 +276,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : qualificationNumbers;
 
-            ////if the form submit was for CSV download
-            //if (compareArr != null && Request.Query["CSV"].Count != 0)
-            //{
-            //    TempData["CSVError"] = true;
-            //    return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction(nameof(DownloadCSV), new { csvTitle, selectedQuals, qualificationNumbers });
-            //}
-
             // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
             // go back to the search results page and show an error
             if (compareArr == null || compareArr.Length < 2)
@@ -275,7 +283,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 TempData["CompareError"] = true;
                 return Redirect(Request.Headers.Referer);
             }
-
 
             if (compareArr.Length >= 2)
             {
@@ -327,7 +334,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
 
             return View(model);
@@ -364,7 +371,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     }
                     catch (ApiException ex)
                     {
-                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                     }
                 }
             }

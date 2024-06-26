@@ -23,7 +23,9 @@ namespace Ofqual.Common.RegisterFrontend.BlobStorage
         {
             try
             {
-                await _blobContainerClient.UploadBlobAsync(blobName, blobContents);
+                var blobClient = _blobContainerClient.GetBlobClient(blobName);
+
+                await blobClient.UploadAsync(blobContents, overwrite:true);
             }
             catch (Exception e)
             {

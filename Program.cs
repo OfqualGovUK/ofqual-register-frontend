@@ -58,21 +58,12 @@ app.Use(async (ctx, next) =>
 {
     await next();
 
-    if (ctx.Response.StatusCode == 404 && !ctx.Response.HasStarted)
+    if (ctx.Response.StatusCode != 200 && !ctx.Response.HasStarted)
     {
         //Re-execute the request so the user gets the error page
         string originalPath = ctx.Request.Path.Value;
         ctx.Items["originalPath"] = originalPath;
-        ctx.Request.Path = "/error/404";
-        await next();
-    }
-
-    if (ctx.Response.StatusCode == 400 && !ctx.Response.HasStarted)
-    {
-        //Re-execute the request so the user gets the error page
-        string originalPath = ctx.Request.Path.Value;
-        ctx.Items["originalPath"] = originalPath;
-        ctx.Request.Path = "/error/500";
+        ctx.Request.Path = $"/error/{ctx.Response.StatusCode}";
         await next();
     }
 });

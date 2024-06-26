@@ -49,7 +49,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 }
                 catch (ApiException ex)
                 {
-                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                 }
             }
 
@@ -85,7 +85,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 }
                 catch (ApiException ex)
                 {
-                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                 }
             }
 
@@ -93,18 +93,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             var memoryStream = await _blobService.DownloadBlob(BLOBNAME_QUALIFICATIONS);
 
             return File(memoryStream.ToArray(), "text/csv", fileName);
-
-            //try
-            //{
-            //    APIResponseList<QualificationCSV> quals;
-            //    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync();
-
-            //    return CreateCSV(fileName, quals.Results!);
-            //}
-            //catch (ApiException ex)
-            //{
-            //    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
-            //}
         }
 
 

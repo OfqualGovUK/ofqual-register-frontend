@@ -71,7 +71,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
 
             var model = new SearchResultViewModel<OrganisationListViewModel>
@@ -107,7 +107,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -135,7 +135,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 

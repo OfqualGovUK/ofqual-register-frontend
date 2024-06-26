@@ -7,9 +7,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
     public class ErrorController : Controller
     {
         [Route("500")]
+        [Route("400")]
         public IActionResult AppError()
         {
-            return View("404");
+            return View("500");
         }
 
         [Route("404")]
