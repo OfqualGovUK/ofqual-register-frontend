@@ -91,7 +91,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             #endregion
 
-            var pagingURL = $"qualifications?page=||_page_||";
+            var pagingURL = $"/qualifications?page=||_page_||";
 
             var pagedFilters = _qualificationsUseCases.CreatePagedFilters(title, availability, qualificationTypes, qualificationLevels, awardingOrganisations, sectorSubjectAreas, gradingTypes, assessmentMethods, nationalAvailability, minTotalQualificationTime, maxTotalQualificationTime, minGuidedLearninghours, maxGuidedLearninghours);
 

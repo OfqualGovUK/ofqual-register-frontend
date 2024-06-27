@@ -44,7 +44,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
 
         [HttpGet]
-        [Route("organisations")]
+        [Route("/organisations")]
         public async Task<IActionResult> SearchResults(string name, int page = 1)
         {
             //if search term is an org recognition number, show the org details page
@@ -62,6 +62,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
 
             int pagingLimit = _config.GetValue<int>("OrganisationsPagingLimit");
+            var pagingURL = $"/organisations?page=||_page_||";
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                //title is not part of the filters section
+                pagingURL += $"&name={name}";
+            }
 
             APIResponseList<OrganisationListViewModel> orgs;
 
@@ -81,7 +88,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 Paging = new PagingModel
                 {
                     PagingList = Utilities.GeneratePageList(page, orgs.Count, pagingLimit),
-                    PagingURL = $"organisations?name={name.ToURL()}&page=||_page_||",
+                    PagingURL = pagingURL,
                     CurrentPage = orgs.CurrentPage
                 }
             };
