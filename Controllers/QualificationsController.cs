@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
+using Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV;
 using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
@@ -224,38 +225,29 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("qualifications/download-CSV")]
         public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
-            title = string.IsNullOrEmpty(title) ? "" : "_" + title;
+            var titleName = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
-            string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            string fileName = $"Qualifications{titleName}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
             try
             {
 
-                APIResponseList<QualificationListViewModel> quals;
+                APIResponseList<QualificationCSV> quals;
 
                 try
                 {
-                    quals = await _registerAPIClient.GetQualificationsListAsync(title, page:1, limit:0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
                 }
                 catch (ApiException ex)
                 {
                     return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                 }
 
-                //var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
-
-                var qualsDetails = quals.Results;
-
-                //foreach (var item in quals)
-                //{
-                //    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
-                //}
-
                 using var memoryStream = new MemoryStream();
                 using (var streamWriter = new StreamWriter(memoryStream))
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
-                    csvWriter.WriteRecords(qualsDetails);
+                    csvWriter.WriteRecords(quals.Results);
                 }
 
                 return File(memoryStream.ToArray(), "text/csv", fileName);

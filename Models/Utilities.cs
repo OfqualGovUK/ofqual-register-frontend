@@ -48,5 +48,27 @@ namespace Ofqual.Common.RegisterFrontend.Models
 
             return pageList;
         }
+
+        public static string FormatNationalAvailability(bool? england, bool? ni, bool? international)
+        {
+            var nAList = new List<string>();
+
+            if (england ?? false)
+            {
+                nAList.Add("England");
+            }
+
+            if (ni ?? false)
+            {
+                nAList.Add("Northern Ireland");
+            }
+
+            if (international ?? false)
+            {
+                nAList.Add("International");
+            }
+
+            return string.Join(", ", nAList);
+        }
     }
 }

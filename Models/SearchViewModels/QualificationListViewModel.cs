@@ -5,6 +5,7 @@
         public required string Title { get; set; }
 
         public required string QualificationNumber { get; set; }
+        public required string QualificationNumberNoObliques { get; set; }
 
         public required string? Status { get; set; }
 

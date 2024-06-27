@@ -1,5 +1,7 @@
 ﻿@using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 @using Ofqual.Common.RegisterFrontend.Extensions;
+@using Ofqual.Common.RegisterFrontend.Models;
+
 @model Qualification
 @{
     ViewData["Title"] = $"{Model.Title} - Find a regulated qualification";
@@ -222,27 +224,7 @@
                                 National availability
                             </dt>
                             <dd class="govuk-summary-list__value">
-
-                                @{
-                                    if (Model.OfferedInEngland ?? false)
-                                    {
-                                        <text>
-                                            England
-                                        </text>
-                                    }
-                                    if (Model.OfferedInNorthernIreland ?? false)
-                                    {
-                                        <text>
-                                            Northern Ireland
-                                        </text>
-                                    }
-                                    if (Model.OfferedInternationally ?? false)
-                                    {
-                                        <text>
-                                            International
-                                        </text>
-                                    }
-                                }
+                                @Html.Raw(Utilities.FormatNationalAvailability(Model.OfferedInEngland, Model.OfferedInNorthernIreland, Model.OfferedInternationally))                    
                             </dd>
                         </div>
                     }
@@ -275,10 +257,10 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Funded in Northern Ireland
+                                Approved for school use in Northern Ireland
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is funded in Northern Ireland</a>
+                                <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is approved for use in schools in Northern Ireland on the Department of Education website</a>
                             </dd>
                         </div>
 

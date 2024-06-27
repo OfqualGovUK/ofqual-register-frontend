@@ -140,7 +140,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         private async Task FetchUploadQualificationsFullDataSet()
         {
-            APIResponseList<QualificationCSV> quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(1, 1);
+            APIResponseList<QualificationCSV> quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(null, 1, 1);
 
             int pages = Convert.ToInt32(Math.Ceiling(44787m / 10000m));
 
@@ -148,7 +148,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             for (int i = 1; i <= pages; i++)
             {
-                quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(page: i, limit: 10000);
+                quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(null, page: i, limit: 10000);
 
                 allQuals.AddRange(quals.Results!);
             }

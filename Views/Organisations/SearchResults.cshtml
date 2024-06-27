@@ -48,8 +48,8 @@
                             <span class="govuk-body-s">@item.Acronym</span>
                         </p>
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                            <div class="govuk-grid-column-one-half">
+                            <div class="ofq-grid-column-35pc">Ofqual status: </div>
+                            <div class="govuk-grid-column-one-third">
                                 @switch (item.OfqualOrganisationStatus?.ToLower())
                                 {
                                     case "surrendered":
@@ -78,8 +78,8 @@
                             </div>
                         </div>
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                            <div class="govuk-grid-column-one-half">
+                            <div class="ofq-grid-column-35pc">CCEA Regulation status: </div>
+                            <div class="govuk-grid-column-one-third">
                                 @switch (item.CceaOrganisationStatus?.ToLower())
                                 {
                                     case "surrendered":

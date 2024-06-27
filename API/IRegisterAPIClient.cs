@@ -33,7 +33,7 @@ namespace Ofqual.Common.RegisterFrontend.RegisterAPI
         Task<Qualification> GetQualificationAsync(string number1, string? number2 = null, string? number3 = null);
 
 
-        [Get("/api/qualifications?page={page}&limit={limit}")]
-        Task<APIResponseList<QualificationCSV>> GetFullQualificationsDataSetAsync(int? page = null, int? limit = null);
+        [Get("/api/qualifications?title={title}&page={page}&limit={limit}&assessmentMethods={assessmentMethods}&gradingTypes={gradingTypes}&awardingOrganisations={awardingOrganisations}&availability={availability}&qualificationTypes={qualificationTypes}&qualificationLevels={qualificationLevels}&nationalAvailability={nationalAvailability}&sectorSubjectAreas={sectorSubjectAreas}&minTotalQualificationTime={minTotalQualificationTime}&maxTotalQualificationTime={maxTotalQualificationTime}&minGuidedLearninghours={minGuidedLearninghours}&maxGuidedLearninghours={maxGuidedLearninghours}")]
+        Task<APIResponseList<QualificationCSV>> GetFullQualificationsDataSetAsync(string? title, int? page = null, int? limit = null, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, string? sectorSubjectAreas = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null);
     }
 }
