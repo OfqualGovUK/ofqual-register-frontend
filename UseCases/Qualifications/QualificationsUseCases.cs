@@ -6,6 +6,8 @@ using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.Models.RefDataModels;
 using static Ofqual.Common.RegisterFrontend.Models.Constants;
+using static Ofqual.Common.RegisterFrontend.SearchFilterTerms.QualificationTypesMap;
+using static Ofqual.Common.RegisterFrontend.SearchFilterTerms.QualificationLevelsMap;
 
 namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
 {
@@ -141,6 +143,92 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
             };
         }
 
+        public async Task<string?> FindQualificationTypeFiltersFromSearch(string search, string? qualificationTypes)
+        {
+            var words = search.ToUpper();
+
+            // Create a list to store the tasks
+            List<Task<string?>> tasks = new List<Task<string?>>();
+
+            // Iterate through each tuple in the list and create a task for each
+            foreach (var tuple in QualificationTypeMapValues)
+            {
+                string searchWord = tuple.Item1;
+
+                //to avoid duplicates
+                if (!string.IsNullOrEmpty(qualificationTypes) && qualificationTypes.ToUpper().Contains(tuple.Item2.ToUpper()))
+                {
+                    continue;
+                }
+
+                tasks.Add(Task.Run(() => words.Contains(searchWord) ? tuple.Item2 : null));
+            }
+
+            // Wait for all tasks to complete
+            string?[] results = await Task.WhenAll(tasks);
+
+            var str = string.Join(",", results.Where(result => result != null));
+
+            if (!string.IsNullOrEmpty(str))
+            {
+                if (string.IsNullOrEmpty(qualificationTypes))
+                {
+                    return string.Join(",", str);
+                }
+
+                return string.Join(",", [qualificationTypes, string.Join(",", str)]);
+            }
+            else
+            {
+                return qualificationTypes;
+            }
+        }
+
+        public async Task<string?> FindQualificationLevelFiltersFromSearch(string search, string? qualificationLevels)
+        {
+            var words = search.ToUpper();
+
+            // Create a list to store the tasks
+            List<Task<string?>> tasks = new List<Task<string?>>();
+
+            // Iterate through each tuple in the list and create a task for each
+            foreach (var tuple in QualificationLevelMapValues)
+            {
+                string searchWord = tuple.Item1;
+
+                //to avoid duplicates
+                if (!string.IsNullOrEmpty(qualificationLevels) && qualificationLevels.ToUpper().Contains(tuple.Item2.ToUpper()))
+                {
+
+                    if (true)
+                    {
+
+                    }
+
+                }
+
+                tasks.Add(Task.Run(() => words.Contains(searchWord) ? string.Join(",", tuple.Item2) : null));
+            }
+
+            // Wait for all tasks to complete
+            string?[] results = await Task.WhenAll(tasks);
+
+            var str = string.Join(",", results.Where(result => result != null));
+
+            if (!string.IsNullOrEmpty(str))
+            {
+                if (string.IsNullOrEmpty(qualificationLevels))
+                {
+                    return string.Join(",", str);
+                }
+
+                return string.Join(",", [qualificationLevels, string.Join(",", str)]);
+            }
+            else
+            {
+                return qualificationLevels;
+            }
+        }
 
         // Helper method to append filter to the paging URL if the filter value is not null or empty
         void AppendFilterToPaging(ref string url, string paramName, string? param)
@@ -162,5 +250,6 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
                 differing.Add(fieldName, [left ?? "-", right ?? "-"]);
             }
         }
+
     }
 }
