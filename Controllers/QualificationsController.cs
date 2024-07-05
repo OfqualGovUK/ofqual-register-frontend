@@ -93,11 +93,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             var pagingURL = $"/qualifications?page=||_page_||";
 
-            if (!string.IsNullOrEmpty(title))
-            {
-                qualificationTypes = await _qualificationsUseCases.FindQualificationTypeFiltersFromSearch(title, qualificationTypes!);
-            }
-
             var pagedFilters = _qualificationsUseCases.CreatePagedFilters(title, availability, qualificationTypes, qualificationLevels, awardingOrganisations, sectorSubjectAreas, gradingTypes, assessmentMethods, nationalAvailability, minTotalQualificationTime, maxTotalQualificationTime, minGuidedLearninghours, maxGuidedLearninghours);
 
             //to show the filters applied section on the page
