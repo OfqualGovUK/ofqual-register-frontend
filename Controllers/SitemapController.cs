@@ -6,6 +6,7 @@ using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using static Ofqual.Common.RegisterFrontend.Models.Constants;
 
@@ -48,7 +49,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 var quals = await FetchSitemapQuals();
 
                 model.Paging.CurrentPage = page ?? 1;
-                model.Paging.PagingURL = $"/qualifications?page=||_page_||";
+                model.Paging.PagingURL = $"/sitemap/qualifications?page=||_page_||";
                 model.Paging.PagingList = Utilities.GeneratePageList(page ?? 1, quals.Count, 500);
 
                 model.Count = quals.Count;
@@ -81,7 +82,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             //fetch the quals
             var qualsMemoryStream = await _blobService.DownloadBlob(BLOBNAME_SITEMAP_QUALS);
-            qualsMemoryStream.Position = 0;
+            //qualsMemoryStream.Position = 0;
 
             var reader = new StreamReader(qualsMemoryStream);
             var qualsJson = reader.ReadToEnd();
@@ -100,14 +101,15 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 //quals = qualsResponse.Results;
                 var json = JsonSerializer.Serialize(qualsResponse.Results);
 
-                var memoryStream = new MemoryStream();
-                var streamWriter = new StreamWriter(memoryStream);
+                var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+                //var streamWriter = new StreamWriter(memoryStream);
 
-                streamWriter.Write(json);
+                //streamWriter.Write(json);
 
-                memoryStream.Position = 0;
+                //memoryStream.Position = 0;
 
                 await _blobService.UploadBlob(BLOBNAME_SITEMAP_QUALS, memoryStream);
+                //await _blobService.UploadBlob(BLOBNAME_SITEMAP_QUALS, );
             }
         }
     }

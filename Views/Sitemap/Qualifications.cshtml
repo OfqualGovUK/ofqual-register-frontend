@@ -7,7 +7,7 @@
         <ul class="govuk-list govuk-list--bullet">
             @foreach (var qual in Model.Qualifications)
             {
-                <li><a href="https://ofq-prod-register-frontend.azurewebsites.net/qualifications/@qual.QualificationNumber" class="govuk-link">@qual.Title</a></li>
+                <li><a href="https://ofq-prod-register-frontend.azurewebsites.net/qualifications/@qual.QualificationNumberNoObliques" class="govuk-link">@qual.Title</a></li>
             }
         </ul>
         <partial name="/Views/Shared/_PagingPartial.cshtml" model="Model.Paging" />

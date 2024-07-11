@@ -46,6 +46,8 @@ A pipeline (`azure-pipelines.yml`) is set on DevOps to automatically deploy the 
 
 ## Full Data Download
 
-A DownloadsController has been created to download the full Qualifications and Organisations data in CSV format. The CSVs are stored in a storage container on Azure as blobs. The code checks the last time CSVs were updated and fetches new data from the Database if the blobs are older than a day. 
+A DownloadsController has been created to download the full Qualifications and Organisations data in CSV format. The CSVs are stored in a storage container on Azure as blobs. The code checks the last time CSVs were modified and fetches new data from the Database if the blobs are older than a day. 
 
+## Qualificaions Sitemap
 
+As the list of qualifications can be huge (48k at the time of writing), the same methodology as Full Data Download is used to store the qualification titles and names, into a JSON file. This file is updated if the last modified date on the file was older than a week. 
