@@ -399,6 +399,5 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         }
         #endregion
 
-
     }
 }

@@ -53,5 +53,8 @@
         //CSV Full Dataset download
         public const string BLOBNAME_ORGANISATIONS = "organisations.csv";
         public const string BLOBNAME_QUALIFICATIONS = "qualifications.csv";
+
+        //Sitemap
+        public const string BLOBNAME_SITEMAP_QUALS = "sitemap_quals.json";        
     }
 }
