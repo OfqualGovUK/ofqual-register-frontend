@@ -4,6 +4,7 @@ using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Models;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Refit;
+using System.IO;
 using System.Net;
 using System.Text.Json;
 using static Ofqual.Common.RegisterFrontend.Models.Constants;
@@ -103,6 +104,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 var streamWriter = new StreamWriter(memoryStream);
 
                 streamWriter.Write(json);
+
+                memoryStream.Position = 0;
 
                 await _blobService.UploadBlob(BLOBNAME_SITEMAP_QUALS, memoryStream);
             }

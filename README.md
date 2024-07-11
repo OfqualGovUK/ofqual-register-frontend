@@ -43,3 +43,9 @@ Variables set in the Function Apps config on Azure
 ## Deployment
 
 A pipeline (`azure-pipelines.yml`) is set on DevOps to automatically deploy the Web App to an Azure container registry . A webhook is setup to pull the container image into an App Service for continuous deployment.
+
+## Full Data Download
+
+A DownloadsController has been created to download the full Qualifications and Organisations data in CSV format. The CSVs are stored in a storage container on Azure as blobs. The code checks the last time CSVs were updated and fetches new data from the Database if the blobs are older than a day. 
+
+
