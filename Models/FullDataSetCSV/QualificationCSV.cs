@@ -51,7 +51,7 @@ namespace Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV
         [Name("Overall Grading Type")]
         public string? GradingType { get; set; }
         [Name("Assessment Methods")]
-        public string[]? AssessmentMethods { get; set; }
+        public string? AssessmentMethods { get; set; }
         [Name("NI Discount Code")]
         public string? NIDiscountCode { get; set; }
         [Name("GCE Size Equivalence")]

@@ -21,12 +21,35 @@ This project is a ASP.NET Core 8 web app with the MVC architecture utilizing Doc
 ![frontend](https://github.com/OfqualGovUK/ofqual-register-frontend/blob/main/Frontend_Arch.jpg?raw=true)
 
 ## Environment Variables / App settings
-Variables set in the Function Apps config on Azure
+Variables set in the Function Apps config locally
 
-- `RegisterAPIUrl`: URL for the Register API 
+Use the following in a local.settings.json. The values should not be used in deployed environments; use appropriate connection strings and URLs depending upon the deployed environment (dev/prod)
+
+```json
+
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=True",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "FUNCTIONS_EXTENSION_WORKER": "~4",
+    "RefDataAPIUrl": "<URL>",
+    "MDDBConnString": "Server=localhost,1433;Initial Catalog=ofqds-dev-md-sql01;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "QualificationsPagingLimit": 10000,
+    "APIMgmtURL": "<URL>"
+  }
+}
+
+```
+
+- `AzureWebJobsStorage`: Connection string for where the web jobs should be stored; can be on dev storage when ran locally, but should have a proper string for when deployed to Azure
+- `MDDBConnString`: The connection string for connecting to the MasterData database.
+- `APIMgmtURL`: URL for the API Management layer, only really used on deployed environments but should be filled in on local environments
 - `RefdataAPIUrl`: URL for the Ref Data API to fetch filter values for qualifications (qualificationtypes, levels, SSAs and assessment methods)
 - `OrganisationsPagingLimit`: Number of items on the Organisations search results page
 - `QualificationsPagingLimit`: Number of items on the Qualifications search results page
+- `FUNCTIONS_WORKER_RUNTIME` and `FUNCTIONS_EXTENSION_WORKER`: Values used as part of running Azure Functions properly
+
 
 ## Assets
 
