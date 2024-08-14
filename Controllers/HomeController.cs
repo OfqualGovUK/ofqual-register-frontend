@@ -15,7 +15,13 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                return View();
+            } else
+            {
+                return NotFound();
+            }
         }
     }
 }
