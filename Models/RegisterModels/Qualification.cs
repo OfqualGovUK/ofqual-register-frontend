@@ -1,4 +1,4 @@
-﻿namespace Ofqual.Common.RegisterFrontend.Models.APIModels
+﻿namespace Ofqual.Common.RegisterFrontend.Models.RegisterModels
 {
     public class Qualification
     {

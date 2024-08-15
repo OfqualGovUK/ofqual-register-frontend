@@ -1,4 +1,4 @@
-﻿using Ofqual.Common.RegisterFrontend.Models.APIModels;
+﻿using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 
 namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications

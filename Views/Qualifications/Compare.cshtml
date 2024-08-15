@@ -23,931 +23,926 @@
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break">
 
-    </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <h2 class="govuk-heading-s ofq-comparison-title" id="@left.QualificationNumber">@left.Title</h2>
 
-
-    <div class="govuk-grid-column-one-half">
-
-        <h2 class="govuk-heading-s ofq-comparison-title" id="@left.QualificationNumber">@left.Title</h2>
-
-        <a href="compare/change?current=@left.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-            Change qualification
-        </a>
-        @if (Model.Differing.Any())
-        {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="differences1">Differing information</h3>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        @foreach (var item in Model.Differing)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    @item.Key
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @if (item.Key == "Specification" && item.Value[0] != "-")
-                                    {
-                                        <a href="@Html.Raw(@item.Value[0])">View this qualification's specification</a>
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw(@item.Value[0])
-                                    }
-                                </dd>
-                            </div>
-                        }
-                    </dl>
-                </div>
+                <a href="compare/change?current=@left.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Change qualification
+                </a>
             </div>
+            <div class="govuk-grid-column-one-half">
 
-        }
+                <h2 class="govuk-heading-s ofq-comparison-title" id="@right.QualificationNumber">@right.Title</h2>
 
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="quals-summary1">Qualification summary</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-
-                    @if (left.Type != null || right.Type != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualification type
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.Type.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (left.Level != null || right.Level != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualification level
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.Level.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Qualification number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @left.QualificationNumber
-                        </dd>
-                    </div>
-                    @if (left.GLH != null || right.GLH != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Guided learning hours
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    if (left.GLH != null)
-                                    {
-                                        <text>
-                                            @left.GLH
-                                        </text>
-                                    }
-                                    else
-                                    {
-                                        <text>
-                                            -
-                                        </text>
-                                    }
-
-                                    if (left.MinimumGLH != null)
-                                    {
-                                        <text>
-                                            (@left.MinimumGLH min,
-                                        </text>
-                                    }
-
-                                    if (left.MaximumGLH != null)
-                                    {
-                                        <text>
-                                            @left.MinimumGLH max)
-                                        </text>
-                                    }
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.TQT != null || right.TQT != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Total qualification time
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (left.TQT != null)
-                                {
-                                    @left.TQT
-                                }
-                                else
-                                {
-                                    <text>
-                                        -
-                                    </text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.AssessmentMethods != null || right.AssessmentMethods != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Assessment methods
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (left.AssessmentMethods != null)
-                                {
-                                    @Html.Raw(string.Join("<br />", left.AssessmentMethods))
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.LinkToSpecification != null || right.LinkToSpecification != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Specification
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (left.LinkToSpecification != null)
-                                {
-                                    <a href="@left.LinkToSpecification">View this qualification's specification</a>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.SSA != null || right.SSA != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Sector subject area
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.SSA.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (left.GradingScale != null || right.GradingScale != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Grading scale
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.GradingScale.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (left.ApprenticeshipStandardTitle != null || right.ApprenticeshipStandardTitle != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                End-point assessment standard
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    var endpt = $"{left.ApprenticeshipStandardTitle.GetCompareValue()} ({left.ApprenticeshipStandardReferenceNumber})";
-                                    <text>
-                                        @endpt
-                                    </text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                </dl>
+                <a href="Compare/Change?current=@right.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                    Change qualification
+                </a>
             </div>
         </div>
 
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="org1">Organisation</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Awarding organisation
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <a href="Organisations/@left.OrganisationRecognitionNumber">@left.OrganisationName</a>
-                        </dd>
+        @if (Model.Differing.Any())
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="differences1">Differing information</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                @foreach (var item in Model.Differing)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            @item.Key
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (item.Key == "Specification" && item.Value[0] != "-")
+                                            {
+                                                <a href="@Html.Raw(@item.Value[0])">View this qualification's specification</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(@item.Value[0])
+                                            }
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
                     </div>
-                </dl>
+                </div>
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="differences2">Differing information</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                @foreach (var item in Model.Differing)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            @item.Key
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @if (item.Key == "Specification" && item.Value[1] != "-")
+                                            {
+                                                <a href="@Html.Raw(@item.Value[0])">View this qualification's specification</a>
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(@item.Value[1])
+                                            }
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="quals-summary1">Qualification summary</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+
+                            @if (left.Type != null || right.Type != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Qualification type
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.Type.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.Level != null || right.Level != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Qualification level
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.Level.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Qualification number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @left.QualificationNumber
+                                </dd>
+                            </div>
+                            @if (left.GLH != null || right.GLH != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Guided learning hours
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            if (left.GLH != null)
+                                            {
+                                                <text>
+                                                    @left.GLH
+                                                </text>
+                                            }
+                                            else
+                                            {
+                                                <text>
+                                                    -
+                                                </text>
+                                            }
+
+                                            if (left.MinimumGLH != null)
+                                            {
+                                                <text>
+                                                    (@left.MinimumGLH min,
+                                                </text>
+                                            }
+
+                                            if (left.MaximumGLH != null)
+                                            {
+                                                <text>
+                                                    @left.MinimumGLH max)
+                                                </text>
+                                            }
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.TQT != null || right.TQT != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Total qualification time
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (left.TQT != null)
+                                        {
+                                            @left.TQT
+                                        }
+                                        else
+                                        {
+                                            <text>
+                                                -
+                                            </text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.AssessmentMethods != null || right.AssessmentMethods != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Assessment methods
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (left.AssessmentMethods != null)
+                                        {
+                                            @Html.Raw(string.Join("<br />", left.AssessmentMethods))
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.LinkToSpecification != null || right.LinkToSpecification != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Specification
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (left.LinkToSpecification != null)
+                                        {
+                                            <a href="@left.LinkToSpecification">View this qualification's specification</a>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.SSA != null || right.SSA != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Sector subject area
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.SSA.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.GradingScale != null || right.GradingScale != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Grading scale
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.GradingScale.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.ApprenticeshipStandardTitle != null || right.ApprenticeshipStandardTitle != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        End-point assessment standard
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            var endpt = $"{left.ApprenticeshipStandardTitle.GetCompareValue()} ({left.ApprenticeshipStandardReferenceNumber})";
+                                            <text>
+                                                @endpt
+                                            </text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="quals-summary2">Qualification summary</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+
+                            @if (right.Type != null || left.Type != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Qualification type
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.Type.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.Level != null || left.Level != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Qualification level
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.Level.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Qualification number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @right.QualificationNumber
+                                </dd>
+                            </div>
+                            @if (right.GLH != null || left.GLH != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Guided learning hours
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            if (right.GLH != null)
+                                            {
+                                                <text>
+                                                    @right.GLH
+                                                </text>
+                                            }
+                                            else
+                                            {
+                                                <text>
+                                                    -
+                                                </text>
+                                            }
+
+                                            if (right.MinimumGLH != null)
+                                            {
+                                                <text>
+                                                    (@right.MinimumGLH min,
+                                                </text>
+                                            }
+
+                                            if (right.MaximumGLH != null)
+                                            {
+                                                <text>
+                                                    @right.MinimumGLH max)
+                                                </text>
+                                            }
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.TQT != null || left.TQT != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Total qualification time
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (right.TQT != null)
+                                        {
+                                            @right.TQT
+                                        }
+                                        else
+                                        {
+                                            <text>
+                                                -
+                                            </text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.AssessmentMethods != null || left.AssessmentMethods != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Assessment methods
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (right.AssessmentMethods != null)
+                                        {
+                                            @Html.Raw(string.Join("<br />", right.AssessmentMethods))
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.LinkToSpecification != null || left.LinkToSpecification != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Specification
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (right.LinkToSpecification != null)
+                                        {
+                                            <a href="@right.LinkToSpecification">View this qualification's specification</a>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.SSA != null || left.SSA != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Sector subject area
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.SSA.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.GradingScale != null || left.GradingScale != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Grading scale
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.GradingScale.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.ApprenticeshipStandardTitle != null || left.ApprenticeshipStandardTitle != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        End-point assessment standard
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            var endpt = $"{right.ApprenticeshipStandardTitle.GetCompareValue()} ({right.ApprenticeshipStandardReferenceNumber})";
+                                            <text>
+                                                @endpt
+                                            </text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="org1">Organisation</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Awarding organisation
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="Organisations/@left.OrganisationRecognitionNumber">@left.OrganisationName</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="org2">Organisation</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Awarding organisation
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="Organisations/@right.OrganisationRecognitionNumber">@right.OrganisationName</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
         @if (left.GradingType != null || right.GradingType != null || left.Specialism != null || right.Specialism != null)
         {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="details1">Further details</h3>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="details1">Further details</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                @if (left.GradingType != null || right.GradingType != null)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Grading type
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @left.GradingType.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                                @if (left.Specialism != null || right.Specialism != null)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Specialisms
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @left.Specialism.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        @if (left.GradingType != null || right.GradingType != null)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Grading type
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @left.GradingType.GetCompareValue()
-                                </dd>
-                            </div>
-                        }
-                        @if (left.Specialism != null || right.Specialism != null)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Specialisms
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @left.Specialism.GetCompareValue()
-                                </dd>
-                            </div>
-                        }
-                    </dl>
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="details2">Further details</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+                                @if (right.GradingType != null || left.GradingType != null)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Grading type
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @right.GradingType.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                                @if (right.Specialism != null || left.Specialism != null)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Specialisms
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @right.Specialism.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
-
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="funding1">Funding</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Funding in England
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <a href="https://www.qualifications.education.gov.uk/Search?Num=@left.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
-                        </dd>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="funding1">Funding</h3>
                     </div>
-                </dl>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Funding in England
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="https://www.qualifications.education.gov.uk/Search?Num=@left.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="funding2">Funding</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Funding in England
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a href="https://www.qualifications.education.gov.uk/Search?Num=@right.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="avail1">Availability</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    @if (left.Status != null || right.Status != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Status
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.Status.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            National availability
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if ((left.OfferedInEngland ?? false) || (left.OfferedInNorthernIreland ?? false) || (left.OfferedInternationally ?? false))
-                            {
-                                if (left.OfferedInEngland ?? false)
-                                {
-                                    <text>
-                                        England
-                                    </text>
-                                }
-                                if (left.OfferedInNorthernIreland ?? false)
-                                {
-                                    <text>
-                                        Northern Ireland
-                                    </text>
-                                }
-                                if (left.OfferedInternationally ?? false)
-                                {
-                                    <text>
-                                        International
-                                    </text>
-                                }
-                            }
-                        </dd>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="avail1">Availability</h3>
                     </div>
-                </dl>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            @if (left.Status != null || right.Status != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Status
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.Status.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    National availability
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if ((left.OfferedInEngland ?? false) || (left.OfferedInNorthernIreland ?? false) || (left.OfferedInternationally ?? false))
+                                    {
+                                        @Html.Raw(Utilities.FormatNationalAvailability(left.OfferedInEngland, left.OfferedInNorthernIreland, left.OfferedInternationally))
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="avail2">Availability</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            @if (right.Status != null || left.Status != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Status
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.Status.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    National availability
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if ((right.OfferedInEngland ?? false) || (right.OfferedInNorthernIreland ?? false) || (right.OfferedInternationally ?? false))
+                                    {
+                                        @Html.Raw(Utilities.FormatNationalAvailability(right.OfferedInEngland, right.OfferedInNorthernIreland, right.OfferedInternationally))
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
             </div>
         </div>
         @if (left.OfferedInNorthernIreland != null || right.OfferedInNorthernIreland != null)
         {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="northern-ireland1">Northern Ireland</h3>
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="northern-ireland1">Northern Ireland</h3>
+                        </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
+
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Available in Northern Ireland
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            if (left.OfferedInNorthernIreland ?? false)
+                                            {
+                                                <text>Yes</text>
+                                            }
+                                            else
+                                            {
+                                                <text>No</text>
+                                            }
+                                        }
+                                    </dd>
+                                </div>
+
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Approved for school use in Northern Ireland
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is approved for use in schools in Northern Ireland on the Department of Education website</a>
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Available in Northern Ireland
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    if (left.OfferedInNorthernIreland ?? false)
-                                    {
-                                        <text>Yes</text>
-                                    }
-                                    else
-                                    {
-                                        <text>No</text>
-                                    }
-                                }
-                            </dd>
+                <div class="govuk-grid-column-one-half">
+                    <div class="govuk-summary-card">
+                        <div class="govuk-summary-card__title-wrapper">
+                            <h3 class="govuk-summary-card__title" id="northern-ireland2">Northern Ireland</h3>
                         </div>
+                        <div class="govuk-summary-card__content">
+                            <dl class="govuk-summary-list">
 
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Funded in Northern Ireland
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is funded in Northern Ireland</a>
-                            </dd>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Available in Northern Ireland
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @{
+                                            if (right.OfferedInNorthernIreland ?? false)
+                                            {
+                                                <text>Yes</text>
+                                            }
+                                            else
+                                            {
+                                                <text>No</text>
+                                            }
+                                        }
+                                    </dd>
+                                </div>
+
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Approved for school use in Northern Ireland
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is approved for use in schools in Northern Ireland on the Department of Education website</a>
+                                    </dd>
+                                </div>
+                            </dl>
                         </div>
-                    </dl>
+                    </div>
                 </div>
             </div>
         }
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="additional1">Additional information</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Regulation start date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@left.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@left.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
-                        </dd>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="additional1">Additional information</h3>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Operational start date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@left.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@left.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
-                        </dd>
-                    </div>
-                    @if (left.OperationalEndDate != null || right.OperationalEndDate != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Operational end date
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (left.OperationalEndDate != null)
-                                {
-                                    <time datetime="@left.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @left.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
-                                    </time>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.CertificationEndDate != null || right.CertificationEndDate != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Certification end date
-                            </dt><dd class="govuk-summary-list__value">
-                                @if (left.CertificationEndDate != null)
-                                {
-                                    <time datetime="@left.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @left.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
-                                    </time>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (left.EQFLevel != null || right.EQFLevel != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                European qualification level
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.EQFLevel.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (left.Pathways != null || right.Pathways != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Optional routes
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @left.Pathways.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                </dl>
-            </div>
-        </div>
-    </div>
-
-    <div class="govuk-grid-column-one-half">
-
-        <h2 class="govuk-heading-s ofq-comparison-title" id="@right.QualificationNumber">@right.Title</h2>
-
-        <a href="Compare/Change?current=@right.QualificationNumber&selected=@string.Join(",",Model.SelectedQuals)&unselected=@string.Join(",",Model.UnselectedQuals)" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-            Change qualification
-        </a>
-
-        @if (Model.Differing.Any())
-        {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="differences2">Differing information</h3>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        @foreach (var item in Model.Differing)
-                        {
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    @item.Key
+                                    Regulation start date
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @if (item.Key == "Specification" && item.Value[1] != "-")
-                                    {
-                                        <a href="@Html.Raw(@item.Value[0])">View this qualification's specification</a>
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw(@item.Value[1])
-                                    }
+                                    <time datetime="@left.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@left.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                                 </dd>
                             </div>
-                        }
-                    </dl>
-                </div>
-            </div>
-        }
-
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="quals-summary2">Qualification summary</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-
-                    @if (right.Type != null || left.Type != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualification type
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.Type.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (right.Level != null || left.Level != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualification level
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.Level.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Qualification number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @right.QualificationNumber
-                        </dd>
-                    </div>
-                    @if (right.GLH != null || left.GLH != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Guided learning hours
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    if (right.GLH != null)
-                                    {
-                                        <text>
-                                            @right.GLH
-                                        </text>
-                                    }
-                                    else
-                                    {
-                                        <text>
-                                            -
-                                        </text>
-                                    }
-
-                                    if (right.MinimumGLH != null)
-                                    {
-                                        <text>
-                                            (@right.MinimumGLH min,
-                                        </text>
-                                    }
-
-                                    if (right.MaximumGLH != null)
-                                    {
-                                        <text>
-                                            @right.MinimumGLH max)
-                                        </text>
-                                    }
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.TQT != null || left.TQT != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Total qualification time
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (right.TQT != null)
-                                {
-                                    @right.TQT
-                                }
-                                else
-                                {
-                                    <text>
-                                        -
-                                    </text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.AssessmentMethods != null || left.AssessmentMethods != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Assessment methods
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (right.AssessmentMethods != null)
-                                {
-                                    @Html.Raw(string.Join("<br />", right.AssessmentMethods))
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.LinkToSpecification != null || left.LinkToSpecification != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Specification
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (right.LinkToSpecification != null)
-                                {
-                                    <a href="@right.LinkToSpecification">View this qualification's specification</a>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.SSA != null || left.SSA != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Sector subject area
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.SSA.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (right.GradingScale != null || left.GradingScale != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Grading scale
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.GradingScale.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (right.ApprenticeshipStandardTitle != null || left.ApprenticeshipStandardTitle != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                End-point assessment standard
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    var endpt = $"{right.ApprenticeshipStandardTitle.GetCompareValue()} ({right.ApprenticeshipStandardReferenceNumber})";
-                                    <text>
-                                        @endpt
-                                    </text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                </dl>
-            </div>
-        </div>
-
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="org2">Organisation</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Awarding organisation
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <a href="Organisations/@right.OrganisationRecognitionNumber">@right.OrganisationName</a>
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
-        @if (left.GradingType != null || right.GradingType != null || left.Specialism != null || right.Specialism != null)
-        {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="details2">Further details</h3>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        @if (right.GradingType != null || left.GradingType != null)
-                        {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    Grading type
+                                    Operational start date
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @right.GradingType.GetCompareValue()
+                                    <time datetime="@left.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@left.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
                                 </dd>
                             </div>
-                        }
-                        @if (right.Specialism != null || left.Specialism != null)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Specialisms
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @right.Specialism.GetCompareValue()
-                                </dd>
-                            </div>
-                        }
-                    </dl>
-                </div>
-            </div>
-        }
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="funding2">Funding</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Funding in England
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <a href="https://www.qualifications.education.gov.uk/Search?Num=@right.QualificationNumberNoObliques">Check if this qualification is funded in England</a>
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
-
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="avail2">Availability</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    @if (right.Status != null || left.Status != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Status
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.Status.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            National availability
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if ((right.OfferedInEngland ?? false) || (right.OfferedInNorthernIreland ?? false) || (right.OfferedInternationally ?? false))
+                            @if (left.OperationalEndDate != null || right.OperationalEndDate != null)
                             {
-                                if (right.OfferedInEngland ?? false)
-                                {
-                                    <text>
-                                        England
-                                    </text>
-                                }
-                                if (right.OfferedInNorthernIreland ?? false)
-                                {
-                                    <text>
-                                        Northern Ireland
-                                    </text>
-                                }
-                                if (right.OfferedInternationally ?? false)
-                                {
-                                    <text>
-                                        International
-                                    </text>
-                                }
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Operational end date
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (left.OperationalEndDate != null)
+                                        {
+                                            <time datetime="@left.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
+                                                @left.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
                             }
-                        </dd>
+                            @if (left.CertificationEndDate != null || right.CertificationEndDate != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Certification end date
+                                    </dt><dd class="govuk-summary-list__value">
+                                        @if (left.CertificationEndDate != null)
+                                        {
+                                            <time datetime="@left.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
+                                                @left.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.EQFLevel != null || right.EQFLevel != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        European qualification level
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.EQFLevel.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (left.Pathways != null || right.Pathways != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Optional routes
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @left.Pathways.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                        </dl>
                     </div>
-                </dl>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h3 class="govuk-summary-card__title" id="additional2">Additional information</h3>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Regulation start date
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <time datetime="@right.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@right.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Operational start date
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <time datetime="@right.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@right.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
+                                </dd>
+                            </div>
+                            @if (right.OperationalEndDate != null || left.OperationalEndDate != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Operational end date
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (right.OperationalEndDate != null)
+                                        {
+                                            <time datetime="@right.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
+                                                @right.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.CertificationEndDate != null || left.CertificationEndDate != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Certification end date
+                                    </dt><dd class="govuk-summary-list__value">
+                                        @if (right.CertificationEndDate != null)
+                                        {
+                                            <time datetime="@right.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
+                                                @right.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.EQFLevel != null || left.EQFLevel != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        European qualification level
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.EQFLevel.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                            @if (right.Pathways != null || left.Pathways != null)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Optional routes
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @right.Pathways.GetCompareValue()
+                                    </dd>
+                                </div>
+                            }
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
 
-        @if (right.OfferedInNorthernIreland != null || left.OfferedInNorthernIreland != null)
-        {
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h3 class="govuk-summary-card__title" id="northern-ireland2">Northern Ireland</h3>
-                </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Available in Northern Ireland
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    if (right.OfferedInNorthernIreland ?? false)
-                                    {
-                                        <text>Yes</text>
-                                    }
-                                    else
-                                    {
-                                        <text>No</text>
-                                    }
-                                }
-                            </dd>
-                        </div>
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Funded in Northern Ireland
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <a href="https://www.education-ni.gov.uk/articles/qualifications#toc-main-skip">Check if this qualification is funded in Northern Ireland</a>
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-        }
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h3 class="govuk-summary-card__title" id="additional2">Additional information</h3>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Regulation start date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@right.RegulationStartDate.ToString("yyyy-MM-dd")" lang="en">@right.RegulationStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Operational start date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <time datetime="@right.OperationalStartDate.ToString("yyyy-MM-dd")" lang="en">@right.OperationalStartDate.ToString("dd MMMM yyyy").StripLeadingZeros()</time>
-                        </dd>
-                    </div>
-                    @if (right.OperationalEndDate != null || left.OperationalEndDate != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Operational end date
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (right.OperationalEndDate != null)
-                                {
-                                    <time datetime="@right.OperationalEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @right.OperationalEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
-                                    </time>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.CertificationEndDate != null || left.CertificationEndDate != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Certification end date
-                            </dt><dd class="govuk-summary-list__value">
-                                @if (right.CertificationEndDate != null)
-                                {
-                                    <time datetime="@right.CertificationEndDate?.ToString("yyyy-MM-dd")" lang="en">
-                                        @right.CertificationEndDate?.ToString("dd MMMM yyyy").StripLeadingZeros()
-                                    </time>
-                                }
-                                else
-                                {
-                                    <text>-</text>
-                                }
-                            </dd>
-                        </div>
-                    }
-                    @if (right.EQFLevel != null || left.EQFLevel != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                European qualification level
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.EQFLevel.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                    @if (right.Pathways != null || left.Pathways != null)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Optional routes
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @right.Pathways.GetCompareValue()
-                            </dd>
-                        </div>
-                    }
-                </dl>
-            </div>
-        </div>
     </div>
 
 </div>
-
-@section Scripts{
-
-    <script type="text/javascript">
-        
-        
-    </script>
-}

@@ -2,9 +2,9 @@
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
-using Ofqual.Common.RegisterFrontend.RegisterAPI;
+using Ofqual.Common.RegisterFrontend.Models.RefDataModels;
 using static Ofqual.Common.RegisterFrontend.Models.Constants;
 
 namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications

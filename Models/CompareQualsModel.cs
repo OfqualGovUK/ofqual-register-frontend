@@ -1,4 +1,4 @@
-﻿using Ofqual.Common.RegisterFrontend.Models.APIModels;
+﻿using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 
 namespace Ofqual.Common.RegisterFrontend.Models
 {

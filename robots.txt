@@ -1,0 +1,13 @@
+Sitemap: https://ofq-prod-register-frontend.azurewebsites.net/sitemap.xml
+
+User-agent: *
+Disallow: /
+
+User-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10157) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 https://www.mirrorweb.com crawling on behalf of The National Archives UK Government Web Archive: http://www.nationalarchives.gov.uk/webarchive/; webarchive@nationalarchives.gov.uk
+Allow: /
+
+User-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 - The National Archives UK Government Web Archive: http://www.nationalarchives.gov.uk/webarchive/; webarchive@nationalarchives.gov.uk
+Allow: /
+
+User-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36 The National Archives UK Government Web Archive webarchive@nationalarchives.gov.uk
+Allow: /

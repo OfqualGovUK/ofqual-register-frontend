@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.RefDataModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using static Ofqual.Common.RegisterFrontend.Models.Constants;

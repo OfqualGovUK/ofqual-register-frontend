@@ -1,4 +1,6 @@
-using Microsoft.Net.Http.Headers;
+using Azure.Identity;
+using Microsoft.Extensions.Azure;
+using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
@@ -23,7 +25,14 @@ builder.Services.AddRefitClient<IRefDataAPIClient>().ConfigureHttpClient(httpCli
 
 });
 
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(new Uri(builder.Configuration["StorageContainerUrl"]!));
+    clientBuilder.UseCredential(new DefaultAzureCredential());
+});
+
 builder.Services.AddSingleton<IRefDataCache, RefDataCache>();
+builder.Services.AddSingleton<IBlobService, BlobService>();
 
 //usecases
 builder.Services.AddScoped<IQualificationsUseCases, QualificationsUseCases>();
@@ -49,26 +58,44 @@ app.Use(async (ctx, next) =>
 {
     await next();
 
-    if (ctx.Response.StatusCode == 404 && !ctx.Response.HasStarted)
+    if (ctx.Response.StatusCode != 200 && !ctx.Response.HasStarted)
     {
         //Re-execute the request so the user gets the error page
         string originalPath = ctx.Request.Path.Value;
         ctx.Items["originalPath"] = originalPath;
-        ctx.Request.Path = "/error/404";
-        await next();
-    }
-
-    if (ctx.Response.StatusCode == 400 && !ctx.Response.HasStarted)
-    {
-        //Re-execute the request so the user gets the error page
-        string originalPath = ctx.Request.Path.Value;
-        ctx.Items["originalPath"] = originalPath;
-        ctx.Request.Path = "/error/500";
+        ctx.Request.Path = $"/error/{ctx.Response.StatusCode}";
         await next();
     }
 });
 
 app.UseStatusCodePagesWithRedirects("/error/{0}");
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/robots.txt"))
+    {
+        var robotsTxtPath = Path.Combine(app.Environment.ContentRootPath, "robots.txt");
+        string output = "User-agent: *  \nDisallow: /";
+        if (File.Exists(robotsTxtPath))
+        {
+            output = await File.ReadAllTextAsync(robotsTxtPath);
+        }
+        context.Response.ContentType = "text/plain";
+        await context.Response.WriteAsync(output);
+    }
+    else if (context.Request.Path.StartsWithSegments("/sitemap.xml"))
+    {
+        var robotsTxtPath = Path.Combine(app.Environment.ContentRootPath, "sitemap.xml");
+        string output = "User-agent: *  \nDisallow: /";
+        if (File.Exists(robotsTxtPath))
+        {
+            output = await File.ReadAllTextAsync(robotsTxtPath);
+        }
+        context.Response.ContentType = "application/xml";
+        await context.Response.WriteAsync(output);
+    }
+    else await next();
+});
 
 app.UseHttpsRedirection();
 
@@ -85,5 +112,6 @@ app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

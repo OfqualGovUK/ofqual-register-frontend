@@ -230,7 +230,7 @@
                             @foreach (var item in appliedFilters.AssessmentMethods)
                             {
                                 <li>
-                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="assessmentMethods-@item..Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
+                                    <a class="app-filter__tag removeFilter jsonly" data-checkbox="assessmentMethods-@item.Hiphenate()" href="#!"><span class="govuk-visually-hidden">Remove this filter</span> @item</a>
                                     <noscript>
                                         <label class="govuk-body">@item</label>
                                     </noscript>
@@ -845,8 +845,8 @@
                             <header class="app-application-card__header">
                                 <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
                                     <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="qualification-@item.QualificationNumber" name="qualificationNumbers" type="checkbox" value="@item.QualificationNumber">
-                                        <label class="govuk-label govuk-checkboxes__label" for="qualification-@item.QualificationNumber">
+                                        <input class="govuk-checkboxes__input" id="qualification-@item.QualificationNumberNoObliques" name="qualificationNumbers" type="checkbox" value="@item.QualificationNumberNoObliques">
+                                        <label class="govuk-label govuk-checkboxes__label" for="qualification-@item.QualificationNumberNoObliques">
                                             @item.Title
                                         </label>
                                     </div>
@@ -857,7 +857,7 @@
                                 <div class="govuk-grid-column-two-thirds">
                                     <dl class="app-application-card__list">
                                         <dt class="govuk-body-m">
-                                            <a href="qualifications/@item.QualificationNumber">View qualification details</a>
+                                            <a href="/qualifications/@item.QualificationNumberNoObliques">View qualification details</a>
                                         </dt>
                                         <dt class="govuk-visually-hidden">Availability</dt>
                                         @switch (item.Status?.ToLower())

@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.Extensions;
 using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+using Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV;
+using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 using Ofqual.Common.RegisterFrontend.Models.SearchViewModels;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
@@ -90,7 +91,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             #endregion
 
-            var pagingURL = $"qualifications?page=||_page_||";
+            var pagingURL = $"/qualifications?page=||_page_||";
 
             var pagedFilters = _qualificationsUseCases.CreatePagedFilters(title, availability, qualificationTypes, qualificationLevels, awardingOrganisations, sectorSubjectAreas, gradingTypes, assessmentMethods, nationalAvailability, minTotalQualificationTime, maxTotalQualificationTime, minGuidedLearninghours, maxGuidedLearninghours);
 
@@ -114,7 +115,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
             #endregion
 
@@ -129,7 +130,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
 
             #endregion
@@ -201,7 +202,22 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
+            }
+        }
+
+        [HttpGet]
+        [Route("qualifications/{number1}")]
+        public async Task<IActionResult> QualificationNoObliques(string number1)
+        {
+            try
+            {
+                var qual = await _registerAPIClient.GetQualificationAsync(number1);
+                return View("Qualification", qual);
+            }
+            catch (ApiException ex)
+            {
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -209,45 +225,36 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         [Route("qualifications/download-CSV")]
         public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
-            title = string.IsNullOrEmpty(title) ? "" : "_" + title;
+            var titleName = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
-            string fileName = $"Qualifications{title}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+            string fileName = $"Qualifications{titleName}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
             byte[] fileBytes = [];
             try
             {
 
-                APIResponseList<QualificationListViewModel> quals;
+                APIResponseList<QualificationCSV> quals;
 
                 try
                 {
-                    quals = await _registerAPIClient.GetQualificationsListAsync(title, page:1, limit:0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
                 }
                 catch (ApiException ex)
                 {
-                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                    return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                 }
-
-                //var quals = selectedQuals != null ? selectedQuals.Split(',') : QualificationNumbers;
-
-                var qualsDetails = quals.Results;
-
-                //foreach (var item in quals)
-                //{
-                //    qualsDetails.Add(await _registerAPIClient.GetQualificationAsync(item));
-                //}
 
                 using var memoryStream = new MemoryStream();
                 using (var streamWriter = new StreamWriter(memoryStream))
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
-                    csvWriter.WriteRecords(qualsDetails);
+                    csvWriter.WriteRecords(quals.Results);
                 }
 
                 return File(memoryStream.ToArray(), "text/csv", fileName);
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
         }
 
@@ -261,13 +268,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             var compareArr = selectedQuals != null ? selectedQuals.Split(',') : qualificationNumbers;
 
-            ////if the form submit was for CSV download
-            //if (compareArr != null && Request.Query["CSV"].Count != 0)
-            //{
-            //    TempData["CSVError"] = true;
-            //    return compareArr.Length < 1 ? Redirect(Request.Headers.Referer) : RedirectToAction(nameof(DownloadCSV), new { csvTitle, selectedQuals, qualificationNumbers });
-            //}
-
             // less than 2 quals are selected (for no JS where user can select one qual and hit compare / download CSV)
             // go back to the search results page and show an error
             if (compareArr == null || compareArr.Length < 2)
@@ -275,7 +275,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 TempData["CompareError"] = true;
                 return Redirect(Request.Headers.Referer);
             }
-
 
             if (compareArr.Length >= 2)
             {
@@ -327,7 +326,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             }
             catch (ApiException ex)
             {
-                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
             }
 
             return View(model);
@@ -364,7 +363,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     }
                     catch (ApiException ex)
                     {
-                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode(500);
+                        return ex.StatusCode == HttpStatusCode.NotFound ? NotFound() : StatusCode((int)ex.StatusCode);
                     }
                 }
             }
@@ -399,7 +398,6 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             return RedirectToAction(nameof(Compare), new { selected, unselected });
         }
         #endregion
-
 
     }
 }

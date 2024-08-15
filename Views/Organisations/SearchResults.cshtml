@@ -44,12 +44,12 @@
                 {
                     <li class="results-list-item">
                         <p class="govuk-body-!-margin-top-2">
-                            <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="organisations/@item.RecognitionNumber">@item.Name</a><br>
+                            <a class="govuk-link govuk-link--no-underline govuk-body govuk-!-font-weight-bold" href="/organisations/@item.RecognitionNumber">@item.Name</a><br>
                             <span class="govuk-body-s">@item.Acronym</span>
                         </p>
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">Ofqual status: </div>
-                            <div class="govuk-grid-column-one-half">
+                            <div class="ofq-grid-column-35pc">Ofqual status: </div>
+                            <div class="govuk-grid-column-one-third">
                                 @switch (item.OfqualOrganisationStatus?.ToLower())
                                 {
                                     case "surrendered":
@@ -78,8 +78,8 @@
                             </div>
                         </div>
                         <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-one-quarter">CCEA status: </div>
-                            <div class="govuk-grid-column-one-half">
+                            <div class="ofq-grid-column-35pc">CCEA Regulation status: </div>
+                            <div class="govuk-grid-column-one-third">
                                 @switch (item.CceaOrganisationStatus?.ToLower())
                                 {
                                     case "surrendered":

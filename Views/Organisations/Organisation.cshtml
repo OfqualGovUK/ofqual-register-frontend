@@ -1,4 +1,4 @@
-﻿@using Ofqual.Common.RegisterFrontend.Models.APIModels;
+﻿@using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 @using Ofqual.Common.RegisterFrontend.Extensions;
 @model Organisation
 @{
@@ -21,7 +21,7 @@
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">Contact details</h2></div>
 
-                <div class="govuk-summary-card__content">``
+                <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
                         @if (Model.ContactEmail.IsNotNull())
                         {
@@ -140,12 +140,11 @@
         </div>
 
         <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-summary-card__title">CCEA recognition</h2></div>
-
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">CCEA Regulation recognition</h2>
+                </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
-
-
                     @if (Model.CceaOrganisationStatus.IsNotNull())
                     {
                         <div class="govuk-summary-list__row">
@@ -182,8 +181,6 @@
 
                         </div>
                     }
-
-
                     @if (Model.CceaRecognisedOn != null)
                     {
                         <div class="govuk-summary-list__row">

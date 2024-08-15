@@ -41,3 +41,10 @@ ul.ofq-tree {
     margin-left: calc(var(--radius) - var(--spacing));
     padding-left: 0;
 }
+
+.ofq-grid-column-35pc {
+    box-sizing: border-box;
+    padding: 0 15px;
+    width: 35%;
+    float: left;
+}

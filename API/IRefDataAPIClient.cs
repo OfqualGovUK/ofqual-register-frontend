@@ -1,5 +1,4 @@
-﻿using Ofqual.Common.RegisterFrontend.Models;
-using Ofqual.Common.RegisterFrontend.Models.APIModels;
+﻿using Ofqual.Common.RegisterFrontend.Models.RefDataModels;
 using Refit;
 using System.Net;
 
