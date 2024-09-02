@@ -15,6 +15,7 @@
         public const string END_POINT_ASSESSMENT_STD = "End-point assessment standard";
         public const string AWARDING_ORG = "Awarding Organisation";
         public const string GRADING_TYPE = "Grading type";
+        public const string TOTAL_CREDITS = "Total credits";
         public const string SPECIALISMS = "Specialisms";
         public const string STATUS = "Status";
         public const string ENGLAND = "England";
