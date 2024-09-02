@@ -164,13 +164,22 @@
                                 @Model.GradingType
                             </dd>
                         </div>
-                    </dl>
-                </div>
-
+                    
+                
+                @if (Model.TotalCredits.HasValue && Model.TotalCredits.Value > 0)
+                {
+                    <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Total credits
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.TotalCredits
+                                </dd>
+                            </div>
+                }
                 @if (Model.Specialism.IsNotNull())
                 {
-                    <div class="govuk-summary-card__content">
-                        <dl class="govuk-summary-list">
+                    
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Specialisms
@@ -179,10 +188,9 @@
                                     @Model.Specialism
                                 </dd>
                             </div>
-                        </dl>
-                    </div>
                 }
-
+                    </dl>
+                </div>
             </div>
         }
         <div class="govuk-summary-card" id="funding-details">

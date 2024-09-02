@@ -496,7 +496,7 @@
                 </div>
             </div>
         </div>
-        @if (left.GradingType != null || right.GradingType != null || left.Specialism != null || right.Specialism != null)
+        @if (left.GradingType != null || right.GradingType != null || left.Specialism != null || right.Specialism != null || left.TotalCredits.HasValue || right.TotalCredits.HasValue)
         {
 
             <div class="govuk-grid-row">
@@ -515,6 +515,17 @@
                                         </dt>
                                         <dd class="govuk-summary-list__value">
                                             @left.GradingType.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                                @if (left.TotalCredits.HasValue && left.TotalCredits.Value > 0 || right.TotalCredits.HasValue && right.TotalCredits.Value > 0)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Total credits
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @left.TotalCredits
                                         </dd>
                                     </div>
                                 }
@@ -549,6 +560,17 @@
                                         </dt>
                                         <dd class="govuk-summary-list__value">
                                             @right.GradingType.GetCompareValue()
+                                        </dd>
+                                    </div>
+                                }
+                                @if (left.TotalCredits.HasValue && left.TotalCredits.Value > 0 || right.TotalCredits.HasValue && right.TotalCredits.Value > 0)
+                                {
+                                    <div class="govuk-summary-list__row">
+                                        <dt class="govuk-summary-list__key">
+                                            Total credits
+                                        </dt>
+                                        <dd class="govuk-summary-list__value">
+                                            @right.TotalCredits
                                         </dd>
                                     </div>
                                 }
