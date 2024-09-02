@@ -38,6 +38,7 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
             DiffValues($"{left.ApprenticeshipStandardTitle} ({left.ApprenticeshipStandardReferenceNumber})", $"{right.ApprenticeshipStandardTitle} ({right.ApprenticeshipStandardReferenceNumber})", END_POINT_ASSESSMENT_STD, ref differing);
             DiffValues(left.OrganisationName, right.OrganisationName, AWARDING_ORG, ref differing);
             DiffValues(left.GradingType, right.GradingType, GRADING_TYPE, ref differing);
+            DiffValues(left.TotalCredits.ToString(), right.TotalCredits.ToString(), TOTAL_CREDITS, ref differing);
             DiffValues(left.Specialism, right.Specialism, SPECIALISMS, ref differing);
             DiffValues(left.Status, right.Status, STATUS, ref differing);
 
