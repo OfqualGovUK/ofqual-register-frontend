@@ -53,6 +53,7 @@ namespace Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV
         public string? GradingType { get; set; }
         [Ignore]
         public string[]? AssessmentMethods { get; set; }
+        [Name("Assessment Methods")]
         public string? AssessmentMethodsStringified => AssessmentMethods != null ? string.Join(", ", AssessmentMethods) : "";
         [Name("NI Discount Code")]
         public string? NIDiscountCode { get; set; }
