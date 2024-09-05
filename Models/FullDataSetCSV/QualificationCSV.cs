@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration.Attributes;
+using Ofqual.Common.RegisterFrontend.Extensions;
 
 namespace Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV
 {
@@ -50,8 +51,10 @@ namespace Ofqual.Common.RegisterFrontend.Models.FullDataSetCSV
         public bool? OfferedInNorthernIreland { get; set; }
         [Name("Overall Grading Type")]
         public string? GradingType { get; set; }
+        [Ignore]
+        public string[]? AssessmentMethods { get; set; }
         [Name("Assessment Methods")]
-        public string? AssessmentMethods { get; set; }
+        public string? AssessmentMethodsStringified => AssessmentMethods != null ? string.Join(", ", AssessmentMethods) : "";
         [Name("NI Discount Code")]
         public string? NIDiscountCode { get; set; }
         [Name("GCE Size Equivalence")]
