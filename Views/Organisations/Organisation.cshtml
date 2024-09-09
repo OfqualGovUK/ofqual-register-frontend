@@ -243,7 +243,8 @@
             </div>
         </div>
 
-        @if (Model.RecognitionScope != null && (Model.RecognitionScope.Inclusions.Any() || Model.RecognitionScope.Exclusions.Any()))
+        @* Commented due to P1 issue, return when scope is fixed @if (Model.RecognitionScope != null && (Model.RecognitionScope.Inclusions.Any() || Model.RecognitionScope.Exclusions.Any())) *@
+        @if (false)
         {
             <!-- Display scope of recognition -->
             <div class="govuk-summary-card">
