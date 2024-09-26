@@ -149,7 +149,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 {
                     AssessmentMethods = assessmentMethods?.GetSubStrings(),
                     GradingTypes = gradingTypes?.GetSubStrings(),
-                    AwardingOrganisations = awardingOrganisations?.GetSubStrings(),
+                    AwardingOrganisations = awardingOrganisations?.GetSubStrings()?.Select(x => WebUtility.UrlDecode(x)).ToArray(),
                     Availability = availability?.GetSubStrings(),
                     QualificationTypes = qualificationTypes?.GetSubStrings(),
                     QualificationLevels = qualificationLevels?.GetSubStrings(),
@@ -177,7 +177,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 title = searchTitle,
                 assessmentMethods = string.Join(',', assessmentMethods),
                 gradingTypes = string.Join(',', gradingTypes),
-                awardingOrganisations = string.Join(',', awardingOrganisations),
+                awardingOrganisations = string.Join(',', awardingOrganisations.Select(x => WebUtility.UrlEncode(x))),
                 availability = string.Join(',', availability),
                 qualificationTypes = string.Join(',', qualificationTypes),
                 qualificationLevels = string.Join(',', qualificationLevels),
