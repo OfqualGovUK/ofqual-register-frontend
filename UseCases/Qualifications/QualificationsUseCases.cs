@@ -84,7 +84,7 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
             return differing;
         }
 
-        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
             var pagingURL = "";
 
@@ -151,6 +151,20 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
                 url += $"&{paramName.ToURL()}={param.ToURL()}";
             }
         }
+
+        // Helper method to append filter to the paging URL if the filter value is not null or empty
+        void AppendFilterToPaging(ref string url, string paramName, string[]? param)
+        {
+            if (param != null)
+            {
+                foreach (string p in param)
+                {
+                    url += $"&{paramName.ToURL()}={p.ToURL()}";
+
+                }
+            }
+        }
+
 
         // Helper method to compare and add differing fields in the quals compare
         private static void DiffValues(string? left, string? right, string fieldName, ref Dictionary<string, string[]> differing)
