@@ -69,6 +69,11 @@ stages:
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
           displayName: "SonarQube Analysis"
+          inputs:
+            extraProperties: |
+              sonar.log.level=DEBUG
+              sonar.verbose=true
+
 
         # Publish SonarQube results
         - task: SonarQubePublish@5
