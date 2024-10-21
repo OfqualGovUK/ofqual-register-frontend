@@ -55,7 +55,7 @@ stages:
           inputs:
             SonarQube: 'Sonar-integration-register-front-end'
             scannerMode: 'MSBuild'
-            projectKey: 'OfqualGovUK_register_AZENPB-ZGhkdpgSsSJ_N'
+            projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
             projectName: 'register'
 
         # Build the project
