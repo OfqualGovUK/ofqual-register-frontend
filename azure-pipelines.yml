@@ -123,6 +123,37 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
+    # Restore NuGet packages
+    - task: DotNetCoreCLI@2
+      displayName: "Restore task"
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Build"
+      inputs:
+        command: "build"
+        projects: "**/*.csproj"
+        arguments: "--configuration $(BuildConfiguration)"
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish"
+      inputs:
+        command: publish
+        publishWebProjects: True
+        arguments: '--configuration $(BuildConfiguration) --output "$(build.artifactstagingdirectory)/Register-front-end'
+        zipAfterPublish: True
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Artifact"
+      inputs:
+        PathtoPublish: "$(build.artifactstagingdirectory)/Register-front-end"
+        ArtifactName: "Register-front-end"
+        publishLocation: "Container"
+        
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
