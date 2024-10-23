@@ -148,7 +148,7 @@ stages:
         zipAfterPublish: True
 
     - task: PublishBuildArtifacts@1
-      displayName: "Publish Web API Artifact"
+      displayName: "Publish Artifact"
       inputs:
         PathtoPublish: "$(build.artifactstagingdirectory)/Register-front-end"
         ArtifactName: "Register-front-end"
