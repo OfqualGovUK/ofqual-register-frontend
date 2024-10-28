@@ -56,9 +56,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("/qualifications")]
-        public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string[]? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
-        {
-            #region Qual Detail
+        public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
             //redirect to the qualification details if qual number is searched
             if (!string.IsNullOrWhiteSpace(title) && title.Length >= 8)
             {
@@ -150,7 +148,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 {
                     AssessmentMethods = assessmentMethods?.GetSubStrings(),
                     GradingTypes = gradingTypes?.GetSubStrings(),
-                    AwardingOrganisations = awardingOrganisations,
+                    AwardingOrganisations = awardingOrganisations?.GetSubStrings(),
                     Availability = availability?.GetSubStrings(),
                     QualificationTypes = qualificationTypes?.GetSubStrings(),
                     QualificationLevels = qualificationLevels?.GetSubStrings(),
@@ -178,7 +176,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 title = searchTitle,
                 assessmentMethods = string.Join(',', assessmentMethods),
                 gradingTypes = string.Join(',', gradingTypes),
-                awardingOrganisations,
+                awardingOrganisations = string.Join(',', awardingOrganisations),
                 availability = string.Join(',', availability),
                 qualificationTypes = string.Join(',', qualificationTypes),
                 qualificationLevels = string.Join(',', qualificationLevels),
@@ -223,7 +221,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("qualifications/download-CSV")]
-        public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
             var titleName = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
