@@ -166,7 +166,7 @@ stages:
           $(tag)
   - job: Build
     displayName: Build for Production
-    condition: and(startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
+    condition: and(startsWith(variables['build.sourceBranch'], 'refs/heads/releases'))
     pool:
       vmImage: $(vmImageName)
     steps:
