@@ -84,7 +84,13 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
             return differing;
         }
 
-        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        {
+            var pagingURL = "";
+
+            AppendFilterToPaging(ref pagingURL, FILTER_NAME_AVAILABILITY, availability);
+            AppendFilterToPaging(ref pagingURL, FILTER_NAME_QUAL_TYPES, qualificationTypes);
+            AppendFilterToPaging(ref pagingURL, FILTER_NAME_QUAL_LEVELS, qualificationLevels);
             AppendFilterToPaging(ref pagingURL, FILTER_NAME_AWARDING_ORG, awardingOrganisations);
             AppendFilterToPaging(ref pagingURL, FILTER_NAME_SSA, sectorSubjectAreas);
             AppendFilterToPaging(ref pagingURL, FILTER_NAME_GRADING_TYPE, gradingTypes);
@@ -145,6 +151,20 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
                 url += $"&{paramName.ToURL()}={param.ToURL()}";
             }
         }
+
+        // Helper method to append filter to the paging URL if the filter value is not null or empty
+        void AppendFilterToPaging(ref string url, string paramName, string[]? param)
+        {
+            if (param != null)
+            {
+                foreach (string p in param)
+                {
+                    url += $"&{paramName.ToURL()}={p.ToURL()}";
+
+                }
+            }
+        }
+
 
         // Helper method to compare and add differing fields in the quals compare
         private static void DiffValues(string? left, string? right, string fieldName, ref Dictionary<string, string[]> differing)
