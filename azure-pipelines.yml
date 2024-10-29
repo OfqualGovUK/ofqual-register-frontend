@@ -118,7 +118,7 @@ stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-  - job: Build
+  - job: BuildDev
     displayName: Build for Dev
     pool:
       vmImage: $(vmImageName)
@@ -164,7 +164,7 @@ stages:
         tags: |
           latest
           $(tag)
-  - job: Build
+  - job: BuildProd
     condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
     displayName: Build for Production
     pool:
