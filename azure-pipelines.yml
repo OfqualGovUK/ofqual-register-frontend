@@ -113,7 +113,7 @@ stages:
   displayName: Build and push stage
   jobs:
   - job: BuildDev
-    condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
+    condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull')))
     displayName: Build for Dev
     pool:
       vmImage: $(vmImageName)
