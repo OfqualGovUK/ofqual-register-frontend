@@ -253,11 +253,9 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     csvWriter.Context.TypeConverterOptionsCache.AddOptions<DateTime?>(options);
 
                     csvWriter.WriteRecords(quals.Results);
-
                 }
 
                 return File(memoryStream.ToArray(), "text/csv", fileName);
-
             }
             catch (ApiException ex)
             {
