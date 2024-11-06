@@ -48,3 +48,7 @@ ul.ofq-tree {
     width: 35%;
     float: left;
 }
+
+.ofq-\!-tag-max-width-none {
+    max-width: none !important;
+  }
