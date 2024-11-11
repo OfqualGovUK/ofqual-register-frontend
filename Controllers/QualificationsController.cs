@@ -1,4 +1,5 @@
 using CsvHelper;
+using CsvHelper.TypeConversion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Cache;
@@ -247,6 +248,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 using (var streamWriter = new StreamWriter(memoryStream))
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
+                    var options = new TypeConverterOptions { Formats = ["yyyy/MM/dd HH:mm:ss"] };
+                    csvWriter.Context.TypeConverterOptionsCache.AddOptions<DateTime>(options);
+                    csvWriter.Context.TypeConverterOptionsCache.AddOptions<DateTime?>(options);
+
                     csvWriter.WriteRecords(quals.Results);
                 }
 
