@@ -127,7 +127,20 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             try
             {
-                quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, 
+                                                                            assessmentMethods, 
+                                                                            gradingTypes, 
+                                                                            availability, 
+                                                                            qualificationTypes, 
+                                                                            qualificationLevels, 
+                                                                            nationalAvailability, 
+                                                                            minTotalQualificationTime, 
+                                                                            maxTotalQualificationTime, 
+                                                                            minGuidedLearninghours, 
+                                                                            maxGuidedLearninghours,
+                                                                            awardingOrganisations,
+                                                                            sectorSubjectAreas
+                                                                            );
             }
             catch (ApiException ex)
             {
@@ -237,7 +250,19 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
                 try
                 {
-                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, 
+                                                                                       assessmentMethods, 
+                                                                                       gradingTypes, 
+                                                                                       availability, 
+                                                                                       qualificationTypes, 
+                                                                                       qualificationLevels, 
+                                                                                       nationalAvailability, 
+                                                                                       minTotalQualificationTime, 
+                                                                                       maxTotalQualificationTime, 
+                                                                                       minGuidedLearninghours, 
+                                                                                       maxGuidedLearninghours, 
+                                                                                       awardingOrganisations, 
+                                                                                       sectorSubjectAreas);
                 }
                 catch (ApiException ex)
                 {
