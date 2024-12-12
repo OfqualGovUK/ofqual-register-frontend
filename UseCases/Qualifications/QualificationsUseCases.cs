@@ -84,7 +84,7 @@ namespace Ofqual.Common.RegisterFrontend.UseCases.Qualifications
             return differing;
         }
 
-        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        public string CreatePagedFilters(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string[]? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
             var pagingURL = "";
 
