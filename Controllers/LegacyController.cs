@@ -13,7 +13,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="LegacyController"/> class.
         /// The constructor retrieves the base URL from the configuration.
-        /// the baseurl should point at the correct environment, so for dev local it will be https://localhost:44320/
+        /// The base URL should point to the correct environment, so for dev local it will be https://localhost:44320/
         /// </summary>
         /// <param name="config">The configuration instance to retrieve settings.</param>
         public LegacyController(IConfiguration config)
@@ -24,33 +24,29 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         /// <summary>
         /// Handles GET requests and redirects based on the provided category and query parameters.
         /// </summary>
-        /// <param name="category">handle categories "organisations" and "qualifications" anything else go to baseurl </param>
-        /// <param name="query"> if no query parameters go to baseurl else handle depending on category type</param>
+        /// <param name="category">Handles categories "organisations" and "qualifications". Anything else redirects to the base URL.</param>
+        /// <param name="query">If no query parameter is provided, redirects to the base URL. Otherwise, handles depending on the category type.</param>
         /// <returns>A redirect result to the appropriate endpoint based on the parameters.</returns>
         [Route("legacy")]
         [HttpGet]
         public IActionResult Get([FromQuery] string? category, [FromQuery] string? query)
         {
-            if (!string.IsNullOrEmpty(category) && !string.IsNullOrEmpty(query))
-            {
-                if (category.Equals("organisations", StringComparison.OrdinalIgnoreCase))
-                {
-                    return new RedirectResult($"{baseUrl}/organisations/?page=1&name={query}");
-                }
-                else if (category.Equals("qualifications", StringComparison.OrdinalIgnoreCase))
-                {
-                    string q = query.Replace("/", "");
-                    return new RedirectResult($"{baseUrl}/qualifications/{q}");
-                }
-                else
-                {
-                    return new RedirectResult(baseUrl);
-                }
-            }
-            else
+            // If the category is null or empty, redirect to the base URL
+            if (string.IsNullOrEmpty(category))
             {
                 return new RedirectResult(baseUrl);
             }
+
+            // Determine the redirect URL based on the category and query parameters
+            string redirectUrl = category.ToLower() switch
+            {
+                "organisations" => string.IsNullOrEmpty(query) ? $"{baseUrl}/find-regulated-organisations" : $"{baseUrl}/organisations/?page=1",
+                "qualifications" => string.IsNullOrEmpty(query) ? $"{baseUrl}/find-regulated-qualifications/" : $"{baseUrl}/qualifications/{query.Replace("/", "")}",
+                _ => baseUrl
+            };
+
+            // Redirect to the determined URL
+            return new RedirectResult(redirectUrl);
         }
     }
 }
