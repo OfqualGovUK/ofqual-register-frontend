@@ -28,6 +28,7 @@ namespace Ofqual.Common.RegisterFrontend.Tests.Controllers
         [InlineData("qualifications", null, registerBaseUrl + "/find-regulated-qualifications/")]
         [InlineData("qualifications", "601/2653/X", registerBaseUrl + "/qualifications/6012653X")]
         [InlineData("invalidCategory", "testQuery", defaultUrl)]
+        [Trait("Category", "Unit")]
         public void Get_ReturnsExpectedRedirectUrl(string category, string query, string expectedUrl)
         {
             // Act

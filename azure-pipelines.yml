@@ -114,6 +114,39 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
+ - stage: Test
+    displayName: "Unit"
+    jobs:
+      - job: Unit
+        displayName: "Unit tests"
+        dependsOn: []
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Use .NET 8.0'
+            inputs:
+              packageType: 'sdk'
+              version: '8.0.x'
+
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: 'restore'
+              projects: '**/*.csproj'
+              feedsToUse: 'select'
+              verbosityRestore: 'Normal'
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: 'build'
+              projects: '**/*.csproj'
+              arguments: '--no-restore'
+          - task: DotNetCoreCLI@2
+            displayName: 'Run unit tests'
+            inputs:
+              command: 'test'
+              projects: '**/*Tests.csproj'
+              arguments: '--no-build --no-restore --filter Category=Unit'
+              testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 - stage: Build
   displayName: Build and push stage
