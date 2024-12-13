@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Ofqual.Common.RegisterFrontend.Controllers;
+using static System.Net.WebRequestMethods;
 
 namespace Ofqual.Common.RegisterFrontend.Tests.Controllers
 {
@@ -9,21 +10,24 @@ namespace Ofqual.Common.RegisterFrontend.Tests.Controllers
     {
         private readonly Mock<IConfiguration> _mockConfiguration;
         private readonly LegacyController _controller;
+        const string registerBaseUrl = "https://find-a-qualification.services.ofqual.gov.uk";
+        const string defaultUrl = "https://www.gov.uk/find-a-regulated-qualification";
 
         public LegacyControllerTests()
         {
             _mockConfiguration = new Mock<IConfiguration>();
-            _mockConfiguration.Setup(config => config["RegisterBaseUrl"]).Returns("https://localhost:44320");
+            _mockConfiguration.Setup(config => config["RegisterBaseUrl"]).Returns(registerBaseUrl);
+            _mockConfiguration.Setup(config => config["DefaultUrl"]).Returns(defaultUrl);
             _controller = new LegacyController(_mockConfiguration.Object);
         }
 
         [Theory]
-        [InlineData(null, null, "https://localhost:44320")]
-        [InlineData("organisations", null, "https://localhost:44320/find-regulated-organisations")]
-        [InlineData("organisations", "testOrg", "https://localhost:44320/organisations/?page=1")]
-        [InlineData("qualifications", null, "https://localhost:44320/find-regulated-qualifications/")]
-        [InlineData("qualifications", "601/2653/X", "https://localhost:44320/qualifications/6012653X")]
-        [InlineData("invalidCategory", "testQuery", "https://localhost:44320")]
+        [InlineData(null, null, defaultUrl)]
+        [InlineData("organisations", null, registerBaseUrl + "/find-regulated-organisations")]
+        [InlineData("organisations", "testOrg", registerBaseUrl + "/organisations/?page=1")]
+        [InlineData("qualifications", null, registerBaseUrl + "/find-regulated-qualifications/")]
+        [InlineData("qualifications", "601/2653/X", registerBaseUrl + "/qualifications/6012653X")]
+        [InlineData("invalidCategory", "testQuery", defaultUrl)]
         public void Get_ReturnsExpectedRedirectUrl(string category, string query, string expectedUrl)
         {
             // Act
