@@ -43,7 +43,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             // Determine the redirect URL based on the category and query parameters
             string redirectUrl = category.ToLower() switch
             {
-                "organisations" => string.IsNullOrEmpty(query) ? $"{_baseUrl}/find-regulated-organisations" : $"{_baseUrl}/organisations/?page=1",
+                "organisations" => string.IsNullOrEmpty(query) ? $"{_baseUrl}/find-regulated-organisations" : $"{_baseUrl}/organisations/?page=1&name={query}",
                 "qualifications" => string.IsNullOrEmpty(query) ? $"{_baseUrl}/find-regulated-qualifications/" : $"{_baseUrl}/qualifications/{query.Replace("/", "")}",
                 _ => _defaultUrl
             };

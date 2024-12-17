@@ -24,7 +24,7 @@ namespace Ofqual.Common.RegisterFrontend.Tests.Controllers
         [Theory]
         [InlineData(null, null, defaultUrl)]
         [InlineData("organisations", null, registerBaseUrl + "/find-regulated-organisations")]
-        [InlineData("organisations", "testOrg", registerBaseUrl + "/organisations/?page=1")]
+        [InlineData("organisations", "testOrg", registerBaseUrl + "/organisations/?page=1&name=testOrg")]
         [InlineData("qualifications", null, registerBaseUrl + "/find-regulated-qualifications/")]
         [InlineData("qualifications", "601/2653/X", registerBaseUrl + "/qualifications/6012653X")]
         [InlineData("invalidCategory", "testQuery", defaultUrl)]
