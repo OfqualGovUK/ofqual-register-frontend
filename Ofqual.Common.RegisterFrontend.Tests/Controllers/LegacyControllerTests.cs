@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Ofqual.Common.RegisterFrontend.Controllers;
-using static System.Net.WebRequestMethods;
+
 
 namespace Ofqual.Common.RegisterFrontend.Tests.Controllers
 {
