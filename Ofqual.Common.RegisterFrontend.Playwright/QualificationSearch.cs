@@ -1,6 +1,4 @@
-﻿using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
-using NUnit.Framework;
+﻿
 using PlaywrightTests.Pages;
 
 namespace PlaywrightTests;
@@ -17,7 +15,7 @@ public class QualificationSearch: PageTest
         var searchQualificationsPage = new SearchQualificationsPage(Page);
         var individualQualificationResultsPage = new IndividualQualificationResultsPage(Page);
 
-        await Page.GotoAsync("http://localhost:5224/");
+        await Page.GotoAsync("https://localhost:44320/");
         await homePage.clickFindQualificationsLink();
         await searchQualificationsPage.enterQualificationNumber("100/2548/0");
         await searchQualificationsPage.clickSearchQualifications();
@@ -31,7 +29,7 @@ public class QualificationSearch: PageTest
         var searchQualificationsPage = new SearchQualificationsPage(Page);
         var individualQualificationResultsPage = new IndividualQualificationResultsPage(Page);
 
-        await Page.GotoAsync("http://localhost:5224/");
+        await Page.GotoAsync("https://localhost:44320/");
         await homePage.clickFindQualificationsLink();
         await searchQualificationsPage.enterQualificationNumber("10025480");
         await searchQualificationsPage.clickSearchQualifications();

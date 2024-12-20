@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.Playwright;
-using Microsoft.Playwright.NUnit;
 
 namespace PlaywrightTests.Pages
 {
