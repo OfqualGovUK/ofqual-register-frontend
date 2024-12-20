@@ -145,11 +145,7 @@ stages:
             arguments: "--configuration $(BuildConfiguration)"
 
         - script: |
-            dotnet tool install --global Microsoft.Playwright.CLI
-          displayName: 'Install Playwright CLI'
-
-        - script: |
-            playwright install
+            pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
 
         - script: |
