@@ -181,6 +181,7 @@ stages:
         - script: |
             pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
+          workingDirectory: $(System.DefaultWorkingDirectory)/PlaywrightTests
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
