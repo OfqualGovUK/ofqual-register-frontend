@@ -115,6 +115,47 @@ stages:
                   exit 0
               fi
 
+# Playwright Tests stage: This stage runs Playwright tests.
+- stage: PlaywrightTests
+  displayName: "Run Playwright Tests"
+  jobs:
+    - job: RunPlaywrightTests
+      displayName: 'Run Playwright Tests'
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+
+        - task: DotNetCoreCLI@2
+          displayName: "Restore task"
+          inputs:
+            command: 'restore'
+            projects: '**/PlaywrightTests/*.csproj'
+
+        - task: DotNetCoreCLI@2
+          displayName: "Build task"
+          inputs:
+            command: "build"
+            projects: "**/PlaywrightTests/*.csproj"
+            arguments: "--configuration $(BuildConfiguration)"
+
+        - script: |
+            dotnet tool install --global Microsoft.Playwright.CLI
+          displayName: 'Install Playwright CLI'
+
+        - script: |
+            playwright install
+          displayName: 'Install Playwright browsers'
+
+        - script: |
+            dotnet test
+          displayName: 'Run Playwright tests'
+
 - stage: Build
   displayName: Build and push stage
   jobs:
