@@ -15,7 +15,7 @@ public class QualificationSearch: PageTest
         var searchQualificationsPage = new SearchQualificationsPage(Page);
         var individualQualificationResultsPage = new IndividualQualificationResultsPage(Page);
 
-        await Page.GotoAsync("https://localhost:44320/");
+        await Page.GotoAsync("https://localhost:7159/");
         await homePage.clickFindQualificationsLink();
         await searchQualificationsPage.enterQualificationNumber("100/2548/0");
         await searchQualificationsPage.clickSearchQualifications();
@@ -29,7 +29,7 @@ public class QualificationSearch: PageTest
         var searchQualificationsPage = new SearchQualificationsPage(Page);
         var individualQualificationResultsPage = new IndividualQualificationResultsPage(Page);
 
-        await Page.GotoAsync("https://localhost:44320/");
+        await Page.GotoAsync("https://localhost:7159/");
         await homePage.clickFindQualificationsLink();
         await searchQualificationsPage.enterQualificationNumber("10025480");
         await searchQualificationsPage.clickSearchQualifications();
