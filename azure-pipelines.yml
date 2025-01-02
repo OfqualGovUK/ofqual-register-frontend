@@ -159,9 +159,6 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
-        env:
-          RegisterBaseUrl: 'https://localhost:7159/'
-          DefaultUrl: 'https://localhost:7159/'
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
           inputs:
@@ -181,6 +178,9 @@ stages:
             command: 'build'
             projects: '**/*.csproj'
             arguments: '--no-restore'
+          env:
+            RegisterBaseUrl: 'https://localhost:7159/'
+            DefaultUrl: 'https://localhost:7159/'            
         - script: |
             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
