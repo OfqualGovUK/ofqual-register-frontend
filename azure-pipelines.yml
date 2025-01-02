@@ -177,10 +177,7 @@ stages:
           inputs:
             command: 'build'
             projects: '**/*.csproj'
-            arguments: '--no-restore'
-          appsettings:
-            RegisterBaseUrl: 'https://localhost:7159/'
-            DefaultUrl: 'https://localhost:7159/'            
+            arguments: '--no-restore'     
         - script: |
             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
