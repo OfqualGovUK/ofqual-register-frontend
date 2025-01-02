@@ -182,12 +182,12 @@ stages:
             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
         - script: |
-            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "https://localhost:7159" &
+            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
             sleep 10
           displayName: 'Start Server'
           env:
-            RegisterBaseUrl: 'https://localhost:7159/'
-            DefaultUrl: 'https://localhost:7159/'
+            RegisterBaseUrl: 'http://localhost:7159/'
+            DefaultUrl: 'http://localhost:7159/'
             RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
             StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
             RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
