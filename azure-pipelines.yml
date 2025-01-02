@@ -188,6 +188,9 @@ stages:
             dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
             sleep 10
           displayName: 'Start Server'
+          env:
+            RegisterBaseUrl: 'https://localhost:7159/'
+            DefaultUrl: 'https://localhost:7159/'
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
