@@ -186,8 +186,11 @@ stages:
             sleep 10
           displayName: 'Start Server'
           env:
-            RegisterBaseUrl: https://localhost:7159/
-            DefaultUrl: https://localhost:7159/
+            RegisterBaseUrl: 'https://localhost:7159/'
+            DefaultUrl: 'https://localhost:7159/'
+            RegisterAPIUrl:'https://ofq-dev-apim-register-api.azure-api.net/'
+            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
