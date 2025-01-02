@@ -178,7 +178,7 @@ stages:
             command: 'build'
             projects: '**/*.csproj'
             arguments: '--no-restore'
-          env:
+          appsettings:
             RegisterBaseUrl: 'https://localhost:7159/'
             DefaultUrl: 'https://localhost:7159/'            
         - script: |
@@ -188,7 +188,7 @@ stages:
             dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
             sleep 10
           displayName: 'Start Server'
-          env:
+          appsettings:
             RegisterBaseUrl: 'https://localhost:7159/'
             DefaultUrl: 'https://localhost:7159/'
         - script: |
