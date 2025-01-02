@@ -159,6 +159,9 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
+        env:
+          RegisterBaseUrl: 'https://localhost:7159/'
+          DefaultUrl:  'https://localhost:7159/'
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
           inputs:
