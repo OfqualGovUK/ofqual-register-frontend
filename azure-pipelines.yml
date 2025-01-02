@@ -186,8 +186,8 @@ stages:
             sleep 10
           displayName: 'Start Server'
           env:
-            RegisterBaseUrl: 'https://localhost:7159/'
-            DefaultUrl: 'https://localhost:7159/'
+            RegisterBaseUrl: https://localhost:7159/
+            DefaultUrl: https://localhost:7159/
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
