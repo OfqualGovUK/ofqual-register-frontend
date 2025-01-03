@@ -16,7 +16,16 @@
     <None Remove="Ofqual.Common.RegisterFrontend.Tests\**" />
   </ItemGroup>
 
-  <ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Ofqual.Common.RegisterFrontend.Playwright\**" />
+		<Content Remove="Ofqual.Common.RegisterFrontend.Playwright\**" />
+		<EmbeddedResource Remove="Ofqual.Common.RegisterFrontend.Playwright\**" />
+		<None Remove="Ofqual.Common.RegisterFrontend.Playwright\**" />
+	</ItemGroup>
+	
+
+
+	<ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.12.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.20.0" />
     <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />

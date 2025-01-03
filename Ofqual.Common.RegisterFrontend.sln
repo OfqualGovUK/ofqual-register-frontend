@@ -5,7 +5,9 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofqual.Common.RegisterFrontend", "Ofqual.Common.RegisterFrontend.csproj", "{FA60EAF5-F415-4334-B995-499279EC7956}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ofqual.Common.RegisterFrontend.Tests", "Ofqual.Common.RegisterFrontend.Tests\Ofqual.Common.RegisterFrontend.Tests.csproj", "{7DF622AC-227A-4243-924B-3B3C34B7C8CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ofqual.Common.RegisterFrontend.Tests", "Ofqual.Common.RegisterFrontend.Tests\Ofqual.Common.RegisterFrontend.Tests.csproj", "{7DF622AC-227A-4243-924B-3B3C34B7C8CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ofqual.Common.RegisterFrontend.Playwright", "Ofqual.Common.RegisterFrontend.Playwright\Ofqual.Common.RegisterFrontend.Playwright.csproj", "{66107B9E-2DE6-4025-A9C5-C5E236510AAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{7DF622AC-227A-4243-924B-3B3C34B7C8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DF622AC-227A-4243-924B-3B3C34B7C8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DF622AC-227A-4243-924B-3B3C34B7C8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66107B9E-2DE6-4025-A9C5-C5E236510AAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66107B9E-2DE6-4025-A9C5-C5E236510AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66107B9E-2DE6-4025-A9C5-C5E236510AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66107B9E-2DE6-4025-A9C5-C5E236510AAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

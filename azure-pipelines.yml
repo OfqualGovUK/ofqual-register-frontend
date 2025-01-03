@@ -150,6 +150,51 @@ stages:
             arguments: '--no-build --no-restore --filter Category=Unit'
             testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
+# Playwright Tests stage: This stage runs Playwright tests.
+- stage: PlaywrightTests
+  displayName: "Run Playwright Tests"
+  jobs:
+    - job: RunPlaywrightTests
+      displayName: 'Run Playwright Tests'
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'     
+        - script: |
+            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+          displayName: 'Install Playwright browsers'
+        - script: |
+            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+            sleep 10
+          displayName: 'Start Server'
+          env:
+            RegisterBaseUrl: $(RegisterBaseUrl)
+            DefaultUrl: $(RegisterBaseUrl)
+            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+        - script: |
+            dotnet test
+          displayName: 'Run Playwright tests'
+
 - stage: Build
   displayName: Build and push stage
   jobs:
