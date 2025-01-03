@@ -186,8 +186,8 @@ stages:
             sleep 10
           displayName: 'Start Server'
           env:
-            RegisterBaseUrl: 'http://localhost:7159/'
-            DefaultUrl: 'http://localhost:7159/'
+            RegisterBaseUrl: $(RegisterBaseUrl)
+            DefaultUrl: $(RegisterBaseUrl)
             RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
             StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
             RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
