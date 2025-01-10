@@ -76,7 +76,7 @@ stages:
           inputs:
             command: "build"
             projects: "**/*.csproj"
-            arguments: "--configuration $(BuildConfiguration)"
+            arguments: "--no-restore"
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
