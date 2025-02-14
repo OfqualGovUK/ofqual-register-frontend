@@ -196,37 +196,63 @@ stages:
           displayName: 'Run Playwright tests'
 
 - stage: Build
-  displayName: Build and push stage
+  displayName: Build 
   jobs:
-  - job: BuildDev
-    condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull')))
-    displayName: Build for Dev
+  - job: Build
+    displayName: Build 
     pool:
       vmImage: $(vmImageName)
-    steps:      
+    
+    strategy:
+      matrix:
+        Dev:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
+          condition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
+        Prod:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+          condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
+
+    condition: and(succeeded(), $[matrix.condition])
+    
+    steps:
     - task: Docker@2
-      displayName: Build and push an image to dev container registry
+      displayName: Build Docker Image
       inputs:
-        command: buildAndPush
+        command: build
         repository: $(imageRepository)
-        containerRegistry: $(dockerRegistryServiceConnectionDev)
         dockerfile: $(dockerfilePath)
         tags: |
           latest
           $(tag)
-  - job: BuildProd
-    condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/releases'))
-    displayName: Build for Production
-    pool:
-      vmImage: $(vmImageName)
-    steps:
+
+    - script: |
+        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
+        echo "Waiting for container health check..."
+        for i in {1..10}; do
+          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+          echo "Health status: $HEALTH_STATUS"
+          if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "Container did not become healthy in time."
+        exit 1
+      displayName: Health Check
+
+    - script: |
+        docker stop register-frontend-healthcheck
+        docker rm register-frontend-healthcheck
+      displayName: Cleanup Container
+      condition: always()
+
     - task: Docker@2
-      displayName: Build and push an image to production container registry
+      displayName: Push Image to Container Registry
       inputs:
-        command: buildAndPush
+        command: push
         repository: $(imageRepository)
-        containerRegistry: $(dockerRegistryServiceConnectionProd)
-        dockerfile: $(dockerfilePath)
+        containerRegistry: $(containerRegistry)
         tags: |
           latest
           $(tag)
