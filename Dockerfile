@@ -1,10 +1,13 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+
+LABEL maintainer="OfqualDevs"
+LABEL description="This Dockerfile builds and runs the Ofqual Register frontend as a .NET 8.0 ASP.NET application with a multi-stage build process for efficient containerization and fast debugging."
+
+USER root
+RUN apt-get	update && apt-get install -y curl
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -22,4 +25,8 @@ RUN dotnet publish "./Ofqual.Common.RegisterFrontend.csproj" -c $BUILD_CONFIGURA
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+USER app
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD curl --fail http://localhost:8080/health || exit 1
 ENTRYPOINT ["dotnet", "Ofqual.Common.RegisterFrontend.dll"]
