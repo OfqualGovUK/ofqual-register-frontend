@@ -233,29 +233,29 @@ stages:
         trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
 
-  - script: |
-      docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-      echo "Waiting for container health check..."
-      for i in {1..10}; do
+    - script: |
+        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
+        echo "Waiting for container health check..."
+        for i in {1..10}; do
         HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
         echo "Health status: $HEALTH_STATUS"
         if [ "$HEALTH_STATUS" == "healthy" ]; then
-          echo "Container is healthy!"
-          exit 0
+            echo "Container is healthy!"
+            exit 0
         fi
         sleep 5
-      done
-      echo "Container did not become healthy in time."
-      exit 1
-    displayName: Health Check
+        done
+        echo "Container did not become healthy in time."
+        exit 1
+      displayName: Health Check
 
-  - script: |
-      docker stop register-frontend-healthcheck
-      docker rm register-frontend-healthcheck
-    displayName: Cleanup Container
-    condition: always()
+    - script: |
+        docker stop register-frontend-healthcheck
+        docker rm register-frontend-healthcheck
+      displayName: Cleanup Container
+      condition: always()
 
-  - task: Docker@2
+    - task: Docker@2
     displayName: Push Image to Container Registry
     inputs:
       command: push
