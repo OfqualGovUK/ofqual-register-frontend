@@ -256,11 +256,11 @@ stages:
       condition: always()
 
     - task: Docker@2
-    displayName: Push Image to Container Registry
-    inputs:
-      command: push
-      repository: $(imageRepository)
-      containerRegistry: $(containerRegistry)
-      tags: |
-        latest
-        $(tag)
+      displayName: Push Image to Container Registry
+      inputs:
+          command: push
+          repository: $(imageRepository)
+          containerRegistry: $(containerRegistry)
+          tags: |
+            latest
+            $(tag)
