@@ -212,7 +212,7 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnectionProd)
           condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
 
-    condition: and(succeeded(), $[matrix.condition])
+    condition: and(succeeded(), variables[matrix.condition])
     
     steps:
     - task: Docker@2
