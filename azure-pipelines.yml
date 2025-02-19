@@ -256,6 +256,7 @@ stages:
 
     - task: Docker@2
       displayName: Push Image to Container Registry
+      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
       inputs:
           command: push
           repository: $(imageRepository)
