@@ -215,7 +215,7 @@ stages:
     steps:
     - task: Docker@2
       displayName: Build Docker Image
-      condition: $[ matrix.buildCondition ]
+      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
       inputs:
         command: build
         repository: $(imageRepository)
