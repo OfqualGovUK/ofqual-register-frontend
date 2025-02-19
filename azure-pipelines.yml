@@ -260,7 +260,7 @@ stages:
       inputs:
           command: push
           repository: $(imageRepository)
-          containerRegistry: variables['containerRegistry']
+          containerRegistry: $(containerRegistry)
           tags: |
             latest
             $(tag)
