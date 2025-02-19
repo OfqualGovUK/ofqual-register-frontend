@@ -195,7 +195,7 @@ stages:
             dotnet test
           displayName: 'Run Playwright tests'
 
-- stage: Build
+- stage: Build  
   displayName: Build 
   jobs:
   - job: Build
@@ -207,16 +207,15 @@ stages:
       matrix:
         Dev:
           containerRegistry: $(dockerRegistryServiceConnectionDev)
-          condition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
+          buildCondition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
         Prod:
           containerRegistry: $(dockerRegistryServiceConnectionProd)
-          condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
-
-    condition: and(succeeded(), variables[matrix.condition])
+          buildCondition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
     
     steps:
     - task: Docker@2
       displayName: Build Docker Image
+      condition: $[ matrix.buildCondition ]
       inputs:
         command: build
         repository: $(imageRepository)
