@@ -223,6 +223,12 @@ stages:
           buildCondition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
     
     steps:
+    - task: PowerShell@2
+      displayName: "Print Branch name"
+      inputs:
+        targetType: 'inline'
+        script: |
+          echo "Branch name: $(Build.SourceBranch)"
     - task: Docker@2
       displayName: Build Docker Image
       condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
