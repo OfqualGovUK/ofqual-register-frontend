@@ -265,7 +265,7 @@ stages:
       inputs:
           command: push
           repository: $(imageRepository)
-          containerRegistry: ${{     startsWith(variables['Build.SourceBranch'], 'refs/heads/releases')     && variables['dockerRegistryServiceConnectionProd']     || variables['dockerRegistryServiceConnectionDev'] }}
+          containerRegistry: ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}${{ variables['dockerRegistryServiceConnectionProd'] }}${{ else }}${{ variables['dockerRegistryServiceConnectionDev'] }}${{ endif }}
           tags: |
             latest
             $(tag)
