@@ -18,6 +18,12 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
+  dockerRegistry: ${{ 
+    startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') 
+    && variables['dockerRegistryServiceConnectionProd'] 
+    || variables['dockerRegistryServiceConnectionDev'] 
+  }}
+
 stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
@@ -268,12 +274,7 @@ stages:
       inputs:
         command: push
         repository: $(imageRepository)
-        containerRegistry: ${{ 
-          if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }} 
-          $(dockerRegistryServiceConnectionProd) 
-          ${{ else }} 
-          $(dockerRegistryServiceConnectionDev) 
-        }}
+        containerRegistry: $(containerRegistry)
         tags: |
           latest
           $(tag)
