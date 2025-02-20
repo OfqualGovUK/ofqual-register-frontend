@@ -207,6 +207,12 @@ stages:
 
 - stage: Build  
   displayName: Build 
+  variables:
+    - name: deployContainerRegistry
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+      value: $(dockerRegistryServiceConnectionProd)
+    ${{ else }}:
+      value: $(dockerRegistryServiceConnectionDev)
   jobs:
   - job: Build
     displayName: Build 
@@ -214,6 +220,7 @@ stages:
       vmImage: $(vmImageName)
     
     steps:
+    - script: echo "Deploy Container: $(deployContainerRegistry)"
     - task: Docker@2
       displayName: Build Docker Image
       inputs:
@@ -265,7 +272,7 @@ stages:
       inputs:
           command: push
           repository: $(imageRepository)
-          containerRegistry: ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}${{ variables['dockerRegistryServiceConnectionProd'] }}${{ else }}${{ variables['dockerRegistryServiceConnectionDev'] }}${{ endif }}
+          containerRegistry: $(deployContainerRegistry)
           tags: |
             latest
             $(tag)
