@@ -22,7 +22,7 @@ stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: and(always(), ne(variables['testingPipeline'], 'true'))
+  condition: always()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -125,7 +125,7 @@ stages:
               fi
 - stage: Test
   displayName: "Unit"
-  condition: and(always(), ne(variables['testingPipeline'], 'true'))
+  condition: always()
   jobs:
     - job: Unit
       displayName: "Unit tests"
@@ -162,7 +162,6 @@ stages:
 # Playwright Tests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
   displayName: "Run Playwright Tests"
-  condition: and(always(), ne(variables['testingPipeline'], 'true'))
   jobs:
     - job: RunPlaywrightTests
       displayName: 'Run Playwright Tests'
@@ -207,6 +206,7 @@ stages:
 
 - stage: Build  
   displayName: Build 
+  condition: succeeded()
   jobs:
   - job: Build
     displayName: Build 
