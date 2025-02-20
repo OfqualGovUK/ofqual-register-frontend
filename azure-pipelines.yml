@@ -26,7 +26,7 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: and(succeeded(), or(startsWith(variables['build.sourceBranch'], 'refs/heads/main'), startsWith(variables['build.sourceBranch'], 'refs/heads/dev/')))
+      condition: and(succeeded(), or(startsWith(variables['build.sourceBranch'], 'refs/heads/main'), startsWith(variables['build.sourceBranch'], 'refs/heads/dev')))
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -207,7 +207,7 @@ stages:
       matrix:
         Dev:
           containerRegistry: $(dockerRegistryServiceConnectionDev)
-          buildCondition: or(startsWith(variables['build.sourceBranch'], 'refs/heads/dev/'), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+          buildCondition: or(startsWith(variables['build.sourceBranch'], 'refs/heads/dev'), eq(variables['build.sourceBranch'], 'refs/heads/main'))
         Prod:
           containerRegistry: $(dockerRegistryServiceConnectionProd)
           buildCondition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
