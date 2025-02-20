@@ -226,8 +226,9 @@ stages:
 
     - script: |
         echo "Installing Trivy..."
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        export PATH=$HOME/bin:$PATH
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.33.0
+        # export PATH=$HOME/bin:$PATH
         trivy --version
       displayName: 'Install Trivy'
     
