@@ -208,7 +208,7 @@ stages:
 
 - stage: Build  
   displayName: Build 
-  condition: succeeded()
+  # condition: succeeded()
   jobs:
   - job: Build
     displayName: Build 
