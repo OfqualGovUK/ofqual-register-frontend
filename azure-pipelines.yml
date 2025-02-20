@@ -31,6 +31,15 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
+
+        # PowerShell script to modify SonarQube parameters
+        - task: PowerShell@2
+          displayName: "Print Branch name"
+          inputs:
+            targetType: 'inline'
+            script: |
+              echo "Branch name: $(Build.SourceBranch)"
+
         # Install .NET Core SDK
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
