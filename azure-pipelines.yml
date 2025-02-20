@@ -19,9 +19,10 @@ variables:
   vmImageName: 'ubuntu-latest'
 
   dockerRegistry: ${{ 
-    startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') 
-    && variables['dockerRegistryServiceConnectionProd'] 
-    || variables['dockerRegistryServiceConnectionDev'] 
+    if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }} 
+      ${{ variables['dockerRegistryServiceConnectionProd'] }} 
+    ${{ else }} 
+      ${{ variables['dockerRegistryServiceConnectionDev'] }} 
   }}
 
 stages:
