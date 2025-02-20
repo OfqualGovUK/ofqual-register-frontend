@@ -26,7 +26,7 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: and(succeeded(), or(startsWith(variables['build.sourceBranch'], 'refs/heads/main'), startsWith(variables['build.sourceBranch'], 'refs/heads/dev')))
+      # condition: and(succeeded(), or(startsWith(variables['build.sourceBranch'], 'refs/heads/main'), startsWith(variables['build.sourceBranch'], 'refs/heads/dev')))
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -216,7 +216,8 @@ stages:
       matrix:
         Dev:
           containerRegistry: $(dockerRegistryServiceConnectionDev)
-          buildCondition: or(startsWith(variables['build.sourceBranch'], 'refs/heads/dev'), eq(variables['build.sourceBranch'], 'refs/heads/main'))
+          buildCondition: not(contains(variables['Build.SourceBranch'], 'refs/heads/releases'))
+          # buildCondition: or(startsWith(variables['build.sourceBranch'], 'refs/heads/dev'), eq(variables['build.sourceBranch'], 'refs/heads/main'))
         Prod:
           containerRegistry: $(dockerRegistryServiceConnectionProd)
           buildCondition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
@@ -234,10 +235,15 @@ stages:
           $(tag)
 
     - script: |
+        echo "Installing Trivy..."
         curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        export PATH=$HOME/bin:$PATH
+        trivy --version
       displayName: 'Install Trivy'
     
     - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
         trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
 
