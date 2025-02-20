@@ -32,9 +32,14 @@ stages:
     
     steps:
     - script: |
+        echo "Pulling the latest .NET base image..."
+        docker pull mcr.microsoft.com/dotnet/aspnet:8.0
+      displayName: 'Pull Latest Base Image'
+
+    - script: |
         echo "Installing Trivy..."
         # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.33.0
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
         # export PATH=$HOME/bin:$PATH
         trivy --version
       displayName: 'Install Trivy'
@@ -79,7 +84,7 @@ stages:
 
     - task: Docker@2
       displayName: Push Image to Container Registry
-      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
+      condition: succeeded()
       inputs:
         command: push
         repository: $(imageRepository)
