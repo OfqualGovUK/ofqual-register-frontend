@@ -14,6 +14,7 @@ variables:
   # Container registry service connection established during pipeline creation
   dockerfilePath: '$(System.DefaultWorkingDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
+  testingPipeline: 'true'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -22,7 +23,7 @@ stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: always()
+  condition: and(always(), eq(variables['testingPipeline'], 'false'))
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -124,8 +125,8 @@ stages:
                   exit 0
               fi
 - stage: Test
-  displayName: "Unit"
-  condition: always()
+  displayName: "Unit Tests"
+  condition:  and(always(), eq(variables['testingPipeline'], 'false'))
   jobs:
     - job: Unit
       displayName: "Unit tests"
@@ -162,6 +163,7 @@ stages:
 # Playwright Tests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
   displayName: "Run Playwright Tests"
+  condition:  eq(variables['testingPipeline'], 'false')
   jobs:
     - job: RunPlaywrightTests
       displayName: 'Run Playwright Tests'
