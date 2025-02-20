@@ -20,6 +20,77 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
+
+
+- stage: Build  
+  displayName: Build 
+  jobs:
+  - job: Build
+    displayName: Build 
+    pool:
+      vmImage: $(vmImageName)
+    
+    steps:
+    - script: |
+        echo "Installing Trivy..."
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.33.0
+        # export PATH=$HOME/bin:$PATH
+        trivy --version
+      displayName: 'Install Trivy'
+
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+    
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
+
+    - script: |
+        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
+        echo "Waiting for container health check..."
+        for i in {1..10}; do
+        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+        echo "Health status: $HEALTH_STATUS"
+        if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+        fi
+        sleep 5
+        done
+        echo "Container did not become healthy in time."
+        exit 1
+      displayName: Health Check
+
+    - script: |
+        docker stop register-frontend-healthcheck
+        docker rm register-frontend-healthcheck
+      displayName: Cleanup Container
+      condition: always()
+
+    - task: Docker@2
+      displayName: Push Image to Container Registry
+      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
+      inputs:
+        command: push
+        repository: $(imageRepository)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
+        tags: |
+          latest
+          $(tag)
+
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
@@ -205,73 +276,3 @@ stages:
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
-
-- stage: Build  
-  displayName: Build 
-  # condition: succeeded()
-  jobs:
-  - job: Build
-    displayName: Build 
-    pool:
-      vmImage: $(vmImageName)
-    
-    steps:
-    - task: Docker@2
-      displayName: Build Docker Image
-      inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        tags: |
-          latest
-          $(tag)
-
-    - script: |
-        echo "Installing Trivy..."
-        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.33.0
-        # export PATH=$HOME/bin:$PATH
-        trivy --version
-      displayName: 'Install Trivy'
-    
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-
-    - script: |
-        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-        echo "Waiting for container health check..."
-        for i in {1..10}; do
-        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-        echo "Health status: $HEALTH_STATUS"
-        if [ "$HEALTH_STATUS" == "healthy" ]; then
-            echo "Container is healthy!"
-            exit 0
-        fi
-        sleep 5
-        done
-        echo "Container did not become healthy in time."
-        exit 1
-      displayName: Health Check
-
-    - script: |
-        docker stop register-frontend-healthcheck
-        docker rm register-frontend-healthcheck
-      displayName: Cleanup Container
-      condition: always()
-
-    - task: Docker@2
-      displayName: Push Image to Container Registry
-      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
-      inputs:
-        command: push
-        repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-        tags: |
-          latest
-          $(tag)
