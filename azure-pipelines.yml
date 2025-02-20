@@ -219,12 +219,8 @@ stages:
       vmImage: $(vmImageName)
     
     steps:
-    - task: PowerShell@2
-      displayName: "Print container reg name"
-      inputs:
-        targetType: 'inline'
-        script: |
-          echo "Container Registry to push image to $(deployContainerRegistry)"
+    - script: echo ${{variables.deployContainerRegistry}}
+
     - task: Docker@2
       displayName: Build Docker Image
       inputs:
