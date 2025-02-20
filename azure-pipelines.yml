@@ -264,14 +264,30 @@ stages:
 
     - task: Docker@2
       displayName: Push Image to Container Registry
-      condition: and(succeeded(), eq(variables['buildCondition'], 'true'))
+      condition: succeeded()
       inputs:
-          command: push
-          repository: $(imageRepository)
-          ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-            containerRegistry: $(dockerRegistryServiceConnectionProd)
-          ${{ else }}:
-            containerRegistry: $(dockerRegistryServiceConnectionProd)
-          tags: |
-            latest
-            $(tag)
+        command: push
+        repository: $(imageRepository)
+        containerRegistry: ${{ 
+          if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }} 
+          $(dockerRegistryServiceConnectionProd) 
+          ${{ else }} 
+          $(dockerRegistryServiceConnectionDev) 
+        }}
+        tags: |
+          latest
+          $(tag)
+
+    # - task: Docker@2
+    #   displayName: Push Image to Container Registry
+    #   condition: succeeded()
+    #   inputs:
+    #       command: push
+    #       repository: $(imageRepository)
+    #       ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+    #         containerRegistry: $(dockerRegistryServiceConnectionProd)
+    #       ${{ else }}:
+    #         containerRegistry: $(dockerRegistryServiceConnectionProd)
+    #       tags: |
+    #         latest
+    #         $(tag)
