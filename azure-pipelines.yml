@@ -268,10 +268,10 @@ stages:
       inputs:
           command: push
           repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
+          ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+            containerRegistry: $(dockerRegistryServiceConnectionProd)
+          ${{ else }}:
+            containerRegistry: $(dockerRegistryServiceConnectionProd)
           tags: |
             latest
             $(tag)
