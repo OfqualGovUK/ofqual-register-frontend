@@ -12,6 +12,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y curl \
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+RUN apt-get update && apt-get upgrade -y && apt-get install -y curl \
+    && rm -rf /var/lib/apt/lists/* 
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Ofqual.Common.RegisterFrontend.csproj", "."]
