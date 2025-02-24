@@ -46,6 +46,18 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
+  - job: Unit
+    displayName: "Unit tests"
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Run unit tests'
+        inputs:
+          command: 'test'
+          projects: '**/*Tests.csproj'
+          arguments: '--no-build --no-restore --filter Category=Unit'
+          testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysisAndAudit
