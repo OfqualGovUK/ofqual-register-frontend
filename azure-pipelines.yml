@@ -68,7 +68,6 @@ stages:
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
-        arguments: '--no-build --no-restore'
         projects: '**/*Tests.csproj'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
