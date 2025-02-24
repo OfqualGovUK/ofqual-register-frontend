@@ -46,17 +46,6 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'publish'
-        arguments: '--output $(Build.ArtifactStagingDirectory)'
-        projects: '**/*.csproj'
-
-    - task: PublishBuildArtifacts@1
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
 
 - stage: Test
   dependsOn: BuildArtifact
@@ -69,6 +58,82 @@ stages:
       inputs:
         command: 'test'
         projects: '**/*Tests.csproj'
+        
+  - job: PlaywrightTests
+    steps:
+    - download: current
+      artifact: drop
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
+    - script: |
+        dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        sleep 10
+      displayName: 'Start Server'
+      env:
+        RegisterBaseUrl: $(RegisterBaseUrl)
+        DefaultUrl: $(RegisterBaseUrl)
+        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+    - script: |
+        dotnet test
+      displayName: 'Run Playwright tests'
+
+# Playwright Tests stage: This stage runs Playwright tests.
+- stage: PlaywrightTests
+  displayName: "Run Playwright Tests"
+  jobs:
+    - job: RunPlaywrightTests
+      displayName: 'Run Playwright Tests'
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'     
+        - script: |
+            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+          displayName: 'Install Playwright browsers'
+        - script: |
+            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+            sleep 10
+          displayName: 'Start Server'
+          env:
+            RegisterBaseUrl: $(RegisterBaseUrl)
+            DefaultUrl: $(RegisterBaseUrl)
+            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+        - script: |
+            dotnet test
+          displayName: 'Run Playwright tests'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysisAndAudit
@@ -158,33 +223,6 @@ stages:
             projects: '**/*Tests.csproj'
             arguments: '--no-build --no-restore --filter Category=Unit'
             testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
-
-# Playwright Tests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Run Playwright Tests"
-  dependsOn: BuildArtifact
-  jobs:
-    - job: RunPlaywrightTests
-      displayName: 'Run Playwright Tests'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - script: |
-            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-          displayName: 'Install Playwright browsers'
-        - script: |
-            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-            sleep 10
-          displayName: 'Start Server'
-          env:
-            RegisterBaseUrl: $(RegisterBaseUrl)
-            DefaultUrl: $(RegisterBaseUrl)
-            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-        - script: |
-            dotnet test
-          displayName: 'Run Playwright tests'
 
 - stage: DockerBuild
   dependsOn: 
