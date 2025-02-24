@@ -20,8 +20,6 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-
-
 - stage: Build  
   displayName: Build 
   jobs:
@@ -31,19 +29,6 @@ stages:
       vmImage: $(vmImageName)
     
     steps:
-    - script: |
-        echo "Pulling the latest .NET base image..."
-        docker pull mcr.microsoft.com/dotnet/aspnet:8.0
-      displayName: 'Pull Latest Base Image'
-
-    - script: |
-        echo "Installing Trivy..."
-        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-        # export PATH=$HOME/bin:$PATH
-        trivy --version
-      displayName: 'Install Trivy'
-
     - task: Docker@2
       displayName: Build Docker Image
       inputs:
@@ -53,13 +38,17 @@ stages:
         tags: |
           latest
           $(tag)
-    
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        publishLocation: 'pipeline'
 
+- stage: Healthcheck
+  displayName: "Health Check"
+  condition: succeeded()
+  jobs:
+  - job: Health Check
+    steps:
     - script: |
         docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
         echo "Waiting for container health check..."
@@ -79,27 +68,35 @@ stages:
     - script: |
         docker stop register-frontend-healthcheck
         docker rm register-frontend-healthcheck
-      displayName: Cleanup Container
+      displayName: Cleanup Healthcheck Container
       condition: always()
 
-    - task: Docker@2
-      displayName: Push Image to Container Registry
-      condition: succeeded()
-      inputs:
-        command: push
-        repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-        tags: |
-          latest
-          $(tag)
+- stage: Container Vulnerability Scan
+  displayName: "Run Vulnerability Scan"
+  condition: succeded()
+  jobs:
+  - job: Install Trivy
+    steps:
+    - script: |
+        echo "Installing Trivy..."
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        # export PATH=$HOME/bin:$PATH
+        trivy --version
+      displayName: 'Install Trivy'
+
+  - job: Run Trivy Scan
+    steps:
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: and(always(), eq(variables['testingPipeline'], 'false'))
+  condition: succeeded()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -108,31 +105,11 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
-
-        # PowerShell script to modify SonarQube parameters
-        - task: PowerShell@2
-          displayName: "Print Branch name"
+        - task: DownloadPipelineArtifact@2
+          displayName: "Download Pipeline Artifact"
           inputs:
-            targetType: 'inline'
-            script: |
-              echo "Branch name: $(Build.SourceBranch)"
-
-        # Install .NET Core SDK
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
-
-        # Restore NuGet packages
-        - task: DotNetCoreCLI@2
-          displayName: "Restore task"
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+            buildType: 'current'
+            targetPath: '$(Pipeline.Workspace)'
 
         # Prepare SonarQube analysis
         - task: SonarQubePrepare@5
@@ -155,14 +132,6 @@ stages:
                   $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
               }
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
-
-        # Build the project
-        - task: DotNetCoreCLI@2
-          displayName: "Build task"
-          inputs:
-            command: "build"
-            projects: "**/*.csproj"
-            arguments: "--no-restore"
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
@@ -281,3 +250,25 @@ stages:
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
+
+
+- stage: Push
+  displayName: Push
+  condition: and(always(), eq(variables['testingPipeline'], 'false'))
+  jobs:
+  - job: Push
+    steps:
+    - task: Docker@2
+      displayName: Push Image to Container Registry
+      condition: succeeded()
+      inputs:
+        command: push
+        repository: $(imageRepository)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
+        tags: |
+          latest
+          $(tag)
+
