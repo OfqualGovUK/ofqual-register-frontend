@@ -121,7 +121,7 @@ stages:
               fi
 - stage: Test
   displayName: "Unit Tests"
-  dependsOn: []
+  dependsOn: BuildArtifact
   jobs:
     - job: Unit
       displayName: "Unit tests"
@@ -139,7 +139,7 @@ stages:
 # Playwright Tests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
   displayName: "Run Playwright Tests"
-  dependsOn: []
+  dependsOn: BuildArtifact
   jobs:
     - job: RunPlaywrightTests
       displayName: 'Run Playwright Tests'
