@@ -47,12 +47,29 @@ stages:
         projects: '**/*.csproj'
         arguments: '--no-restore'
     - task: DotNetCoreCLI@2
-      displayName: 'Run unit tests'
+      inputs:
+        command: 'publish'
+        arguments: '--output $(Build.ArtifactStagingDirectory)'
+        projects: '**/*.csproj'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+- stage: Test
+  dependsOn: Build
+  jobs:
+  - job: Test
+    steps:
+    - download: current
+      artifact: drop
+    - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
+        arguments: '--no-build --no-restore'
         projects: '**/*Tests.csproj'
-        arguments: '--no-build --no-restore --filter Category=Unit'
-        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysisAndAudit
@@ -126,7 +143,7 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
-- stage: Test
+- stage: Tests
   displayName: "Unit Tests"
   dependsOn: BuildArtifact
   jobs:
