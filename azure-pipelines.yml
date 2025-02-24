@@ -20,83 +20,51 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: Build  
-  displayName: Build 
+- stage: BuildArtifact
+  displayName: "Build Artifact for Static Analaysis and Testing"
   jobs:
-  - job: Build
-    displayName: Build 
+  - job: BuildArtifact
+    displayName: "Build Artifact"
     pool:
       vmImage: $(vmImageName)
-    
     steps:
-    - task: Docker@2
-      displayName: Build Docker Image
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk 8.0'
       inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        tags: |
-          latest
-          $(tag)
-    - task: PublishPipelineArtifact@1
+        packageType: 'sdk'
+        version: '8.0.x'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
       inputs:
-        targetPath: '$(Pipeline.Workspace)'
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--no-restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: 'publish'
+        publishWebProjects: true
+        arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(Pipeline.Workspace)'
+        artifact: 'registerFrontend'
         publishLocation: 'pipeline'
-
-- stage: Healthcheck
-  displayName: "Health Check"
-  condition: succeeded()
-  jobs:
-  - job: Health Check
-    steps:
-    - script: |
-        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-        echo "Waiting for container health check..."
-        for i in {1..10}; do
-        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-        echo "Health status: $HEALTH_STATUS"
-        if [ "$HEALTH_STATUS" == "healthy" ]; then
-            echo "Container is healthy!"
-            exit 0
-        fi
-        sleep 5
-        done
-        echo "Container did not become healthy in time."
-        exit 1
-      displayName: Health Check
-
-    - script: |
-        docker stop register-frontend-healthcheck
-        docker rm register-frontend-healthcheck
-      displayName: Cleanup Healthcheck Container
-      condition: always()
-
-- stage: Container Vulnerability Scan
-  displayName: "Run Vulnerability Scan"
-  condition: succeded()
-  jobs:
-  - job: Install Trivy
-    steps:
-    - script: |
-        echo "Installing Trivy..."
-        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-        # export PATH=$HOME/bin:$PATH
-        trivy --version
-      displayName: 'Install Trivy'
-
-  - job: Run Trivy Scan
-    steps:
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: succeeded()
+  dependsOn: BuildArtifact
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -106,10 +74,18 @@ stages:
         vmImage: $(vmImageName)
       steps:
         - task: DownloadPipelineArtifact@2
-          displayName: "Download Pipeline Artifact"
+          displayName: "Download Artifact"
           inputs:
             buildType: 'current'
+            artifactName: 'registerFrontend'
             targetPath: '$(Pipeline.Workspace)'
+        # PowerShell script to modify SonarQube parameters
+        - task: PowerShell@2
+          displayName: "Print Branch name"
+          inputs:
+            targetType: 'inline'
+            script: |
+              echo "Branch name: $(Build.SourceBranch)"
 
         # Prepare SonarQube analysis
         - task: SonarQubePrepare@5
@@ -250,6 +226,75 @@ stages:
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
+
+- stage: Build  
+  displayName: Build 
+  jobs:
+  - job: Build
+    displayName: Build 
+    pool:
+      vmImage: $(vmImageName)
+    
+    steps:
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+
+- stage: Healthcheck
+  displayName: "Health Check"
+  condition: succeeded()
+  jobs:
+  - job: Health Check
+    steps:
+    - script: |
+        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
+        echo "Waiting for container health check..."
+        for i in {1..10}; do
+        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+        echo "Health status: $HEALTH_STATUS"
+        if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+        fi
+        sleep 5
+        done
+        echo "Container did not become healthy in time."
+        exit 1
+      displayName: Health Check
+
+    - script: |
+        docker stop register-frontend-healthcheck
+        docker rm register-frontend-healthcheck
+      displayName: Cleanup Healthcheck Container
+      condition: always()
+
+- stage: Container Vulnerability Scan
+  displayName: "Run Vulnerability Scan"
+  condition: succeded()
+  jobs:
+  - job: Install Trivy
+    steps:
+    - script: |
+        echo "Installing Trivy..."
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        # export PATH=$HOME/bin:$PATH
+        trivy --version
+      displayName: 'Install Trivy'
+
+  - job: Run Trivy Scan
+    steps:
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
 
 
 - stage: Push
