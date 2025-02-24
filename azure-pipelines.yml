@@ -59,7 +59,7 @@ stages:
         publishLocation: 'Container'
 
 - stage: Test
-  dependsOn: Build
+  dependsOn: BuildArtifact
   jobs:
   - job: Test
     steps:
