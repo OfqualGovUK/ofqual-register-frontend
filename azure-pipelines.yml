@@ -46,20 +46,6 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
-    # - task: DotNetCoreCLI@2
-    #   displayName: 'Publish'
-    #   inputs:
-    #     command: 'publish'
-    #     publishWebProjects: true
-    #     arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)'
-    #     zipAfterPublish: true
-
-    # - task: PublishBuildArtifacts@1
-    #   displayName: 'Publish Artifact'
-    #   inputs:
-    #     PathtoPublish: '$(Pipeline.Workspace)'
-    #     artifact: 'registerFrontend'
-    #     publishLocation: 'pipeline'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysisAndAudit
@@ -180,7 +166,7 @@ stages:
 - stage: DockerBuild
   dependsOn: 
     - BuildArtifact
-    - StaticAnalysis
+    - StaticAnalysisAndAudit
     - Test
     - PlaywrightTests
   displayName: Docker Build 
@@ -205,7 +191,8 @@ stages:
   displayName: "Health Check"
   dependsOn: DockerBuild
   jobs:
-  - job: Health Check
+  - job: HealthCheck
+    displayName: "Health Check"
     steps:
     - script: |
         docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
@@ -233,7 +220,8 @@ stages:
   displayName: "Run Container Vulnerability Scan"
   dependsOn: Healthcheck
   jobs:
-  - job: Install Trivy
+  - job: InstallTrivy
+    displayName: "Install Trivy"
     steps:
     - script: |
         echo "Installing Trivy..."
@@ -243,7 +231,8 @@ stages:
         trivy --version
       displayName: 'Install Trivy'
 
-  - job: Run Trivy Scan
+  - job: RunTrivyScan
+    displayName: "Run Trivy Scan"
     steps:
     - script: |
         echo "Running Trivy Scan..."
@@ -255,8 +244,6 @@ stages:
 - stage: Push
   displayName: Push
   dependsOn: 
-    - DockerBuild
-    - Healthcheck
     - ContainerVulnerabilityScan
   jobs:
   - job: Push
