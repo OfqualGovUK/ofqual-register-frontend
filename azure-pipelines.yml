@@ -46,6 +46,9 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
   - job: UnitTest
     dependsOn: BuildArtifact
     displayName: "Unit Tests"
@@ -58,9 +61,7 @@ stages:
     displayName: "Playwright Tests"
     dependsOn: BuildArtifact
     steps:
-    - script: |
-        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-      displayName: 'Install Playwright browsers'
+
     - script: |
         dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
         sleep 10
