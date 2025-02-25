@@ -90,10 +90,18 @@ stages:
         ls -R $(Pipeline.Workspace)/drop
       displayName: 'List Artifact Contents'
     - script: |
-        pwsh $(Pipeline.Workspace)/s/Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+        # Extract the zip file (if the artifact is zipped)
+        echo "Extracting the published zip file..."
+        unzip $(Pipeline.Workspace)/drop/*.zip -d $(Pipeline.Workspace)/drop/extracted
+        echo "Extracted files:"
+        ls -R $(Pipeline.Workspace)/drop/extracted
+      displayName: 'Extract Published Zip File'    
+    - script: |
+        pwsh -c "dotnet tool install --global Microsoft.Playwright.CLI"
+        pwsh -c "playwright install"
       displayName: 'Install Playwright browsers'
     - script: |
-        dotnet run --project $(Pipeline.Workspace)/s/Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        dotnet run --project $(Pipeline.Workspace)/drop/extracted/Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
         sleep 10
       displayName: 'Start Server'
       env:
