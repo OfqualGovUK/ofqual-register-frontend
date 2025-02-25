@@ -52,10 +52,6 @@ stages:
         # export PATH=$HOME/bin:$PATH
         trivy --version
       displayName: 'Install Trivy'
-
-  - job: RunTrivyScan
-    displayName: "Run Trivy Scan"
-    steps:
     - script: |
         echo "Running Trivy Scan..."
         export PATH=$HOME/bin:$PATH
