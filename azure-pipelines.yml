@@ -46,6 +46,9 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
     - task: DotNetCoreCLI@2
       inputs:
         command: 'publish'
@@ -57,14 +60,6 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
-  - job: 
-    displayName: "Build Artifact"
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-      - script: |
-          pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-        displayName: 'Install Playwright browsers'
 
 - stage: Test
   dependsOn: BuildArtifact
