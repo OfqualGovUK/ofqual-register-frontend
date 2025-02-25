@@ -57,7 +57,7 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
-        
+
 - stage: Test
   dependsOn: BuildArtifact
   jobs:
@@ -85,7 +85,7 @@ stages:
         feedsToUse: 'select'
         verbosityRestore: 'Normal'
     - script: |
-        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+        pwsh $(Build.ArtifactStagingDirectory)/Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
       displayName: 'Install Playwright browsers'
     - script: |
         dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
