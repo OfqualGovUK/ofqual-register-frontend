@@ -46,7 +46,8 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
-    - job: Test
+  - job: UnitTest
+    displayName: "Unit Tests"
     steps:
     - task: DotNetCoreCLI@2
       inputs:
