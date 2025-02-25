@@ -61,7 +61,7 @@ stages:
       displayName: 'Run Trivy Scan'
 
     - script: |
-        docker run -d --name register-frontend-healthcheck -p 3154:8080 $(imageRepository):$(tag)
+        docker run -d --name register-frontend-healthcheck --network="host" $(imageRepository):$(tag)
         echo "Waiting for container health check..."
         for i in {1..10}; do
         HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
