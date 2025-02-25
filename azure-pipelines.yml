@@ -63,8 +63,8 @@ stages:
   jobs:
   - job: Test
     steps:
-    - download: current
-      artifact: drop
+    # - download: current
+    #   artifact: drop
     - task: DotNetCoreCLI@2
       inputs:
         command: 'test'
@@ -85,19 +85,19 @@ stages:
             version: 8.x
             performMultiLevelLookup: true
             includePreviewVersions: true
-        # - task: DotNetCoreCLI@2
-        #   displayName: Restore
-        #   inputs:
-        #     command: 'restore'
-        #     projects: '**/*.csproj'
-        #     feedsToUse: 'select'
-        #     verbosityRestore: 'Normal'
-        # - task: DotNetCoreCLI@2
-        #   displayName: Build
-        #   inputs:
-        #     command: 'build'
-        #     projects: '**/*.csproj'
-        #     arguments: '--no-restore'     
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'     
         - script: |
             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
@@ -114,6 +114,75 @@ stages:
         - script: |
             dotnet test
           displayName: 'Run Playwright tests'
+
+# Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
+- stage: StaticAnalysis
+  displayName: "Run Static Analysis"
+  condition: always()
+  jobs:
+    # SonarQube job: This job performs static code analysis using SonarQube.
+    - job: SonarQube
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
+      displayName: 'Build and SonarQube Analysis'
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        # Install .NET Core SDK
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+
+        # Restore NuGet packages
+        - task: DotNetCoreCLI@2
+          displayName: "Restore task"
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+
+        # Prepare SonarQube analysis
+        - task: SonarQubePrepare@5
+          displayName: "Prepare SonarQube Analysis"
+          inputs:
+            SonarQube: 'Sonar-integration-register-front-end'
+            scannerMode: 'MSBuild'
+            projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
+            projectName: 'register'
+
+        # PowerShell script to modify SonarQube parameters
+        - task: PowerShell@2
+          displayName: "Modify SonarQube Parameters"
+          inputs:
+            targetType: 'inline'
+            script: |
+              if ($env:BUILD_REASON -eq "PullRequest") {
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,-]*"\,?'
+              } else {
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
+              }
+              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+
+        # Build the project
+        - task: DotNetCoreCLI@2
+          displayName: "Build task"
+          inputs:
+            command: "build"
+            projects: "**/*.csproj"
+            arguments: "--no-restore"
+
+        # Run SonarQube analysis
+        - task: SonarQubeAnalyze@5
+          displayName: "SonarQube Analysis"
+
+        # Publish SonarQube results
+        - task: SonarQubePublish@5
+          displayName: "Publish Results"
+          inputs:
+            pollingTimeoutSec: '300'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysisAndAudit
@@ -187,22 +256,6 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
-- stage: Tests
-  displayName: "Unit Tests"
-  dependsOn: BuildArtifact
-  jobs:
-    - job: Unit
-      displayName: "Unit tests"
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: DotNetCoreCLI@2
-          displayName: 'Run unit tests'
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--no-build --no-restore --filter Category=Unit'
-            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 - stage: DockerBuild
   dependsOn: 
