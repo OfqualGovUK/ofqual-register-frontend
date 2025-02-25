@@ -73,6 +73,8 @@ stages:
         sleep 5
         done
         curl --fail http://localhost:8080/health
+        curl --fail http://127.0.0.1:8080/health
+        curl --fail http://172.17.0.1:8080/health
         echo "Container did not become healthy in time."
         exit 1
       displayName: Health Check
