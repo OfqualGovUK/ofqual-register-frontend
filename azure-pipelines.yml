@@ -85,10 +85,10 @@ stages:
         feedsToUse: 'select'
         verbosityRestore: 'Normal'
     - script: |
-        pwsh $(Pipeline.Workspace)/Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+        pwsh $(Pipeline.Workspace)/drop/Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
       displayName: 'Install Playwright browsers'
     - script: |
-        dotnet run --project $(Pipeline.Workspace)/Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        dotnet run --project $(Pipeline.Workspace)/drop/Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
         sleep 10
       displayName: 'Start Server'
       env:
