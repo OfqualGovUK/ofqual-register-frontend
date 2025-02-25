@@ -20,92 +20,35 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-- stage: BuildArtifact
-  displayName: "Build Artifact for Static Analaysis and Testing"
-  jobs:
-  - job: BuildArtifact
-    displayName: "Build Artifact"
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 8.0'
-      inputs:
-        packageType: 'sdk'
-        version: '8.0.x'
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore'
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-        feedsToUse: 'select'
-        verbosityRestore: 'Normal'
-    - task: DotNetCoreCLI@2
-      displayName: 'Build'
-      inputs:
-        command: 'build'
-        projects: '**/*.csproj'
-        arguments: '--no-restore'
-    - script: |
-        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-      displayName: 'Install Playwright browsers'
-  - job: UnitTest
-    dependsOn: BuildArtifact
-    displayName: "Unit Tests"
-    steps:
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'test'
-        projects: '**/*Tests.csproj'
-  - job: PlaywrightTests
-    displayName: "Playwright Tests"
-    dependsOn: BuildArtifact
-    steps:
-
-    - script: |
-        dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-        sleep 10
-      displayName: 'Start Server'
-      env:
-        RegisterBaseUrl: $(RegisterBaseUrl)
-        DefaultUrl: $(RegisterBaseUrl)
-        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-    - script: |
-        dotnet test
-      displayName: 'Run Playwright tests'
-    # - task: DotNetCoreCLI@2
-    #   inputs:
-    #     command: 'publish'
-    #     arguments: '--output $(Build.ArtifactStagingDirectory)'
-    #     projects: '**/*.csproj'
-
-    # - task: PublishBuildArtifacts@1
-    #   inputs:
-    #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    #     ArtifactName: 'drop'
-    #     publishLocation: 'Container'
-
+stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
-- stage: StaticAnalysisAndAudit
-  displayName: "Run Static Analysis and Audit Dependencies"
-  dependsOn: BuildArtifact
+- stage: StaticAnalysis
+  displayName: "Run Static Analysis"
+  condition: always()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      # condition: and(succeeded(), or(startsWith(variables['build.sourceBranch'], 'refs/heads/main'), startsWith(variables['build.sourceBranch'], 'refs/heads/dev')))
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
       steps:
-        # PowerShell script to modify SonarQube parameters
-        - task: PowerShell@2
-          displayName: "Print Branch name"
+        # Install .NET Core SDK
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
           inputs:
-            targetType: 'inline'
-            script: |
-              echo "Branch name: $(Build.SourceBranch)"
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+
+        # Restore NuGet packages
+        - task: DotNetCoreCLI@2
+          displayName: "Restore task"
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
 
         # Prepare SonarQube analysis
         - task: SonarQubePrepare@5
@@ -129,6 +72,14 @@ stages:
               }
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
 
+        # Build the project
+        - task: DotNetCoreCLI@2
+          displayName: "Build task"
+          inputs:
+            command: "build"
+            projects: "**/*.csproj"
+            arguments: "--no-restore"
+
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
           displayName: "SonarQube Analysis"
@@ -145,6 +96,12 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+          displayName: 'Restore Nuget Packages'
+
         - task: Bash@3
           displayName: Check NuGet vulnerabilities
           inputs:
@@ -159,18 +116,94 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
+- stage: Test
+  displayName: "Unit"
+  condition: always()
+  jobs:
+    - job: Unit
+      displayName: "Unit tests"
+      dependsOn: []
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET 8.0'
+          inputs:
+            packageType: 'sdk'
+            version: '8.0.x'
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'
+        - task: DotNetCoreCLI@2
+          displayName: 'Run unit tests'
+          inputs:
+            command: 'test'
+            projects: '**/*Tests.csproj'
+            arguments: '--no-build --no-restore --filter Category=Unit'
+            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+
+# Playwright Tests stage: This stage runs Playwright tests.
+- stage: PlaywrightTests
+  displayName: "Run Playwright Tests"
+  jobs:
+    - job: RunPlaywrightTests
+      displayName: 'Run Playwright Tests'
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'     
+        - script: |
+            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+          displayName: 'Install Playwright browsers'
+        - script: |
+            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+            sleep 10
+          displayName: 'Start Server'
+          env:
+            RegisterBaseUrl: $(RegisterBaseUrl)
+            DefaultUrl: $(RegisterBaseUrl)
+            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+        - script: |
+            dotnet test
+          displayName: 'Run Playwright tests'
 
 - stage: DockerBuild
-  dependsOn: 
-    - BuildArtifact
-    - StaticAnalysisAndAudit
   displayName: Docker Build 
   jobs:
   - job: Build
     displayName: Build 
     pool:
       vmImage: $(vmImageName)
-    
     steps:
     - task: Docker@2
       displayName: Build Docker Image
