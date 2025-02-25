@@ -47,6 +47,7 @@ stages:
         projects: '**/*.csproj'
         arguments: '--no-restore'
   - job: UnitTest
+    dependsOn: BuildArtifact
     displayName: "Unit Tests"
     steps:
     - task: DotNetCoreCLI@2
@@ -55,6 +56,7 @@ stages:
         projects: '**/*Tests.csproj'
   - job: PlaywrightTests
     displayName: "Playwright Tests"
+    dependsOn: BuildArtifact
     steps:
     - script: |
         pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
