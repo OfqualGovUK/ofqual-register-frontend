@@ -72,7 +72,7 @@ stages:
         fi
         sleep 5
         done
-        curl --fail http://localhost:3154/health
+        curl --fail http://localhost:8080/health
         echo "Container did not become healthy in time."
         exit 1
       displayName: Health Check
