@@ -85,19 +85,19 @@ stages:
             version: 8.x
             performMultiLevelLookup: true
             includePreviewVersions: true
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'     
+        # - task: DotNetCoreCLI@2
+        #   displayName: Restore
+        #   inputs:
+        #     command: 'restore'
+        #     projects: '**/*.csproj'
+        #     feedsToUse: 'select'
+        #     verbosityRestore: 'Normal'
+        # - task: DotNetCoreCLI@2
+        #   displayName: Build
+        #   inputs:
+        #     command: 'build'
+        #     projects: '**/*.csproj'
+        #     arguments: '--no-restore'     
         - script: |
             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
           displayName: 'Install Playwright browsers'
