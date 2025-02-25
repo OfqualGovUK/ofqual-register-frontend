@@ -20,8 +20,6 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-
-
 - stage: BuildAndTestDockerImage  
   displayName: Build and Test Docker Image
   jobs:
@@ -59,7 +57,25 @@ stages:
         export PATH=$HOME/bin:$PATH
         trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
-
+    - script: |
+        docker run -d --name register-frontend-healthcheck $(imageRepository):$(tag)
+        echo "Waiting for container health check..."
+        for i in {1..10}; do
+        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+        echo "Health status: $HEALTH_STATUS"
+        if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+        fi
+        sleep 5
+        done
+        curl --fail http://localhost:8080/health
+        curl --fail http://127.0.0.1:8080/health
+        curl --fail http://172.17.0.1:8080/health
+        curl --fail http://host.docker.internal:8080/health
+        echo "Container did not become healthy in time."
+        exit 1
+      displayName: Health Check
     - script: |
         docker run -d --name register-frontend-healthcheck --network="host" $(imageRepository):$(tag)
         echo "Waiting for container health check..."
@@ -83,25 +99,7 @@ stages:
         docker stop register-frontend-healthcheck
         docker rm register-frontend-healthcheck
       displayName: Cleanup Container
-    - script: |
-        docker run -d --name register-frontend-healthcheck $(imageRepository):$(tag)
-        echo "Waiting for container health check..."
-        for i in {1..10}; do
-        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-        echo "Health status: $HEALTH_STATUS"
-        if [ "$HEALTH_STATUS" == "healthy" ]; then
-            echo "Container is healthy!"
-            exit 0
-        fi
-        sleep 5
-        done
-        curl --fail http://localhost:8080/health
-        curl --fail http://127.0.0.1:8080/health
-        curl --fail http://172.17.0.1:8080/health
-        curl --fail http://host.docker.internal:8080/health
-        echo "Container did not become healthy in time."
-        exit 1
-      displayName: Health Check
+
 
     - script: |
         docker stop register-frontend-healthcheck
