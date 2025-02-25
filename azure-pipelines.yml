@@ -73,7 +73,6 @@ stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: always()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -165,86 +164,6 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
-# - stage: Test
-#   displayName: "Unit"
-#   condition: always()
-#   jobs:
-#     - job: Unit
-#       displayName: "Unit tests"
-#       dependsOn: []
-#       pool:
-#         vmImage: $(vmImageName)
-#       steps:
-#         - task: UseDotNet@2
-#           displayName: 'Use .NET 8.0'
-#           inputs:
-#             packageType: 'sdk'
-#             version: '8.0.x'
-#         - task: DotNetCoreCLI@2
-#           displayName: Restore
-#           inputs:
-#             command: 'restore'
-#             projects: '**/*.csproj'
-#             feedsToUse: 'select'
-#             verbosityRestore: 'Normal'
-#         - task: DotNetCoreCLI@2
-#           displayName: Build
-#           inputs:
-#             command: 'build'
-#             projects: '**/*.csproj'
-#             arguments: '--no-restore'
-#         - task: DotNetCoreCLI@2
-#           displayName: 'Run unit tests'
-#           inputs:
-#             command: 'test'
-#             projects: '**/*Tests.csproj'
-#             arguments: '--no-build --no-restore --filter Category=Unit'
-#             testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
-
-# # Playwright Tests stage: This stage runs Playwright tests.
-# - stage: PlaywrightTests
-#   displayName: "Run Playwright Tests"
-#   jobs:
-#     - job: RunPlaywrightTests
-#       displayName: 'Run Playwright Tests'
-#       pool:
-#         vmImage: $(vmImageName)
-#       steps:
-#         - task: UseDotNet@2
-#           displayName: 'Install .NET Core SDK'
-#           inputs:
-#             version: 8.x
-#             performMultiLevelLookup: true
-#             includePreviewVersions: true
-#         - task: DotNetCoreCLI@2
-#           displayName: Restore
-#           inputs:
-#             command: 'restore'
-#             projects: '**/*.csproj'
-#             feedsToUse: 'select'
-#             verbosityRestore: 'Normal'
-#         - task: DotNetCoreCLI@2
-#           displayName: Build
-#           inputs:
-#             command: 'build'
-#             projects: '**/*.csproj'
-#             arguments: '--no-restore'     
-#         - script: |
-#             pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-#           displayName: 'Install Playwright browsers'
-#         - script: |
-#             dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-#             sleep 10
-#           displayName: 'Start Server'
-#           env:
-#             RegisterBaseUrl: $(RegisterBaseUrl)
-#             DefaultUrl: $(RegisterBaseUrl)
-#             RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-#             StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-#             RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-#         - script: |
-#             dotnet test
-#           displayName: 'Run Playwright tests'
 
 - stage: DockerBuild
   displayName: Docker Build 
@@ -263,6 +182,30 @@ stages:
         tags: |
           latest
           $(tag)
+
+- stage: ContainerVulnerabilityScan
+  displayName: "Run Container Vulnerability Scan"
+  jobs:
+  - job: InstallTrivy
+    displayName: "Install Trivy"
+    steps:
+    - script: |
+        echo "Installing Trivy..."
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        # export PATH=$HOME/bin:$PATH
+        trivy --version
+      displayName: 'Install Trivy'
+
+  - job: RunTrivyScan
+    displayName: "Run Trivy Scan"
+    steps:
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
+
 
 - stage: Healthcheck
   displayName: "Health Check"
@@ -291,30 +234,6 @@ stages:
         docker rm register-frontend-healthcheck
       displayName: Cleanup Healthcheck Container
       condition: always()
-
-- stage: ContainerVulnerabilityScan
-  displayName: "Run Container Vulnerability Scan"
-  jobs:
-  - job: InstallTrivy
-    displayName: "Install Trivy"
-    steps:
-    - script: |
-        echo "Installing Trivy..."
-        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-        # export PATH=$HOME/bin:$PATH
-        trivy --version
-      displayName: 'Install Trivy'
-
-  - job: RunTrivyScan
-    displayName: "Run Trivy Scan"
-    steps:
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-
 
 - stage: Push
   displayName: Push
