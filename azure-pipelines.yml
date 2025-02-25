@@ -70,50 +70,6 @@ stages:
         command: 'test'
         projects: '**/*Tests.csproj'
 
-  - job: PlaywrightTests
-    steps:
-    - download: current
-      artifact: drop
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '8.x'
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-        feedsToUse: 'select'
-        verbosityRestore: 'Normal'
-
-    - script: |
-        echo "Artifact contents:"
-        ls -R $(Pipeline.Workspace)/drop
-      displayName: 'List Artifact Contents'
-    - script: |
-        # Extract the zip file (if the artifact is zipped)
-        echo "Extracting the published zip file..."
-        unzip $(Pipeline.Workspace)/drop/*.zip -d $(Pipeline.Workspace)/drop/extracted
-        echo "Extracted files:"
-        ls -R $(Pipeline.Workspace)/drop/extracted
-      displayName: 'Extract Published Zip File'    
-    - script: |
-        pwsh -c "dotnet tool install --global Microsoft.Playwright.CLI"
-        pwsh -c "playwright install"
-      displayName: 'Install Playwright browsers'
-    - script: |
-        dotnet run --project $(Pipeline.Workspace)/drop/extracted/Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-        sleep 10
-      displayName: 'Start Server'
-      env:
-        RegisterBaseUrl: $(RegisterBaseUrl)
-        DefaultUrl: $(RegisterBaseUrl)
-        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-    - script: |
-        dotnet test
-      displayName: 'Run Playwright tests'
-
 # Playwright Tests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
   displayName: "Run Playwright Tests"
