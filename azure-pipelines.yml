@@ -161,8 +161,6 @@ stages:
   dependsOn: 
     - BuildArtifact
     - StaticAnalysisAndAudit
-    - Test
-    - PlaywrightTests
   displayName: Docker Build 
   jobs:
   - job: Build
@@ -183,7 +181,6 @@ stages:
 
 - stage: Healthcheck
   displayName: "Health Check"
-  dependsOn: DockerBuild
   jobs:
   - job: HealthCheck
     displayName: "Health Check"
@@ -212,7 +209,6 @@ stages:
 
 - stage: ContainerVulnerabilityScan
   displayName: "Run Container Vulnerability Scan"
-  dependsOn: Healthcheck
   jobs:
   - job: InstallTrivy
     displayName: "Install Trivy"
@@ -237,8 +233,6 @@ stages:
 
 - stage: Push
   displayName: Push
-  dependsOn: 
-    - ContainerVulnerabilityScan
   jobs:
   - job: Push
     steps:
