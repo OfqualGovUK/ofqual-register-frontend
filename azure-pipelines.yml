@@ -36,7 +36,6 @@ stages:
         secureFile: 'register-frontend-appsettings.json'
 
     - script: |
-        echo "securefile path is $(downloadAppsettings.secureFilePath), sources directory is $(Build.SourcesDirectory)"
         mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appSettings.json
       displayName: "Rename and Move appSettings.json"
 
@@ -66,7 +65,7 @@ stages:
 
     - script: |
         echo "Running Docker Container..."
-        docker run -d --name healthcheck-container $(imageRepository):$(tag)
+        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appSettings.json:/app/appSettings.json $(imageRepository):$(tag)
       displayName: 'Run Docker Container'
 
     - script: |
