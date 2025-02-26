@@ -55,12 +55,12 @@ stages:
     - script: |
         echo "Running Trivy Scan..."
         export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
 
     - script: |
         echo "Running Docker Container..."
-        docker run -d --name healthcheck-container $(imageRepository):latest
+        docker run -d --name healthcheck-container $(imageRepository):$(tag)
       displayName: 'Run Docker Container'
 
     - script: |
@@ -74,9 +74,10 @@ stages:
           sleep 10
         done
         echo "Container did not become healthy within the expected time."
+        echo "Checking container logs..."
+        docker logs healthcheck-container
         exit 1
       displayName: 'Wait for Container Health Check'
-
     # - script: |
     #     docker run -d --name register-frontend-healthcheck $(imageRepository):$(tag)
     #     echo "Waiting for container health check..."
