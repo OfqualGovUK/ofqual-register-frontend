@@ -78,7 +78,7 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
+      condition: succeeded()
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -171,6 +171,7 @@ stages:
 
 - stage: BuildAndTestDockerImage  
   displayName: Build and Test Docker Image
+  condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
   jobs:
   - job: Build
     displayName: Build 
