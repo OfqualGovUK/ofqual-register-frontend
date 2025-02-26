@@ -46,6 +46,9 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
+    - script: |
+        ls
+        displayName: "Pint ls"
     - task: DotNetCoreCLI@2
       displayName: 'Run unit tests'
       inputs:
