@@ -1,4 +1,5 @@
 using CsvHelper;
+using CsvHelper.TypeConversion;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Ofqual.Common.RegisterFrontend.Cache;
@@ -56,7 +57,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("/qualifications")]
-        public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string[]? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string? sectorSubjectAreas = null)
+        public async Task<IActionResult> SearchResults(string title, string bav = "", int page = 1, string? assessmentMethods = null, string? gradingTypes = null, string[]? awardingOrganisations = null, string? availability = null, string? qualificationTypes = null, string? qualificationLevels = null, string? nationalAvailability = null, int? minTotalQualificationTime = null, int? maxTotalQualificationTime = null, int? minGuidedLearninghours = null, int? maxGuidedLearninghours = null, string[]? sectorSubjectAreas = null)
         {
             #region Qual Detail
             //redirect to the qualification details if qual number is searched
@@ -126,7 +127,20 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             try
             {
-                quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                quals = await _registerAPIClient.GetQualificationsListAsync(title, page, pagingLimit, 
+                                                                            assessmentMethods, 
+                                                                            gradingTypes, 
+                                                                            availability, 
+                                                                            qualificationTypes, 
+                                                                            qualificationLevels, 
+                                                                            nationalAvailability, 
+                                                                            minTotalQualificationTime, 
+                                                                            maxTotalQualificationTime, 
+                                                                            minGuidedLearninghours, 
+                                                                            maxGuidedLearninghours,
+                                                                            awardingOrganisations,
+                                                                            sectorSubjectAreas
+                                                                            );
             }
             catch (ApiException ex)
             {
@@ -155,7 +169,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     QualificationTypes = qualificationTypes?.GetSubStrings(),
                     QualificationLevels = qualificationLevels?.GetSubStrings(),
                     NationalAvailability = nationalAvailability?.GetSubStrings(),
-                    SectorSubjectAreas = sectorSubjectAreas?.GetSubStrings(),
+                    SectorSubjectAreas = sectorSubjectAreas,
                     MinTotalQualificationTime = minTotalQualificationTime,
                     MaxTotalQualificationTime = maxTotalQualificationTime,
                     MinGuidedLearninghours = minGuidedLearninghours,
@@ -187,7 +201,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 maxTotalQualificationTime,
                 minGuidedLearninghours,
                 maxGuidedLearninghours,
-                sectorSubjectAreas = string.Join(',', sectorSubjectAreas),
+                sectorSubjectAreas,
             });
         }
 
@@ -223,7 +237,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
         [HttpGet]
         [Route("qualifications/download-CSV")]
-        public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
+        public async Task<IActionResult> DownloadCSV(string? title, string? availability, string? qualificationTypes, string? qualificationLevels, string[]? awardingOrganisations, string[]? sectorSubjectAreas, string? gradingTypes, string? assessmentMethods, string? nationalAvailability, int? minTotalQualificationTime, int? maxTotalQualificationTime, int? minGuidedLearninghours, int? maxGuidedLearninghours)
         {
             var titleName = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
@@ -236,7 +250,19 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
                 try
                 {
-                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, assessmentMethods: assessmentMethods, gradingTypes: gradingTypes, awardingOrganisations: awardingOrganisations, availability: availability, qualificationTypes: qualificationTypes, qualificationLevels: qualificationLevels, nationalAvailability: nationalAvailability, sectorSubjectAreas: sectorSubjectAreas, minTotalQualificationTime: minTotalQualificationTime, maxTotalQualificationTime: maxTotalQualificationTime, minGuidedLearninghours: minGuidedLearninghours, maxGuidedLearninghours: maxGuidedLearninghours);
+                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, 
+                                                                                       assessmentMethods, 
+                                                                                       gradingTypes, 
+                                                                                       availability, 
+                                                                                       qualificationTypes, 
+                                                                                       qualificationLevels, 
+                                                                                       nationalAvailability, 
+                                                                                       minTotalQualificationTime, 
+                                                                                       maxTotalQualificationTime, 
+                                                                                       minGuidedLearninghours, 
+                                                                                       maxGuidedLearninghours, 
+                                                                                       awardingOrganisations, 
+                                                                                       sectorSubjectAreas);
                 }
                 catch (ApiException ex)
                 {
@@ -247,6 +273,10 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                 using (var streamWriter = new StreamWriter(memoryStream))
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
+                    var options = new TypeConverterOptions { Formats = ["yyyy/MM/dd HH:mm:ss"] };
+                    csvWriter.Context.TypeConverterOptionsCache.AddOptions<DateTime>(options);
+                    csvWriter.Context.TypeConverterOptionsCache.AddOptions<DateTime?>(options);
+
                     csvWriter.WriteRecords(quals.Results);
                 }
 
