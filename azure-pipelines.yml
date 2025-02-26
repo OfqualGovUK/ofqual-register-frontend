@@ -14,15 +14,188 @@ variables:
   # Container registry service connection established during pipeline creation
   dockerfilePath: '$(System.DefaultWorkingDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
+  testingPipeline: 'true'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
 
 stages:
+- stage: BuildAndTestDockerImage  
+  displayName: Build and Test Docker Image
+  jobs:
+  - job: Build
+    displayName: Build 
+    pool:
+      vmImage: $(vmImageName)
+    
+    steps:
+    - task: DownloadSecureFile@1
+      name: downloadAppsettings
+      displayName: 'Download App Settings for Health Check'
+      inputs:
+        secureFile: 'register-frontend-appsettings.json'
+
+    - script: |
+        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appSettings.json
+        ls $(Build.SourcesDirectory)
+      displayName: "Rename and Move appSettings.json"
+
+    - script: |
+        echo "Installing Trivy..."
+        # curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        # export PATH=$HOME/bin:$PATH
+        trivy --version
+      displayName: 'Install Trivy'
+
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+    
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
+
+    - script: |
+        echo "Running Docker Container..."
+        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appSettings.json:/app/appSettings.json $(imageRepository):$(tag)
+        docker exec healthcheck-container ls /
+        docker exec healthcheck-container ls /app
+      displayName: 'Run Docker Container'
+
+    - script: |
+        echo "Waiting for container to become healthy..."
+        for i in {1..10}; do
+          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' healthcheck-container)
+          if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+          fi
+          sleep 10
+        done
+        echo "Container did not become healthy within the expected time."
+        echo "Checking container logs..."
+        docker logs healthcheck-container
+        exit 1
+      displayName: 'Wait for Container Health Check'
+    # - script: |
+    #     docker run -d --name register-frontend-healthcheck $(imageRepository):$(tag)
+    #     echo "Waiting for container health check..."
+    #     for i in {1..10}; do
+    #     HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+    #     echo "Health status: $HEALTH_STATUS"
+    #     if [ "$HEALTH_STATUS" == "healthy" ]; then
+    #         echo "Container is healthy!"
+    #         exit 0
+    #     fi
+    #     sleep 5
+    #     done
+    #     curl --fail http://localhost:8080/health
+    #     curl --fail http://127.0.0.1:8080/health
+    #     curl --fail http://172.17.0.1:8080/health
+    #     curl --fail http://host.docker.internal:8080/health
+    #     echo "Container did not become healthy in time."
+    #     exit 1
+    #   displayName: Health Check
+    # - script: |
+    #     docker run -d --name register-frontend-healthcheck --network="host" $(imageRepository):$(tag)
+    #     echo "Waiting for container health check..."
+    #     for i in {1..10}; do
+    #     HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
+    #     echo "Health status: $HEALTH_STATUS"
+    #     if [ "$HEALTH_STATUS" == "healthy" ]; then
+    #         echo "Container is healthy!"
+    #         exit 0
+    #     fi
+    #     sleep 5
+    #     done
+    #     curl --fail http://localhost:8080/health
+    #     curl --fail http://127.0.0.1:8080/health
+    #     curl --fail http://172.17.0.1:8080/health
+    #     echo "Container did not become healthy in time."
+    #     exit 1
+    #   displayName: Health Check
+
+    - script: |
+        docker stop register-frontend-healthcheck
+        docker rm register-frontend-healthcheck
+      displayName: Cleanup Container
+
+    - task: Docker@2
+      displayName: Push Image to Container Registry
+      condition: succeeded()
+      inputs:
+        command: push
+        repository: $(imageRepository)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
+        tags: |
+          latest
+          $(tag)
+
+- stage: BuildAndTestArtifact
+  displayName: "Build and test artifact"
+  jobs:
+  - job: BuildArtifact
+    displayName: "Build Artifact"
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk 8.0'
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--no-restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
+      inputs:
+        command: 'test'
+        projects: '**/*Tests.csproj'
+        arguments: '--no-build --no-restore --filter Category=Unit'
+        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
+    - script: |
+        dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        sleep 10
+      displayName: 'Start Server'
+      env:
+        RegisterBaseUrl: $(RegisterBaseUrl)
+        DefaultUrl: $(RegisterBaseUrl)
+        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+    - script: |
+        dotnet test
+      displayName: 'Run Playwright tests'
+
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: always()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
@@ -114,153 +287,23 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
-- stage: Test
-  displayName: "Unit"
-  condition: always()
-  jobs:
-    - job: Unit
-      displayName: "Unit tests"
-      dependsOn: []
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Use .NET 8.0'
-          inputs:
-            packageType: 'sdk'
-            version: '8.0.x'
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'
-        - task: DotNetCoreCLI@2
-          displayName: 'Run unit tests'
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--no-build --no-restore --filter Category=Unit'
-            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
-# Playwright Tests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Run Playwright Tests"
+- stage: Push
+  displayName: Push
   jobs:
-    - job: RunPlaywrightTests
-      displayName: 'Run Playwright Tests'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'     
-        - script: |
-            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-          displayName: 'Install Playwright browsers'
-        - script: |
-            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-            sleep 10
-          displayName: 'Start Server'
-          env:
-            RegisterBaseUrl: $(RegisterBaseUrl)
-            DefaultUrl: $(RegisterBaseUrl)
-            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-        - script: |
-            dotnet test
-          displayName: 'Run Playwright tests'
-
-- stage: Build
-  displayName: Build 
-  jobs:
-  - job: Build
-    displayName: Build 
-    pool:
-      vmImage: $(vmImageName)
-    
-    strategy:
-      matrix:
-        Dev:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-          condition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
-        Prod:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-          condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
-
-    condition: and(succeeded(), $[matrix.condition])
-    
+  - job: Push
     steps:
     - task: Docker@2
-      displayName: Build Docker Image
+      displayName: Push Image to Container Registry
+      condition: succeeded()
       inputs:
-        command: build
+        command: push
         repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
         tags: |
           latest
           $(tag)
 
-    - script: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-      displayName: 'Install Trivy'
-    
-    - script: |
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-
-  - script: |
-      docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-      echo "Waiting for container health check..."
-      for i in {1..10}; do
-        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-        echo "Health status: $HEALTH_STATUS"
-        if [ "$HEALTH_STATUS" == "healthy" ]; then
-          echo "Container is healthy!"
-          exit 0
-        fi
-        sleep 5
-      done
-      echo "Container did not become healthy in time."
-      exit 1
-    displayName: Health Check
-
-  - script: |
-      docker stop register-frontend-healthcheck
-      docker rm register-frontend-healthcheck
-    displayName: Cleanup Container
-    condition: always()
-
-  - task: Docker@2
-    displayName: Push Image to Container Registry
-    inputs:
-      command: push
-      repository: $(imageRepository)
-      containerRegistry: $(containerRegistry)
-      tags: |
-        latest
-        $(tag)
