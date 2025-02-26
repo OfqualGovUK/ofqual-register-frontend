@@ -37,6 +37,7 @@ stages:
 
     - script: |
         mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appSettings.json
+        ls $(Build.SourcesDirectory)
       displayName: "Rename and Move appSettings.json"
 
     - script: |
