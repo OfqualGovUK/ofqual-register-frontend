@@ -29,6 +29,14 @@ stages:
       vmImage: $(vmImageName)
     
     steps:
+    - task: DownloadSecureFile@1
+      name: downloadAppSettings
+      displayName: "Download App Settings for Health Check"
+      inputs:
+        secureFile: "register-frontend-appsettings.json"      
+    - script: |
+        mv "$(Agent.TempDirectory)/$(downloadAppSettings.secureFilePath)" "$(Build.SourcesDirectory)/appSettings.json"
+      displayName: "Rename and Move appSettings.json"
     - script: |
         echo "Pulling the latest .NET base image..."
         docker pull mcr.microsoft.com/dotnet/aspnet:8.0
