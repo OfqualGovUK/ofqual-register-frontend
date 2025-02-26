@@ -36,9 +36,9 @@ stages:
         secureFile: 'register-frontend-appsettings.json'
 
     - script: |
-        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appSettings.json
+        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
         ls $(Build.SourcesDirectory)
-      displayName: "Rename and Move appSettings.json"
+      displayName: "Rename and Move appsettings.json"
 
     - script: |
         echo "Installing Trivy..."
@@ -66,7 +66,7 @@ stages:
 
     - script: |
         echo "Running Docker Container..."
-        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appSettings.json:/app/appSettings.json $(imageRepository):$(tag)
+        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
         docker exec healthcheck-container ls /
         docker exec healthcheck-container ls /app
       displayName: 'Run Docker Container'
