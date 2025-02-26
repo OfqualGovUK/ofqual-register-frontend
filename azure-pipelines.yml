@@ -30,13 +30,14 @@ stages:
     
     steps:
     - task: DownloadSecureFile@1
-      name: downloadAppSettings
       displayName: "Download App Settings for Health Check"
       inputs:
         secureFile: "register-frontend-appsettings.json"     
-         
+        name: 'appSettingsFile'
+
     - script: |
-        mv "$(Agent.TempDirectory)/$(downloadAppSettings.secureFilePath)" "$(Build.SourcesDirectory)/appSettings.json"
+        echo 
+        mv $(appSettingsFile.secureFilePath) $(Build.SourcesDirectory)/appSettings.json
       displayName: "Rename and Move appSettings.json"
 
     - script: |
