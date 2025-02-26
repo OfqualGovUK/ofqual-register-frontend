@@ -66,6 +66,8 @@ stages:
     - script: |
         echo "Running Docker Container..."
         docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appSettings.json:/app/appSettings.json $(imageRepository):$(tag)
+        docker exec healthcheck-container ls /
+        docker exec healthcheck-container ls /app
       displayName: 'Run Docker Container'
 
     - script: |
