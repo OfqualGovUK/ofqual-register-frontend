@@ -59,6 +59,7 @@ stages:
           $(tag)
     
     - script: |
+        docker images 
         echo "Running Trivy Scan..."
         export PATH=$HOME/bin:$PATH
         trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
@@ -91,13 +92,12 @@ stages:
         docker stop healthcheck-container
         docker rm healthcheck-container
       displayName: Cleanup Container
-
     
     - task: Docker@2
       displayName: Push Image to Container Registry
       condition: succeeded()
       inputs:
-        command: push
+        command: buildAndPush
         repository: $(imageRepository)
         ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
           containerRegistry: $(dockerRegistryServiceConnectionProd)
