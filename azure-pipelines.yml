@@ -63,7 +63,6 @@ stages:
       displayName: 'Run tests'
       inputs:
         command: 'test'
-        projects: '**/*Tests.csproj'
         arguments: '--no-build --no-restore'
         testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
