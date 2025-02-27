@@ -60,13 +60,12 @@ stages:
         StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
         RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
     - task: DotNetCoreCLI@2
-      displayName: 'Run unit tests'
+      displayName: 'Run tests'
       inputs:
         command: 'test'
         projects: '**/*Tests.csproj'
         arguments: '--no-build --no-restore'
         testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
-      displayName: 'Run Playwright tests'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
