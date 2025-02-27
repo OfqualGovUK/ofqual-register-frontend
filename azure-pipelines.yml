@@ -46,47 +46,31 @@ stages:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore'
-    - script: |
-        ls
-        echo "download path: $(System.ArtifactsDirectory)"
-        ls /$(Build.SourcesDirectory)
-        echo "path to publish: $(Build.ArtifactStagingDirectory)"
-        echo "Build.SourcesDirectory: $(Build.SourcesDirectory)"
-        echo "--------bin-------"
-        ls /bin
-        echo "--------obj-------"
-        ls /obj
-      displayName: "Pint info"
-    # - task: DotNetCoreCLI@2
-    #   displayName: 'Run unit tests'
-    #   inputs:
-    #     command: 'test'
-    #     projects: '**/*Tests.csproj'
-    #     arguments: '--no-build --no-restore --filter Category=Unit'
-    #     testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
-    # - script: |
-    #     pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-    #   displayName: 'Install Playwright browsers'
-    # - script: |
-    #     dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-    #     sleep 10
-    #   displayName: 'Start Server'
-    #   env:
-    #     RegisterBaseUrl: $(RegisterBaseUrl)
-    #     DefaultUrl: $(RegisterBaseUrl)
-    #     RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-    #     StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-    #     RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-    # - script: |
-    #     dotnet test
-    #   displayName: 'Run Playwright tests'
-    # - publish: '$(Build.ArtifactStagingDirectory)'
-    #   artifact: drop
-    - task: PublishPipelineArtifact@1
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
       inputs:
-        targetPath: '$(Build.SourcesDirectory)/bin'
-        artifact: 'bin-folder'
-      displayName: 'Publish bin folder as an artifact'
+        command: 'test'
+        projects: '**/*Tests.csproj'
+        arguments: '--no-build --no-restore --filter Category=Unit'
+        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
+    - script: |
+        dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        sleep 10
+      displayName: 'Start Server'
+      env:
+        RegisterBaseUrl: $(RegisterBaseUrl)
+        DefaultUrl: $(RegisterBaseUrl)
+        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
+        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
+        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+    - script: |
+        dotnet test
+      displayName: 'Run Playwright tests'
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: drop
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
@@ -94,17 +78,12 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: succeeded()
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
       steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifact: 'bin-folder'
-            path: '$(Build.SourcesDirectory)/bin'
-          displayName: 'Download bin folder artifact'
-              # Install .NET Core SDK
+        # Install .NET Core SDK
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
           inputs:
@@ -120,13 +99,7 @@ stages:
             projects: '**/*.csproj'
             feedsToUse: 'select'
             vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
-        - script: |
-            ls
-            echo "--------bin-------"
-            ls /bin
-            echo "--------obj-------"
-            ls /obj
-          displayName: "Pint ls"
+
         # Prepare SonarQube analysis
         - task: SonarQubePrepare@5
           displayName: "Prepare SonarQube Analysis"
@@ -148,6 +121,16 @@ stages:
                   $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
               }
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+        - script: |
+            ls
+          displayName: "Pint ls"
+        # # Build the project
+        # - task: DotNetCoreCLI@2
+        #   displayName: "Build task"
+        #   inputs:
+        #     command: "build"
+        #     projects: "**/*.csproj"
+        #     arguments: "--no-restore"
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
@@ -188,7 +171,6 @@ stages:
 
 - stage: BuildAndTestDockerImage  
   displayName: Build and Test Docker Image
-  condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
   jobs:
   - job: Build
     displayName: Build 
