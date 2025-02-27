@@ -48,7 +48,10 @@ stages:
         arguments: '--no-restore'
     - script: |
         ls
-      displayName: "Pint ls"
+        echo "download path: $(System.ArtifactsDirectory)"
+        echo "path to publish: $(Build.ArtifactStagingDirectory)"
+        echo "Build.SourcesDirectory: $(Build.SourcesDirectory)"
+      displayName: "Pint info"
     - task: DotNetCoreCLI@2
       displayName: 'Run unit tests'
       inputs:
@@ -72,8 +75,13 @@ stages:
     - script: |
         dotnet test
       displayName: 'Run Playwright tests'
-    - publish: '$(Build.ArtifactStagingDirectory)'
-      artifact: drop
+    # - publish: '$(Build.ArtifactStagingDirectory)'
+    #   artifact: drop
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)' # string. Required. Path to publish. Default: $(Build.ArtifactStagingDirectory).
+        ArtifactName: 'drop' # string. Required. Artifact name. Default: drop.
+        publishLocation: 'Container'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
@@ -86,7 +94,12 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
-        # Install .NET Core SDK
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current' 
+            artifactName: drop
+            downloadPath: '$(Build.SourcesDirectory)/bin'
+              # Install .NET Core SDK
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
           inputs:
@@ -127,13 +140,7 @@ stages:
         - script: |
             ls
           displayName: "Pint ls"
-        # # Build the project
-        # - task: DotNetCoreCLI@2
-        #   displayName: "Build task"
-        #   inputs:
-        #     command: "build"
-        #     projects: "**/*.csproj"
-        #     arguments: "--no-restore"
+
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
