@@ -49,8 +49,13 @@ stages:
     - script: |
         ls
         echo "download path: $(System.ArtifactsDirectory)"
+        ls /$(Build.SourcesDirectory)
         echo "path to publish: $(Build.ArtifactStagingDirectory)"
         echo "Build.SourcesDirectory: $(Build.SourcesDirectory)"
+        echo "--------bin-------"
+        ls /bin
+        echo "--------obj-------"
+        ls /obj
       displayName: "Pint info"
     # - task: DotNetCoreCLI@2
     #   displayName: 'Run unit tests'
@@ -117,6 +122,10 @@ stages:
             vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
         - script: |
             ls
+            echo "--------bin-------"
+            ls /bin
+            echo "--------obj-------"
+            ls /obj
           displayName: "Pint ls"
         # Prepare SonarQube analysis
         - task: SonarQubePrepare@5
