@@ -77,11 +77,11 @@ stages:
     #   displayName: 'Run Playwright tests'
     # - publish: '$(Build.ArtifactStagingDirectory)'
     #   artifact: drop
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)' # string. Required. Path to publish. Default: $(Build.ArtifactStagingDirectory).
-        ArtifactName: 'drop' # string. Required. Artifact name. Default: drop.
-        publishLocation: 'Container'
+        targetPath: '$(Build.SourcesDirectory)/bin'
+        artifact: 'bin-folder'
+      displayName: 'Publish bin folder as an artifact'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
@@ -94,11 +94,11 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
-        - task: DownloadBuildArtifacts@1
+        - task: DownloadPipelineArtifact@2
           inputs:
-            buildType: 'current' 
-            artifactName: drop
-            downloadPath: '$(Build.SourcesDirectory)/bin'
+            artifact: 'bin-folder'
+            path: '$(Build.SourcesDirectory)/bin'
+          displayName: 'Download bin folder artifact'
               # Install .NET Core SDK
         - task: UseDotNet@2
           displayName: 'Install .NET Core SDK'
