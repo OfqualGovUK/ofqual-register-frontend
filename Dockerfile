@@ -6,8 +6,8 @@ LABEL maintainer="OfqualDevs"
 LABEL description="This Dockerfile builds and runs the Ofqual Register frontend as a .NET 8.0 ASP.NET application with a multi-stage build process for efficient containerization and fast debugging."
 
 USER root
-RUN apt-get update && apt-get upgrade -y && apt-get install -y curl \
-    && rm -rf /var/lib/apt/lists/* 
+RUN apk update && apk upgrade && apk add --no-cache curl \
+    && rm -rf /var/cache/apk/*
     
 WORKDIR /app
 
