@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-noble AS base                               
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base                               
 
 LABEL maintainer="OfqualDevs"
 LABEL description="This Dockerfile builds and runs the Ofqual Register frontend as a .NET 8.0 ASP.NET application with a multi-stage build process for efficient containerization and fast debugging."
@@ -11,9 +11,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y curl \
     
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-noble AS build
-RUN apt-get update && apt-get upgrade -y && apt-get install -y curl \
-    && rm -rf /var/lib/apt/lists/* 
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Ofqual.Common.RegisterFrontend.csproj", "."]

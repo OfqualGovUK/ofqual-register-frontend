@@ -14,7 +14,6 @@ variables:
   # Container registry service connection established during pipeline creation
   dockerfilePath: '$(System.DefaultWorkingDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
-  testingPipeline: 'true'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -118,11 +117,12 @@ stages:
                   exit 0
               fi
 
-- stage: BuildAndTestArtifact
-  displayName: "Build and test artifact"
+# Build and Test stage: This stage builds and tests the application.
+- stage: BuildAndTest
+  displayName: "Build and test"
   jobs:
-  - job: BuildArtifact
-    displayName: "Build Artifact"
+  - job: Build
+    displayName: "Build"
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -164,25 +164,26 @@ stages:
         arguments: '--no-build --no-restore'
         testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
-- stage: BuildAndTestDockerImage  
-  displayName: Build and Test Docker Image
+# Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
+- stage: BuildTestAndPublishDockerImage  
+  displayName: Build, Test and publish Docker Image
   jobs:
   - job: Build
     displayName: Build 
     pool:
       vmImage: $(vmImageName)
-    
     steps:
+    # Download appsettings.json file stored in the pipeline secure files. Required for health check as the repository doesn't contain the app settings
     - task: DownloadSecureFile@1
       name: downloadAppsettings
       displayName: 'Download App Settings for Health Check'
       inputs:
         secureFile: 'register-frontend-appsettings.json'
-
+      # move the downloaded app settings to the root of the source directory
     - script: |
         mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
       displayName: "Rename and Move appsettings.json"
-
+    # Run Vulnerability Scanner to test the image
     - script: |
         echo "Installing Trivy..."
         curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
