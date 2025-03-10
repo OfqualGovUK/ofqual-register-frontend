@@ -4,7 +4,9 @@ using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Refit;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,9 @@ builder.Services.AddSingleton<IBlobService, BlobService>();
 builder.Services.AddScoped<IQualificationsUseCases, QualificationsUseCases>();
 
 builder.Services.AddWebOptimizer();
+
+//healthcheck
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -96,6 +101,9 @@ app.Use(async (context, next) =>
     }
     else await next();
 });
+
+// Configure the health check endpoint
+app.MapHealthChecks("/health");
 
 app.UseHttpsRedirection();
 
