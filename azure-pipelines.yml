@@ -26,63 +26,72 @@ stages:
     - job: Snyk
       displayName: "Snyk SAST Analysis"
       steps:
-    # Install .NET Core SDK
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core SDK'
-        inputs:
-          version: 8.x
-          performMultiLevelLookup: true
-          includePreviewVersions: true
+        # Install .NET Core SDK
+        - task: UseDotNet@2
+          displayName: 'Install .NET Core SDK'
+          inputs:
+            version: 8.x
+            performMultiLevelLookup: true
+            includePreviewVersions: true
 
-      # Restore NuGet packages
-      - task: DotNetCoreCLI@2
-        displayName: "Restore task"
-        inputs:
-          command: 'restore'
-          projects: '**/*.csproj'
-          feedsToUse: 'select'
-          vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+        # Restore NuGet packages
+        - task: DotNetCoreCLI@2
+          displayName: "Restore task"
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
 
-      # Build the project
-      - task: DotNetCoreCLI@2
-        displayName: "Build task"
-        inputs:
-          command: "build"
-          projects: "**/*.csproj"
-          arguments: "--no-restore"
-    
-      # Install and authenticate Snyk
-      - script: |
-          npm install -g snyk
-          snyk config set endpoint='https://app.eu.snyk.io/api'
-          snyk auth $(SNYK_TOKEN)
-          set +e
-        displayName: 'Snyk Install & Auth'
+        # Build the project
+        - task: DotNetCoreCLI@2
+          displayName: "Build task"
+          inputs:
+            command: "build"
+            projects: "**/*.csproj"
+            arguments: "--no-restore"
+      
+        # Install and authenticate Snyk
+        - script: |
+            npm install -g snyk
+            snyk config set endpoint='https://app.eu.snyk.io/api'
+            snyk auth $(SNYK_TOKEN)
+            set +e
+          displayName: 'Snyk Install & Auth'
 
-      - task: SnykSecurityScan@1
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'code'
-          monitorWhen: 'always'
-          failOnIssues: false
+        - task: SnykSecurityScan@1
+          inputs:
+            serviceConnectionEndpoint: 'snyk-integration-eu'
+            testType: 'code'
+            monitorWhen: 'always'
+            failOnIssues: false
 
-      - task: SnykSecurityScan@1
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'app'
-          severityThreshold: 'high'
-          monitorWhen: 'always'
-          failOnIssues: false 
-          additionalArguments: '--all-projects'
-          
-      - task: SnykSecurityScan@1
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'container'
-          dockerfilePath: '$(dockerfilePath)'
-          severityThreshold: 'high'
-          monitorWhen: 'always'
-          failOnIssues: false
+        - task: SnykSecurityScan@1
+          inputs:
+            serviceConnectionEndpoint: 'snyk-integration-eu'
+            testType: 'app'
+            severityThreshold: 'high'
+            monitorWhen: 'always'
+            failOnIssues: false 
+            additionalArguments: '--all-projects'
+            
+        - task: Docker@2
+          displayName: Build Docker Image
+          inputs:
+            command: build
+            dockerfile: '$(dockerfilePath)'
+            tags: |
+              register-frontend:latest
+              $(tag)
+
+        - task: SnykSecurityScan@1
+          inputs:
+            serviceConnectionEndpoint: 'snyk-integration-eu'
+            testType: 'container'
+            dockerImageName: 'register-frontend:latest'
+            severityThreshold: 'high'
+            monitorWhen: 'always'
+            failOnIssues: true
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
