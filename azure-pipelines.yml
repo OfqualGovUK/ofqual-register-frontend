@@ -82,7 +82,6 @@ stages:
             dockerfile: '$(dockerfilePath)'
             tags: |
               register-frontend:latest
-              $(tag)
 
         - script: docker images
           displayName: List Docker Images
