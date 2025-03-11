@@ -79,9 +79,9 @@ stages:
           displayName: Build Docker Image
           inputs:
             command: build
+            repository: 'register-frontend'
             dockerfile: '$(dockerfilePath)'
-            tags: |
-              register-frontend:latest
+            tags: 'latest'
 
         - script: docker images
           displayName: List Docker Images
