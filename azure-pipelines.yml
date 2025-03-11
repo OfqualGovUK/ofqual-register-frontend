@@ -84,6 +84,9 @@ stages:
               register-frontend:latest
               $(tag)
 
+        - script: docker images
+          displayName: List Docker Images
+
         - task: SnykSecurityScan@1
           inputs:
             serviceConnectionEndpoint: 'snyk-integration-eu'
