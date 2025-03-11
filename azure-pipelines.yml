@@ -19,6 +19,66 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
+- stage:
+  displayName: "Run Static Analysis - Snyk"
+  condition: always()
+  jobs:
+    - job: Snyk
+      displayName: "Snyk SAST Analysis"
+      steps:
+      - task: UseDotNet@2
+        displayName: 'Use .NET 8.0'
+        inputs:
+          packageType: 'sdk'
+          version: '8.0.x'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore task'
+        inputs:
+          command: 'restore'
+          projects: '**/*.csproj'
+          feedsToUse: 'select'
+          vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Build task'
+        inputs:
+          command: 'build'
+          projects: '**/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
+    
+      # Install and authenticate Snyk
+      - script: |
+          npm install -g snyk
+          snyk config set endpoint='https://app.eu.snyk.io/api'
+          snyk auth $(SNYK_TOKEN)
+          set +e
+        displayName: 'Snyk Install & Auth'
+
+      - task: SnykSecurityScan@1
+        inputs:
+          serviceConnectionEndpoint: 'snyk-integration-eu'
+          testType: 'code'
+          monitorWhen: 'always'
+          failOnIssues: false
+
+      - task: SnykSecurityScan@1
+        inputs:
+          serviceConnectionEndpoint: 'snyk-integration-eu'
+          testType: 'app'
+          severityThreshold: 'high'
+          monitorWhen: 'always'
+          failOnIssues: false 
+          
+      - task: SnykSecurityScan@1
+        inputs:
+          serviceConnectionEndpoint: 'snyk-integration-eu'
+          testType: 'container'
+          dockerfilePath: '$(dockerfilePath)'
+          severityThreshold: 'high'
+          monitorWhen: 'always'
+          failOnIssues: false
+
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
@@ -195,72 +255,3 @@ stages:
             dotnet test
           displayName: 'Run Playwright tests'
 
-- stage: Build
-  displayName: Build 
-  jobs:
-  - job: Build
-    displayName: Build 
-    pool:
-      vmImage: $(vmImageName)
-    
-    strategy:
-      matrix:
-        Dev:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-          condition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
-        Prod:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-          condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
-
-    condition: and(succeeded(), $[matrix.condition])
-    
-    steps:
-    - task: Docker@2
-      displayName: Build Docker Image
-      inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        tags: |
-          latest
-          $(tag)
-
-    - script: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-      displayName: 'Install Trivy'
-    
-    - script: |
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-
-  - script: |
-      docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-      echo "Waiting for container health check..."
-      for i in {1..10}; do
-        HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-        echo "Health status: $HEALTH_STATUS"
-        if [ "$HEALTH_STATUS" == "healthy" ]; then
-          echo "Container is healthy!"
-          exit 0
-        fi
-        sleep 5
-      done
-      echo "Container did not become healthy in time."
-      exit 1
-    displayName: Health Check
-
-  - script: |
-      docker stop register-frontend-healthcheck
-      docker rm register-frontend-healthcheck
-    displayName: Cleanup Container
-    condition: always()
-
-  - task: Docker@2
-    displayName: Push Image to Container Registry
-    inputs:
-      command: push
-      repository: $(imageRepository)
-      containerRegistry: $(containerRegistry)
-      tags: |
-        latest
-        $(tag)
