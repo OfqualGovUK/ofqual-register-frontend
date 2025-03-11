@@ -73,6 +73,7 @@ stages:
           severityThreshold: 'high'
           monitorWhen: 'always'
           failOnIssues: false 
+          additionalArguments: '--all-projects'
           
       - task: SnykSecurityScan@1
         inputs:
