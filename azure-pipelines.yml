@@ -71,7 +71,7 @@ stages:
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
         - script: |
             ls
-          displayName: "Pint ls"
+          displayName: "Print ls"
         # Build the project
         - task: DotNetCoreCLI@2
           displayName: "Build task"
@@ -117,9 +117,46 @@ stages:
                   exit 0
               fi
 
-# Build and Test stage: This stage builds and tests the application.
-- stage: BuildAndTest
-  displayName: "Build and test"
+#UnitTests stage: This stage runs unit tests.
+- stage: UnitTests
+  displayName: "Unit Tests"
+  condition: always()
+  jobs:
+    - job: Unit
+      displayName: "Unit tests"
+      dependsOn: []
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET 8.0'
+          inputs:
+            packageType: 'sdk'
+            version: '8.0.x'
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+            feedsToUse: 'select'
+            verbosityRestore: 'Normal'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+            arguments: '--no-restore'
+        - task: DotNetCoreCLI@2
+          displayName: 'Run unit tests'
+          inputs:
+            command: 'test'
+            projects: '**/*Tests.csproj'
+            arguments: '--no-build --no-restore --filter Category=Unit'
+            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+
+# PlaywrightTests stage: This stage runs Playwright tests.
+- stage: PlaywrightTests
+    displayName: "Playwright Tests"
   jobs:
   - job: Build
     displayName: "Build"
