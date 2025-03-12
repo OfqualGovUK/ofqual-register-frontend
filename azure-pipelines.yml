@@ -123,7 +123,7 @@ stages:
   condition: always()
   jobs:
     - job: Unit
-      displayName: "Unit tests"
+      displayName: "Build and run Unit tests"
       dependsOn: []
       pool:
         vmImage: $(vmImageName)
@@ -158,8 +158,8 @@ stages:
 - stage: PlaywrightTests
   displayName: "Playwright Tests"
   jobs:
-  - job: Build
-    displayName: "Build"
+  - job: Playwright
+    displayName: "Build and run Playwright tests"
     pool:
       vmImage: $(vmImageName)
     steps:
