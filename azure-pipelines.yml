@@ -194,12 +194,6 @@ stages:
         RegisterAPIUrl: $(RegisterAPIUrl)
         StorageContainerUrl: $(StorageContainerUrl)
         RefDataAPIUrl: $(RefDataAPIUrl)
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      inputs:
-        command: 'test'
-        arguments: '--no-build --no-restore'
-        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
