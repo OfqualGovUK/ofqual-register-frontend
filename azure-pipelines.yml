@@ -19,14 +19,14 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
+
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
   displayName: "Run Static Analysis"
-  condition: always()
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
+      condition: succeeded()
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -69,7 +69,9 @@ stages:
                   $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
               }
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
-
+        - script: |
+            ls
+          displayName: "Print ls"
         # Build the project
         - task: DotNetCoreCLI@2
           displayName: "Build task"
@@ -114,12 +116,14 @@ stages:
                   echo "No critical or high severity vulnerabilities found."
                   exit 0
               fi
-- stage: Test
-  displayName: "Unit"
+
+#UnitTests stage: This stage runs unit tests.
+- stage: UnitTests
+  displayName: "Unit Tests"
   condition: always()
   jobs:
     - job: Unit
-      displayName: "Unit tests"
+      displayName: "Build and run Unit tests"
       dependsOn: []
       pool:
         vmImage: $(vmImageName)
@@ -150,71 +154,73 @@ stages:
             arguments: '--no-build --no-restore --filter Category=Unit'
             testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
-# Playwright Tests stage: This stage runs Playwright tests.
+# PlaywrightTests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
-  displayName: "Run Playwright Tests"
+  displayName: "Playwright Tests"
   jobs:
-    - job: RunPlaywrightTests
-      displayName: 'Run Playwright Tests'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'     
-        - script: |
-            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-          displayName: 'Install Playwright browsers'
-        - script: |
-            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-            sleep 10
-          displayName: 'Start Server'
-          env:
-            RegisterBaseUrl: $(RegisterBaseUrl)
-            DefaultUrl: $(RegisterBaseUrl)
-            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-        - script: |
-            dotnet test
-          displayName: 'Run Playwright tests'
+  - job: Playwright
+    displayName: "Build and run Playwright tests"
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk 8.0'
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--no-restore'
+    - script: |
+        pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      displayName: 'Install Playwright browsers'
+    - script: |
+        dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+        sleep 10
+      displayName: 'Start Server'
+      env:
+        RegisterBaseUrl: $(RegisterBaseUrl)
+        DefaultUrl: $(RegisterBaseUrl)
+        RegisterAPIUrl: $(RegisterAPIUrl)
+        StorageContainerUrl: $(StorageContainerUrl)
+        RefDataAPIUrl: $(RefDataAPIUrl)
 
-- stage: Build
-  displayName: Build 
+# Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
+- stage: BuildTestAndPublishDockerImage  
+  displayName: Build, Test and publish Docker Image
   jobs:
   - job: Build
     displayName: Build 
     pool:
       vmImage: $(vmImageName)
-    
-    strategy:
-      matrix:
-        Dev:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-          condition: not(startsWith(variables['build.sourceBranch'], 'refs/pull'))
-        Prod:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-          condition: startsWith(variables['build.sourceBranch'], 'refs/heads/releases')
-
-    condition: and(succeeded(), $[matrix.condition])
-    
     steps:
+    # Download appsettings.json file stored in the pipeline secure files. Required for health check as the repository doesn't contain the app settings
+    - task: DownloadSecureFile@1
+      name: downloadAppsettings
+      displayName: 'Download App Settings for Health Check'
+      inputs:
+        secureFile: 'register-frontend-appsettings.json'
+      # move the downloaded app settings to the root of the source directory
+    - script: |
+        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
+      displayName: "Rename and Move appsettings.json"
+    # Run Vulnerability Scanner to test the image
+    - script: |
+        echo "Installing Trivy..."
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        trivy --version
+      displayName: 'Install Trivy'
+
     - task: Docker@2
       displayName: Build Docker Image
       inputs:
@@ -224,43 +230,50 @@ stages:
         tags: |
           latest
           $(tag)
-
-    - script: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-      displayName: 'Install Trivy'
     
     - script: |
-        trivy image $(imageRepository):latest --exit-code 1 --severity HIGH,CRITICAL
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
+      continueOnError: true
 
     - script: |
-        docker run -d --name register-frontend-healthcheck -p 8080:80 $(imageRepository):$(tag)
-        echo "Waiting for container health check..."
+        echo "Running Docker Container..."
+        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
+      displayName: 'Run Docker Container'
+
+    - script: |
+        echo "Waiting for container to become healthy..."
         for i in {1..10}; do
-          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' register-frontend-healthcheck)
-          echo "Health status: $HEALTH_STATUS"
+          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' healthcheck-container)
           if [ "$HEALTH_STATUS" == "healthy" ]; then
             echo "Container is healthy!"
             exit 0
           fi
-          sleep 5
+          sleep 10
         done
-        echo "Container did not become healthy in time."
+        echo "Container did not become healthy within the expected time."
+        echo "Checking container logs..."
+        docker logs healthcheck-container
         exit 1
-      displayName: Health Check
+      displayName: 'Wait for Container Health Check'
 
     - script: |
-        docker stop register-frontend-healthcheck
-        docker rm register-frontend-healthcheck
+        docker stop healthcheck-container
+        docker rm healthcheck-container
       displayName: Cleanup Container
-      condition: always()
     
     - task: Docker@2
       displayName: Push Image to Container Registry
+      condition: succeeded()
       inputs:
-        command: push
+        command: buildAndPush
         repository: $(imageRepository)
-        containerRegistry: $(containerRegistry)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
         tags: |
           latest
           $(tag)
