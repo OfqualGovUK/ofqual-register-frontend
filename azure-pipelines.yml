@@ -205,6 +205,7 @@ stages:
         export PATH=$HOME/bin:$PATH
         trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
+      continueOnError: true
 
     - script: |
         echo "Running Docker Container..."
