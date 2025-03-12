@@ -156,7 +156,7 @@ stages:
 
 # PlaywrightTests stage: This stage runs Playwright tests.
 - stage: PlaywrightTests
-    displayName: "Playwright Tests"
+  displayName: "Playwright Tests"
   jobs:
   - job: Build
     displayName: "Build"
