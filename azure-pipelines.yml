@@ -52,10 +52,10 @@ stages:
         - task: SonarQubePrepare@5
           displayName: "Prepare SonarQube Analysis"
           inputs:
-            SonarQube: 'Sonar-integration-register-front-end'
+            SonarQube: 'Sonar-integration-register-frontend'
             scannerMode: 'MSBuild'
-            projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
-            projectName: 'register'
+            projectKey: $(SonarqubeKey)
+            projectName: 'register-frontend'
 
         # PowerShell script to modify SonarQube parameters
         - task: PowerShell@2
