@@ -65,6 +65,14 @@ stages:
             projects: "**/*.csproj"
             arguments: "--no-restore"
 
+        - task: PowerShell@2
+          displayName: 'Modify SonarQube Scanner Parameters'
+          inputs:
+            targetType: 'inline'
+            script: |
+              $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
+              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"  
+
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
           displayName: "SonarQube Analysis"
