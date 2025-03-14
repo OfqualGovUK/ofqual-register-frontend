@@ -26,7 +26,7 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: succeeded()
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'))
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -57,19 +57,6 @@ stages:
             projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
             projectName: 'register'
 
-        # PowerShell script to modify SonarQube parameters
-        - task: PowerShell@2
-          displayName: "Modify SonarQube Parameters"
-          inputs:
-            targetType: 'inline'
-            script: |
-              if ($env:BUILD_REASON -eq "PullRequest") {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,.,-]*"\,?'
-              } else {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'
-              }
-              "Scanner Params: " + $params | Write-Output
-              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
         - script: |
             ls
           displayName: "Print ls"
