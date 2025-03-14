@@ -66,8 +66,8 @@ stages:
             arguments: "--no-restore"
 
         - task: PowerShell@2
-          displayName: 'Update SonarQube Scanner Parameters'
-          Inputs:
+          displayName: 'Modify SonarQube Scanner Parameters'
+          inputs:
             targetType: 'inline'
             script: |
               $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
