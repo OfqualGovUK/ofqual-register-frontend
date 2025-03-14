@@ -64,10 +64,11 @@ stages:
             targetType: 'inline'
             script: |
               if ($env:BUILD_REASON -eq "PullRequest") {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,-]*"\,?'
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,.,-]*"\,?'
               } else {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'
               }
+              "Scanner Params: " + $params | Write-Output
               Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
         - script: |
             ls
