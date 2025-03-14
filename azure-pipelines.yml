@@ -66,11 +66,12 @@ stages:
             arguments: "--no-restore"
 
         - task: PowerShell@2
-          displayName: 'Update SonarQube Scanner Parameters'   
-          targetType: 'inline'
-          - script: |
-            $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
-            Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"  
+          displayName: 'Update SonarQube Scanner Parameters'
+          Inputs:
+            targetType: 'inline'
+            script: |
+              $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
+              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"  
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
