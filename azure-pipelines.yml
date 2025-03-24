@@ -154,9 +154,9 @@ stages:
       env:
         RegisterBaseUrl: $(RegisterBaseUrl)
         DefaultUrl: $(RegisterBaseUrl)
-        RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-        StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-        RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
+        RegisterAPIUrl: $(RegisterAPIUrl)
+        StorageContainerUrl: $(StorageContainerUrl)
+        RefDataAPIUrl: $(RefDataAPIUrl)
     - task: DotNetCoreCLI@2
       displayName: 'Run tests'
       inputs:
@@ -234,6 +234,7 @@ stages:
     
     - task: Docker@2
       displayName: Build and push an image to dev container registry
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/releases'))
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
