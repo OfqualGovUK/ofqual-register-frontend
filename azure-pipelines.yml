@@ -3,355 +3,345 @@
 
 trigger:
   branches:
-   include:
-     - main
-     - releases/*
+    include:
+      - main
+      - releases/*
 
 resources:
-- repo: self
+  - repo: self
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerfilePath: '$(System.DefaultWorkingDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
+  dockerfilePath: "$(System.DefaultWorkingDirectory)/Dockerfile"
+  tag: "$(Build.BuildId)"
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  vmImageName: "ubuntu-latest"
 
 stages:
-- stage:
-  displayName: "Run Static Analysis - Snyk"
-  condition: always()
-  jobs:
-    - job: Snyk
-      displayName: "Snyk SAST Analysis"
-      steps:
-        # Install .NET Core SDK
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
+  - stage:
+    displayName: "Run Static Analysis - Snyk"
+    condition: always()
+    jobs:
+      - job: Snyk
+        displayName: "Snyk SAST Analysis"
+        steps:
+          # Install .NET Core SDK
+          - task: UseDotNet@2
+            displayName: "Install .NET Core SDK"
+            inputs:
+              version: 8.x
+              performMultiLevelLookup: true
+              includePreviewVersions: true
 
-        # Restore NuGet packages
-        - task: DotNetCoreCLI@2
-          displayName: "Restore task"
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+          # Restore NuGet packages
+          - task: DotNetCoreCLI@2
+            displayName: "Restore task"
+            inputs:
+              command: "restore"
+              projects: "**/*.csproj"
+              feedsToUse: "select"
+              vstsFeed: "b8db0229-c220-4583-b1d9-1111e482a1ce"
 
-        # Build the project
-        - task: DotNetCoreCLI@2
-          displayName: "Build task"
-          inputs:
-            command: "build"
-            projects: "**/*.csproj"
-            arguments: "--no-restore"
-      
-        # Install and authenticate Snyk
-        - script: |
-            npm install -g snyk
-            snyk config set endpoint='https://app.eu.snyk.io/api'
-            snyk auth $(SNYK_TOKEN)
-            set +e
-          displayName: 'Snyk Install & Auth'
+          # Build the project
+          - task: DotNetCoreCLI@2
+            displayName: "Build task"
+            inputs:
+              command: "build"
+              projects: "**/*.csproj"
+              arguments: "--no-restore"
 
-        - task: SnykSecurityScan@1
-          inputs:
-            serviceConnectionEndpoint: 'snyk-integration-eu'
-            testType: 'code'
-            monitorWhen: 'always'
-            failOnIssues: false
+          # Install and authenticate Snyk
+          - script: |
+              npm install -g snyk
+              snyk config set endpoint='https://app.eu.snyk.io/api'
+              snyk auth $(SNYK_TOKEN)
+              set +e
+            displayName: "Snyk Install & Auth"
 
-        - task: SnykSecurityScan@1
-          inputs:
-            serviceConnectionEndpoint: 'snyk-integration-eu'
-            testType: 'app'
-            severityThreshold: 'high'
-            monitorWhen: 'always'
-            failOnIssues: false 
-            additionalArguments: '--all-projects'
-            
-        - task: Docker@2
-          displayName: Build Docker Image
-          inputs:
-            command: build
-            repository: 'register-frontend'
-            dockerfile: '$(dockerfilePath)'
-            tags: 'latest'
+          - task: SnykSecurityScan@1
+            inputs:
+              serviceConnectionEndpoint: "snyk-integration-eu"
+              testType: "code"
+              monitorWhen: "always"
+              failOnIssues: false
 
-        - script: docker images
-          displayName: List Docker Images
+          - task: SnykSecurityScan@1
+            inputs:
+              serviceConnectionEndpoint: "snyk-integration-eu"
+              testType: "app"
+              severityThreshold: "high"
+              monitorWhen: "always"
+              failOnIssues: false
+              additionalArguments: "--all-projects"
 
-        - task: SnykSecurityScan@1
-          inputs:
-            serviceConnectionEndpoint: 'snyk-integration-eu'
-            testType: 'container'
-            dockerImageName: 'register-frontend:latest'
-            severityThreshold: 'high'
-            monitorWhen: 'always'
-            failOnIssues: true
+          - task: Docker@2
+            displayName: Build Docker Image
+            inputs:
+              command: build
+              repository: "register-frontend"
+              dockerfile: "$(dockerfilePath)"
+              tags: "latest"
 
-# Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
-- stage: StaticAnalysis
-  displayName: "Run Static Analysis"
-  condition: always()
-  jobs:
-    # SonarQube job: This job performs static code analysis using SonarQube.
-    - job: SonarQube
-      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/main'))
-      displayName: 'Build and SonarQube Analysis'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        # Install .NET Core SDK
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
+          - script: docker images
+            displayName: List Docker Images
 
-        # Restore NuGet packages
-        - task: DotNetCoreCLI@2
-          displayName: "Restore task"
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+          - task: SnykSecurityScan@1
+            inputs:
+              serviceConnectionEndpoint: "snyk-integration-eu"
+              testType: "container"
+              dockerImageName: "register-frontend:latest"
+              severityThreshold: "high"
+              monitorWhen: "always"
+              failOnIssues: true
 
-        # Prepare SonarQube analysis
-        - task: SonarQubePrepare@5
-          displayName: "Prepare SonarQube Analysis"
-          inputs:
-            SonarQube: 'Sonar-integration-register-front-end'
-            scannerMode: 'MSBuild'
-            projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
-            projectName: 'register'
+  # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
+  - stage: StaticAnalysis
+    displayName: "Run Static Analysis"
+    jobs:
+      # SonarQube job: This job performs static code analysis using SonarQube.
+      - job: SonarQube
+        condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'))
+        displayName: "Build and SonarQube Analysis"
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          # Install .NET Core SDK
+          - task: UseDotNet@2
+            displayName: "Install .NET Core SDK"
+            inputs:
+              version: 8.x
+              performMultiLevelLookup: true
+              includePreviewVersions: true
 
-        # PowerShell script to modify SonarQube parameters
-        - task: PowerShell@2
-          displayName: "Modify SonarQube Parameters"
-          inputs:
-            targetType: 'inline'
-            script: |
-              if ($env:BUILD_REASON -eq "PullRequest") {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,-]*"\,?'
-              } else {
-                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
-              }
-              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+          # Restore NuGet packages
+          - task: DotNetCoreCLI@2
+            displayName: "Restore task"
+            inputs:
+              command: "restore"
+              projects: "**/*.csproj"
+              feedsToUse: "select"
+              vstsFeed: "b8db0229-c220-4583-b1d9-1111e482a1ce"
 
-        # Build the project
-        - task: DotNetCoreCLI@2
-          displayName: "Build task"
-          inputs:
-            command: "build"
-            projects: "**/*.csproj"
-            arguments: "--no-restore"
+          # Prepare SonarQube analysis
+          - task: SonarQubePrepare@5
+            displayName: "Prepare SonarQube Analysis"
+            inputs:
+              SonarQube: "Sonar-integration-register-frontend"
+              scannerMode: "MSBuild"
+              projectKey: $(SonarqubeKey)
+              projectName: "register-frontend"
 
-        # Run SonarQube analysis
-        - task: SonarQubeAnalyze@5
-          displayName: "SonarQube Analysis"
+          # Build the project
+          - task: DotNetCoreCLI@2
+            displayName: "Build task"
+            inputs:
+              command: "build"
+              projects: "**/*.csproj"
+              arguments: "--no-restore"
 
-        # Publish SonarQube results
-        - task: SonarQubePublish@5
-          displayName: "Publish Results"
-          inputs:
-            pollingTimeoutSec: '300'
+          - task: PowerShell@2
+            displayName: "Modify SonarQube Scanner Parameters"
+            inputs:
+              targetType: "inline"
+              script: |
+                $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
+                Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
 
-      # Audit job: This job audits dependencies for vulnerabilities.
-    - job: Audit
-      displayName: 'Audit Dependencies'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-          displayName: 'Restore Nuget Packages'
+          # Run SonarQube analysis
+          - task: SonarQubeAnalyze@5
+            displayName: "SonarQube Analysis"
 
-        - task: Bash@3
-          displayName: Check NuGet vulnerabilities
-          inputs:
-            targetType: 'inline'
-            script: |
-              dotnet list package --vulnerable --include-transitive 2>&1 | tee build.log
-              echo "Analyse dotnet list package command log output..."
-              if grep -q -i "critical\|high" build.log; then
-                  echo "Must fix security vulnerabilities found on the log output"
-                  exit 1
-              else
-                  echo "No critical or high severity vulnerabilities found."
+          # Publish SonarQube results
+          - task: SonarQubePublish@5
+            displayName: "Publish Results"
+            inputs:
+              pollingTimeoutSec: "300"
+
+        # Audit job: This job audits dependencies for vulnerabilities.
+      - job: Audit
+        displayName: "Audit Dependencies"
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: "restore"
+              projects: "**/*.csproj"
+            displayName: "Restore Nuget Packages"
+
+          - task: Bash@3
+            displayName: Check NuGet vulnerabilities
+            inputs:
+              targetType: "inline"
+              script: |
+                dotnet list package --vulnerable --include-transitive 2>&1 | tee build.log
+                echo "Analyse dotnet list package command log output..."
+                if grep -q -i "critical\|high" build.log; then
+                    echo "Must fix security vulnerabilities found on the log output"
+                    exit 1
+                else
+                    echo "No critical or high severity vulnerabilities found."
+                    exit 0
+                fi
+
+  #UnitTests stage: This stage runs unit tests.
+  - stage: UnitTests
+    displayName: "Unit Tests"
+    condition: always()
+    jobs:
+      - job: Unit
+        displayName: "Build and run Unit tests"
+        dependsOn: []
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: UseDotNet@2
+            displayName: "Use .NET 8.0"
+            inputs:
+              packageType: "sdk"
+              version: "8.0.x"
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: "restore"
+              projects: "**/*.csproj"
+              feedsToUse: "select"
+              verbosityRestore: "Normal"
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: "build"
+              projects: "**/*.csproj"
+              arguments: "--no-restore"
+          - task: DotNetCoreCLI@2
+            displayName: "Run unit tests"
+            inputs:
+              command: "test"
+              projects: "**/*Tests.csproj"
+              arguments: "--no-build --no-restore --filter Category=Unit"
+              testRunTitle: "Register-Frontend-Unit-$(Build.BuildId)"
+
+  # PlaywrightTests stage: This stage runs Playwright tests.
+  - stage: PlaywrightTests
+    displayName: "Playwright Tests"
+    jobs:
+      - job: RunPlaywrightTests
+        displayName: "Run Playwright Tests"
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          - task: UseDotNet@2
+            displayName: "Install .NET Core SDK"
+            inputs:
+              version: 8.x
+              performMultiLevelLookup: true
+              includePreviewVersions: true
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: "restore"
+              projects: "**/*.csproj"
+              feedsToUse: "select"
+              verbosityRestore: "Normal"
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              command: "build"
+              projects: "**/*.csproj"
+              arguments: "--no-restore"
+          - script: |
+              pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
+            displayName: "Install Playwright browsers"
+          - script: |
+              dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
+              sleep 10
+            displayName: "Start Server"
+            env:
+              RegisterBaseUrl: $(RegisterBaseUrl)
+              DefaultUrl: $(RegisterBaseUrl)
+              RegisterAPIUrl: "https://ofq-dev-apim-register-api.azure-api.net/"
+              StorageContainerUrl: "https://saofqregisterdev.blob.core.windows.net/"
+              RefDataAPIUrl: "https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net"
+          - script: |
+              dotnet test
+            displayName: "Run Playwright tests"
+
+  - stage: Build
+    displayName: Build
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+          # Download appsettings.json file stored in the pipeline secure files. Required for health check as the repository doesn't contain the app settings
+          - task: DownloadSecureFile@1
+            name: downloadAppsettings
+            displayName: "Download App Settings for Health Check"
+            inputs:
+              secureFile: "register-frontend-appsettings.json"
+            # move the downloaded app settings to the root of the source directory
+          - script: |
+              mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
+            displayName: "Rename and Move appsettings.json"
+          # Run Vulnerability Scanner to test the image
+          - script: |
+              echo "Installing Trivy..."
+              curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+              trivy --version
+            displayName: "Install Trivy"
+
+          - task: Docker@2
+            displayName: Build Docker Image
+            inputs:
+              command: build
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              tags: |
+                latest
+                $(tag)
+
+          - script: |
+              echo "Running Trivy Scan..."
+              export PATH=$HOME/bin:$PATH
+              trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+            displayName: "Run Trivy Scan"
+            continueOnError: true
+
+          - script: |
+              echo "Running Docker Container..."
+              docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
+            displayName: "Run Docker Container"
+
+          - script: |
+              echo "Waiting for container to become healthy..."
+              for i in {1..10}; do
+                HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' healthcheck-container)
+                if [ "$HEALTH_STATUS" == "healthy" ]; then
+                  echo "Container is healthy!"
                   exit 0
-              fi
-- stage: Test
-  displayName: "Unit"
-  condition: always()
-  jobs:
-    - job: Unit
-      displayName: "Unit tests"
-      dependsOn: []
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Use .NET 8.0'
-          inputs:
-            packageType: 'sdk'
-            version: '8.0.x'
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'
-        - task: DotNetCoreCLI@2
-          displayName: 'Run unit tests'
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--no-build --no-restore --filter Category=Unit'
-            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+                fi
+                sleep 10
+              done
+              echo "Container did not become healthy within the expected time."
+              echo "Checking container logs..."
+              docker logs healthcheck-container
+              exit 1
+            displayName: "Wait for Container Health Check"
 
-# Playwright Tests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Run Playwright Tests"
-  jobs:
-    - job: RunPlaywrightTests
-      displayName: 'Run Playwright Tests'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Install .NET Core SDK'
-          inputs:
-            version: 8.x
-            performMultiLevelLookup: true
-            includePreviewVersions: true
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'     
-        - script: |
-            pwsh Ofqual.Common.RegisterFrontend.Playwright/bin/Debug/net8.0/playwright.ps1 install --with-deps
-          displayName: 'Install Playwright browsers'
-        - script: |
-            dotnet run --project Ofqual.Common.RegisterFrontend.csproj --urls "http://localhost:7159" &
-            sleep 10
-          displayName: 'Start Server'
-          env:
-            RegisterBaseUrl: $(RegisterBaseUrl)
-            DefaultUrl: $(RegisterBaseUrl)
-            RegisterAPIUrl: 'https://ofq-dev-apim-register-api.azure-api.net/'
-            StorageContainerUrl: 'https://saofqregisterdev.blob.core.windows.net/'
-            RefDataAPIUrl: 'https://ofq-dev-refdata2-fuasa5gxhfdhh4dd.ukwest-01.azurewebsites.net'
-        - script: |
-            dotnet test
-          displayName: 'Run Playwright tests'
+      - script: |
+          docker stop register-frontend-healthcheck
+          docker rm register-frontend-healthcheck
+        displayName: Cleanup Container
+        condition: always()
 
-          # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
-          
-- stage: BuildTestAndPublishDockerImage  
-  displayName: Build, Test and publish Docker Image
-  jobs:
-  - job: Build
-    displayName: Build 
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    # Download appsettings.json file stored in the pipeline secure files. Required for health check as the repository doesn't contain the app settings
-    - task: DownloadSecureFile@1
-      name: downloadAppsettings
-      displayName: 'Download App Settings for Health Check'
-      inputs:
-        secureFile: 'register-frontend-appsettings.json'
-      # move the downloaded app settings to the root of the source directory
-    - script: |
-        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
-      displayName: "Rename and Move appsettings.json"
-    # Run Vulnerability Scanner to test the image
-    - script: |
-        echo "Installing Trivy..."
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-        trivy --version
-      displayName: 'Install Trivy'
-
-    - task: Docker@2
-      displayName: Build Docker Image
-      inputs:
-        command: build
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        tags: |
-          latest
-          $(tag)
-    
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-      continueOnError: true
-
-    - script: |
-        echo "Running Docker Container..."
-        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
-      displayName: 'Run Docker Container'
-
-    - script: |
-        echo "Waiting for container to become healthy..."
-        for i in {1..10}; do
-          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' healthcheck-container)
-          if [ "$HEALTH_STATUS" == "healthy" ]; then
-            echo "Container is healthy!"
-            exit 0
-          fi
-          sleep 10
-        done
-        echo "Container did not become healthy within the expected time."
-        echo "Checking container logs..."
-        docker logs healthcheck-container
-        exit 1
-      displayName: 'Wait for Container Health Check'
-
-    - script: |
-        docker stop healthcheck-container
-        docker rm healthcheck-container
-      displayName: Cleanup Container
-    
-    - task: Docker@2
-      displayName: Push Image to Container Registry
-      condition: succeeded()
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-        tags: |
-          latest
-          $(tag)
-
+      - task: Docker@2
+        displayName: Push Image to Container Registry
+        inputs:
+          command: push
+          repository: $(imageRepository)
+          containerRegistry: $(containerRegistry)
+          tags: |
+            latest
+            $(tag)
