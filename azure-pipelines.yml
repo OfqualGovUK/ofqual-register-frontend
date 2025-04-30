@@ -271,3 +271,87 @@ stages:
             dotnet test
           displayName: 'Run Playwright tests'
 
+          # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
+          
+- stage: BuildTestAndPublishDockerImage  
+  displayName: Build, Test and publish Docker Image
+  jobs:
+  - job: Build
+    displayName: Build 
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    # Download appsettings.json file stored in the pipeline secure files. Required for health check as the repository doesn't contain the app settings
+    - task: DownloadSecureFile@1
+      name: downloadAppsettings
+      displayName: 'Download App Settings for Health Check'
+      inputs:
+        secureFile: 'register-frontend-appsettings.json'
+      # move the downloaded app settings to the root of the source directory
+    - script: |
+        mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
+      displayName: "Rename and Move appsettings.json"
+    # Run Vulnerability Scanner to test the image
+    - script: |
+        echo "Installing Trivy..."
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+        trivy --version
+      displayName: 'Install Trivy'
+
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+    
+    - script: |
+        echo "Running Trivy Scan..."
+        export PATH=$HOME/bin:$PATH
+        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
+      displayName: 'Run Trivy Scan'
+      continueOnError: true
+
+    - script: |
+        echo "Running Docker Container..."
+        docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
+      displayName: 'Run Docker Container'
+
+    - script: |
+        echo "Waiting for container to become healthy..."
+        for i in {1..10}; do
+          HEALTH_STATUS=$(docker inspect --format='{{.State.Health.Status}}' healthcheck-container)
+          if [ "$HEALTH_STATUS" == "healthy" ]; then
+            echo "Container is healthy!"
+            exit 0
+          fi
+          sleep 10
+        done
+        echo "Container did not become healthy within the expected time."
+        echo "Checking container logs..."
+        docker logs healthcheck-container
+        exit 1
+      displayName: 'Wait for Container Health Check'
+
+    - script: |
+        docker stop healthcheck-container
+        docker rm healthcheck-container
+      displayName: Cleanup Container
+    
+    - task: Docker@2
+      displayName: Push Image to Container Registry
+      condition: succeeded()
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
+          containerRegistry: $(dockerRegistryServiceConnectionProd)
+        ${{ else }}:
+          containerRegistry: $(dockerRegistryServiceConnectionDev)
+        tags: |
+          latest
+          $(tag)
+
