@@ -94,7 +94,6 @@ stages:
             severityThreshold: 'high'
             monitorWhen: 'always'
             failOnIssues: true
-            dockerfilePath: './Dockerfile'
 
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
