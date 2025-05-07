@@ -98,12 +98,13 @@ stages:
           projects: '**/*.csproj'
           feedsToUse: 'select'
           vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+
       - task: DotNetCoreCLI@2
-        displayName: 'Build task'
+        displayName: "Build task"
         inputs:
-          command: 'build'
-          projects: '**/*.csproj'
-          arguments: '--configuration $(BuildConfiguration)'
+          command: "build"
+          projects: "**/*.csproj"
+          arguments: "--no-restore"
       # Install and authenticate Snyk
       - script: |
           npm install -g snyk
