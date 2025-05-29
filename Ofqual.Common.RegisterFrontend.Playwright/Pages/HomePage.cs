@@ -1,27 +1,29 @@
 using Microsoft.Playwright;
 
-namespace PlaywrightTests.Pages
+namespace Ofqual.Common.RegisterFrontend.Playwright.Pages;
+
+public class HomePage : BasePage
 {
-public class HomePage : PageTest
-{
-    private readonly IPage _page;
     private readonly ILocator _qualificationsLink;
-    private readonly string _baseUrl;
-    public HomePage(IPage Page)
+    private readonly ILocator _organisationsLink;
+
+    public HomePage(IPage page) : base(page)
     {
-        _page = Page;
-        _qualificationsLink = Page.GetByRole(AriaRole.Link, new() { Name = "Find a regulated qualification" });
-        _baseUrl = Environment.GetEnvironmentVariable("RegisterBaseUrl") ?? "http://localhost:7159/";
+        _qualificationsLink = page.GetByRole(AriaRole.Link, new() { Name = "Find a regulated qualification" });
+        _organisationsLink = page.GetByRole(AriaRole.Link, new() { Name = "Find a regulated awarding organisation" });
     }
     public async Task GoToHomePage()
     {
-        await _page.GotoAsync(_baseUrl);
+        await _page.GotoAsync($"{_baseUrl}");
     }
 
     public async Task clickFindQualificationsLink()
     {
-        await _qualificationsLink.ClickAsync();        
+        await _qualificationsLink.ClickAsync();
     }
 
-}
+    public async Task clickFindOrganisationsLink()
+    {
+        await _organisationsLink.ClickAsync();
+    }
 }
