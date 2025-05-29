@@ -26,7 +26,7 @@ stages:
   jobs:
     # SonarQube job: This job performs static code analysis using SonarQube.
     - job: SonarQube
-      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'))
+      condition: succeeded()
       displayName: 'Build and SonarQube Analysis'
       pool:
         vmImage: $(vmImageName)
@@ -52,11 +52,26 @@ stages:
         - task: SonarQubePrepare@5
           displayName: "Prepare SonarQube Analysis"
           inputs:
-            SonarQube: 'Sonar-integration-register-frontend'
+            SonarQube: 'Sonar-integration-register-front-end'
             scannerMode: 'MSBuild'
-            projectKey: $(SonarqubeKey)
-            projectName: 'register-frontend'
+            projectKey: 'OfqualGovUK_ofqual-register-frontend_AZKvU5DXb83dXmjjBi1u'
+            projectName: 'register'
 
+        # PowerShell script to modify SonarQube parameters
+        - task: PowerShell@2
+          displayName: "Modify SonarQube Parameters"
+          inputs:
+            targetType: 'inline'
+            script: |
+              if ($env:BUILD_REASON -eq "PullRequest") {
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.pullrequest.*":"[\w,/,-]*"\,?'
+              } else {
+                  $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,-]*"\,?'
+              }
+              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+        - script: |
+            ls
+          displayName: "Pint ls"
         # Build the project
         - task: DotNetCoreCLI@2
           displayName: "Build task"
@@ -64,14 +79,6 @@ stages:
             command: "build"
             projects: "**/*.csproj"
             arguments: "--no-restore"
-
-        - task: PowerShell@2
-          displayName: 'Modify SonarQube Scanner Parameters'
-          inputs:
-            targetType: 'inline'
-            script: |
-              $params = "$env:SONARQUBE_SCANNER_PARAMS" -replace '"sonar.branch.name":"[\w,/,.,-]*"\,?'                 
-              Write-Host "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"  
 
         # Run SonarQube analysis
         - task: SonarQubeAnalyze@5
@@ -179,49 +186,12 @@ stages:
                   exit 0
               fi
 
-#UnitTests stage: This stage runs unit tests.
-- stage: UnitTests
-  displayName: "Unit Tests"
-  condition: always()
+# Build and Test stage: This stage builds and tests the application.
+- stage: BuildAndTest
+  displayName: "Build and test"
   jobs:
-    - job: Unit
-      displayName: "Build and run Unit tests"
-      dependsOn: []
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Use .NET 8.0'
-          inputs:
-            packageType: 'sdk'
-            version: '8.0.x'
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'
-        - task: DotNetCoreCLI@2
-          displayName: 'Run unit tests'
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--no-build --no-restore --filter Category=Unit'
-            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
-
-# PlaywrightTests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Playwright Tests"
-  jobs:
-  - job: Playwright
-    displayName: "Build and run Playwright tests"
+  - job: Build
+    displayName: "Build"
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -256,6 +226,12 @@ stages:
         RegisterAPIUrl: $(RegisterAPIUrl)
         StorageContainerUrl: $(StorageContainerUrl)
         RefDataAPIUrl: $(RefDataAPIUrl)
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        arguments: '--no-build --no-restore'
+        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
@@ -298,7 +274,6 @@ stages:
         export PATH=$HOME/bin:$PATH
         trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
       displayName: 'Run Trivy Scan'
-      continueOnError: true
 
     - script: |
         echo "Running Docker Container..."
@@ -327,15 +302,13 @@ stages:
       displayName: Cleanup Container
     
     - task: Docker@2
-      displayName: Push Image to Container Registry
-      condition: succeeded()
+      displayName: Build and push an image to dev container registry
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/releases'))
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
+        containerRegistry: $(dockerRegistryServiceConnectionDev)
+        dockerfile: $(dockerfilePath)
         tags: |
           latest
-          $(tag)
+          $(Build.BuildId)
