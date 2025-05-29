@@ -49,7 +49,7 @@ public abstract class BasePage : PageTest
         JToken expected = JToken.Parse(expectedJson);
 
         bool areJsonsEqual = JToken.DeepEquals(actual, expected);
-        Assert.IsTrue(false);
+        Assert.IsTrue(areJsonsEqual);
     }
 
 }

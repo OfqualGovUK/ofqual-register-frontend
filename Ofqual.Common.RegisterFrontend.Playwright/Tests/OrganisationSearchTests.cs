@@ -7,7 +7,6 @@ namespace Ofqual.Common.RegisterFrontend.Playwright.Tests;
 public class OrganisationSearch : PageTest
 {
     [Test]
-    [Category("RunOnlyThis")]
     public async Task SearchOrganisationName()
     {
         string expectedJson = "{ \"Contact details\": { \"Email\":\"examsofficers@example.comd\", \"Website\": \"AQA Education\", \"Pricing and fees\": \"Qualification fees and prices\" }, " +
