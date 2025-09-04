@@ -259,7 +259,7 @@ stages:
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
-  displayName: Build, Test and publish Docker Image
+  displayName: Container Health Check
   jobs:
   - job: Build
     displayName: Build 
@@ -325,17 +325,39 @@ stages:
         docker stop healthcheck-container
         docker rm healthcheck-container
       displayName: Cleanup Container
-    
-    - task: Docker@2
-      displayName: Push Image to Container Registry
-      condition: succeeded()
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/releases') }}:
-          containerRegistry: $(dockerRegistryServiceConnectionProd)
-        ${{ else }}:
-          containerRegistry: $(dockerRegistryServiceConnectionDev)
-        tags: |
-          latest
-          $(tag)
+          
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+    - job: BuildDev
+      condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull')))
+      displayName: Build for Dev
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: Docker@2
+          displayName: Build and push an image to dev container registry
+          inputs:
+            command: buildAndPush
+            repository: $(imageRepository)
+            containerRegistry: $(dockerRegistryServiceConnectionDev)
+            dockerfile: $(dockerfilePath)
+            tags: |
+              latest
+              $(tag)
+    - job: BuildProd
+      condition: and(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/releases'))
+      displayName: Build for Production
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: Docker@2
+          displayName: Build and push an image to production container registry
+          inputs:
+            command: buildAndPush
+            repository: $(imageRepository)
+            containerRegistry: $(dockerRegistryServiceConnectionProd)
+            dockerfile: $(dockerfilePath)
+            tags: |
+              latest
+              $(tag)
