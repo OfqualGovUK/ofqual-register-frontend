@@ -1,14 +1,20 @@
 using Azure.Identity;
+using GovUk.Frontend.AspNetCore;
 using Microsoft.Extensions.Azure;
 using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Cache;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Refit;
-using System.Text.Json;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Add GovUK Frontend assets
+builder.Services.AddGovUkFrontend(options => 
+{ 
+    options.Rebrand = true; 
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -45,6 +51,9 @@ builder.Services.AddWebOptimizer();
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+//Add GovUk Frontend to the middleware pipeline
+app.UseGovUkFrontend();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
