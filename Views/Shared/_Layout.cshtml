@@ -9,7 +9,6 @@
 
 @section BodyStart
 {
-    <link rel="stylesheet" href="~/css/application.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <script type="text/javascript" src="~/js/analytics.js" asp-append-version="true"></script>
     <noscript>
@@ -72,11 +71,6 @@
 @section BodyEnd
 {
     @await RenderSectionAsync("Scripts", required: false)
-    <script type="module" src="~/js/govuk-frontend.min.js" asp-append-version="true"></script>
-    <script type="module">
-        import { initAll } from '/js/govuk-frontend.min.js'
-        initAll()
-    </script>
     <script type="text/javascript">
 
         document.addEventListener("DOMContentLoaded", function (event) {
