@@ -1,7 +1,6 @@
 ﻿@{
     Layout = "_GovUkPageTemplate";
     
-
     var controllerName = this.ViewContext.RouteData.Values["controller"]?.ToString();
     var matomoId = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production" ? 10 : 9;
 }
@@ -9,8 +8,8 @@
 
 @section BodyStart
 {
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <script type="text/javascript" src="~/js/analytics.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
+    <script type="text/javascript" src="/js/analytics.js" asp-append-version="true"></script>
     <noscript>
         <style>
             .jsonly {
@@ -18,7 +17,6 @@
             }
         </style>
     </noscript>
-
     
     <script>
         //<!-- Matomo -->
@@ -49,6 +47,7 @@
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
     <partial name="/Views/Shared/_AnalyticsCookieBannerPartial.cshtml" />
     <partial name="/Views/Shared/_HeaderPartial.cshtml" />
+    <partial name="/Views/Shared/_ServiceNavigationPartial.cshtml" />
 
     <div class="govuk-width-container">
         <partial name="/Views/Shared/_PhaseBannerPartial.cshtml" />
