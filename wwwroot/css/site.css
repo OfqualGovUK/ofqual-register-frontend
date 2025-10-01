@@ -1,14 +1,3 @@
-@charset "UTF-8";
-
-a, .govuk-link {
-    font-family: "GDS Transport", arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-decoration: underline;
-    text-decoration-thickness: max(1px, .0625rem);
-    text-underline-offset: 0.1578em;
-}
-
 .govuk-back-link {
     cursor: pointer;
 }
@@ -62,7 +51,7 @@ ul.ofq-tree {
 
 .ofq-\!-tag-max-width-none {
     max-width: none !important;
-  }
+}
 
 /* Consolidated application CSS */
 
@@ -845,89 +834,12 @@ ul.ofq-tree {
         margin-bottom: 0;
     }
 
-.app-filter__legend {
-    overflow: visible;
-    width: 100%;
-}
-
-    .app-filter__legend button {
-        background-color: transparent;
-        box-sizing: border-box;
-        border-radius: 0;
-        border: 0 none;
-        cursor: pointer;
-        display: block;
-        margin: 0;
-        padding: 0;
-        position: relative;
-        text-align: left;
-        width: 100%;
-        -webkit-appearance: none;
-    }
-
-        .app-filter__legend button::-moz-focus-inner {
-            padding: 0;
-            border: 0;
-        }
-
-        .app-filter__legend button::after {
-            background-image: url("/assets/images/icon-toggle-plus-minus.svg");
-            background-position: 0 0;
-            content: "";
-            display: block;
-            height: 16px;
-            margin-top: -8px;
-            position: absolute;
-            top: 50%;
-            right: 0;
-            width: 16px;
-        }
-
-        .app-filter__legend button[aria-expanded=true]::after {
-            background-position: 16px 16px;
-        }
-
 .app-filter__header-title,
 .app-filter__header-action {
     display: inline-block;
     text-align: left;
     vertical-align: middle;
 }
-
-.app-filter__close {
-    color: #0b0c0c;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-    margin: 0;
-    padding: 0;
-    -webkit-appearance: none;
-}
-
-    .app-filter__close:focus {
-        background-color: #ffdd00;
-        color: #0b0c0c;
-        box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
-        outline: none;
-    }
-
-    .app-filter__close::-moz-focus-inner {
-        padding: 0;
-        border: 0;
-    }
-
-    .app-filter__close::before {
-        background-image: url("/assets/images/icon-close-cross-black.svg");
-        content: "";
-        display: inline-block;
-        height: 14px;
-        margin-right: 5px;
-        position: relative;
-        top: -1px;
-        vertical-align: middle;
-        width: 14px;
-    }
 
 .app-filter__selected {
     background-color: #f3f2f1;
@@ -971,6 +883,9 @@ ul.ofq-tree {
     }
 
 .app-filter__tag {
+    font-family: "GDS Transport", arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     font-size: 16px;
     background-color: #ffffff;
     border: 1px solid #0b0c0c;
@@ -996,7 +911,7 @@ ul.ofq-tree {
     }
 
     .app-filter__tag:after {
-        background-image: url("/assets/images/icon-tag-remove-cross.svg");
+        background-image: url("/images/icon-tag-remove-cross.svg");
         content: "";
         display: inline-block;
         font-weight: bold;
@@ -1007,7 +922,7 @@ ul.ofq-tree {
     }
 
     .app-filter__tag:hover:after {
-        background-image: url("/assets/images/icon-tag-remove-cross-white.svg");
+        background-image: url("/images/icon-tag-remove-cross-white.svg");
     }
 
 .app-filter__options {
@@ -1099,4 +1014,3 @@ ul.ofq-tree {
     list-style: none;
     padding-right: 8px;
 }
-
