@@ -1,26 +1,12 @@
 ﻿@{
+    Layout = "_GovUkPageTemplate";
     var controllerName = this.ViewContext.RouteData.Values["controller"]?.ToString();
 }
 
-<!DOCTYPE html>
-<html lang="en" class="govuk-template">
-
-<head>
-    <meta charset="utf-8">
-    <title>@ViewData["Title"] - Ofqual - GOV.UK</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b0c0c">
-    <link rel="icon" sizes="48x48" href="~/assets/images/favicon.ico">
-    <link rel="icon" sizes="any" href="~/assets/images/favicon.svg" type="image/svg+xml">
-    <link rel="mask-icon" href="~/assets/images/govuk-icon-mask.svg" color="#0b0c0c">
-    <link rel="apple-touch-icon" href="~/assets/images/govuk-icon-180.png">
-    <link rel="manifest" href="~/assets/manifest.json">
-    <link rel="stylesheet" href="~/css/govuk-frontend.min.css">
-    <link rel="stylesheet" href="~/css/application.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-    <script type="text/javascript" src="~/js/analytics.js" asp-append-version="true"></script>
-
-    @await RenderSectionAsync("Head", required: false)
+@section BodyStart
+{
+    <link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
+    <script type="text/javascript" src="/js/analytics.js" asp-append-version="true"></script>
     <noscript>
         <style>
             .jsonly {
@@ -28,29 +14,38 @@
             }
         </style>
     </noscript>
+    <script>
+        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
+}
 
-</head>
-<body class="govuk-template__body">
-    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+@section Header
+{
+    @await RenderSectionAsync("Head", required: false)
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
     <partial name="/Views/Shared/_HeaderPartial.cshtml" />
 
     <div class="govuk-width-container">
         <partial name="/Views/Shared/_PhaseBannerPartial.cshtml" />
-        <p id="back" class="govuk-back-link jsonly">Back</p>
-        <main class="govuk-main-wrapper" id="main-content" role="main">
-            @RenderBody()
-        </main>
+        <p id="back"
+           class="govuk-back-link jsonly"
+           @(controllerName?.StartsWith("Home") ?? true ? "hidden" : string.Empty)>
+            Back
+        </p>
     </div>
+}
+<div class="govuk-width-container">
+    @RenderBody()
+</div>
 
+@section Footer
+{
     <partial name="/Views/Shared/_FooterPartial.cshtml" />
+}
 
-    <script type="module" src="~/js/govuk-frontend.min.js" asp-append-version="true"></script>
-    <script type="module">
-        import { initAll } from '/js/govuk-frontend.min.js'
-        initAll()
-    </script>
+@section BodyEnd
+{
     <script type="text/javascript">
 
         document.getElementById("back").addEventListener("click", () => {
@@ -58,7 +53,4 @@
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
-</body>
-
-</html>
-
+}
