@@ -69,6 +69,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             {
                 //title is not part of the filters section
                 pagingURL += $"&name={name}";
+                ViewData["SearchTitle"] = name;
             }
 
             APIResponseList<OrganisationListViewModel> orgs;
@@ -93,6 +94,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     CurrentPage = orgs.CurrentPage
                 }
             };
+
+            ViewData["SearchCount"] = orgs.Count;
 
             return View(model);
         }

@@ -103,6 +103,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
             {
                 //title is not part of the filters section
                 pagingURL += $"&title={title}";
+                ViewData["SearchTitle"] = title;
             }
 
             pagingURL += pagedFilters;
@@ -177,6 +178,8 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
                     FiltersApplied = filtersApplied
                 }
             };
+
+            ViewData["SearchCount"] = quals.Count;
 
             return View(model);
         }
