@@ -23,9 +23,9 @@
         if (analyticsEnabled()) {
             var _paq = window._paq = window._paq || [];
             /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(["setDomains", ["*.find-a-qualification.services.ofqual.gov.uk", "*.find-an-awarding-organisation.services.ofqual.gov.uk", "*.ofq-prod-register-frontend.azurewebsites.net", "localhost:7159"]]);
-            if (@ViewData["SearchTitle"]){
-                _paq.push(['trackSiteSearch', @ViewData["SearchTitle"], controllerName, (int)@ViewData["SearchCount"] ?? false])
+            _paq.push(["setDomains", ["*.find-a-qualification.services.ofqual.gov.uk", "*.find-an-awarding-organisation.services.ofqual.gov.uk", "*.ofq-prod-register-frontend.azurewebsites.net", "https://localhost:7159"]]);
+            if ('@ViewData["SearchTitle"]'){
+                _paq.push(['trackSiteSearch', '@ViewData["SearchTitle"]', '@controllerName', '@ViewData["SearchCount"]' ?? 'false'])
             } else {
                 _paq.push(['trackPageView']);
             }
