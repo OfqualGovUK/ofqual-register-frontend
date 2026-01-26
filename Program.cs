@@ -3,6 +3,7 @@ using GovUk.Frontend.AspNetCore;
 using Microsoft.Extensions.Azure;
 using Ofqual.Common.RegisterFrontend.BlobStorage;
 using Ofqual.Common.RegisterFrontend.Cache;
+using Ofqual.Common.RegisterFrontend.FeatureFlag;
 using Ofqual.Common.RegisterFrontend.RegisterAPI;
 using Ofqual.Common.RegisterFrontend.UseCases.Qualifications;
 using Refit;
@@ -41,6 +42,9 @@ builder.Services.AddAzureClients(clientBuilder =>
 
 builder.Services.AddSingleton<IRefDataCache, RefDataCache>();
 builder.Services.AddSingleton<IBlobService, BlobService>();
+
+// Add Feature Flag Service
+builder.Services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
 //usecases
 builder.Services.AddScoped<IQualificationsUseCases, QualificationsUseCases>();

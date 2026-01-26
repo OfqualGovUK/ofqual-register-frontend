@@ -1,5 +1,7 @@
-﻿@using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
+﻿@using Ofqual.Common.RegisterFrontend.FeatureFlag
+@using Ofqual.Common.RegisterFrontend.Models.RegisterModels;
 @using Ofqual.Common.RegisterFrontend.Extensions;
+@inject IFeatureFlagService FeatureFlagService
 @model Organisation
 @{
     ViewData["Title"] = $"{Model.Name} - Find a regulated awarding organisation";
@@ -240,7 +242,7 @@
             </div>
         </div>
 
-        @if (Model.RecognitionScope != null && (Model.RecognitionScope.Inclusions.Any() || Model.RecognitionScope.Exclusions.Any()))
+        @if (Model.RecognitionScope != null && (Model.RecognitionScope.Inclusions.Any() || Model.RecognitionScope.Exclusions.Any()) && FeatureFlagService.IsFeatureEnabled("OrganisationScopeOfRecognition"))
         {
             <!-- Display scope of recognition -->
             <div class="govuk-summary-card">
