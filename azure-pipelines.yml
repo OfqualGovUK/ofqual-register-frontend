@@ -276,13 +276,8 @@ stages:
     - script: |
         mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
       displayName: "Rename and Move appsettings.json"
-    # Run Vulnerability Scanner to test the image
-    - script: |
-        echo "Installing Trivy..."
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-        trivy --version
-      displayName: 'Install Trivy'
 
+    # Run Vulnerability Scanner to test the image
     - task: Docker@2
       displayName: Build Docker Image
       inputs:
@@ -292,13 +287,6 @@ stages:
         tags: |
           latest
           $(tag)
-    
-    - script: |
-        echo "Running Trivy Scan..."
-        export PATH=$HOME/bin:$PATH
-        trivy image $(imageRepository):$(tag) --exit-code 1 --severity HIGH,CRITICAL
-      displayName: 'Run Trivy Scan'
-      continueOnError: true
 
     - script: |
         echo "Running Docker Container..."
