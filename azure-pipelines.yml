@@ -277,7 +277,27 @@ stages:
         mv $(downloadAppsettings.secureFilePath) $(Build.SourcesDirectory)/appsettings.json
       displayName: "Rename and Move appsettings.json"
 
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+
     # Run Vulnerability Scanner to test the image
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        tags: |
+          latest
+          $(tag)
+
     - script: |
         echo "Running Docker Container..."
         docker run -d --name healthcheck-container -v $(Build.SourcesDirectory)/appsettings.json:/app/appsettings.json $(imageRepository):$(tag)
