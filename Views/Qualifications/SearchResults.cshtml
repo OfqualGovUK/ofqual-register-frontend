@@ -2,10 +2,17 @@
 @using Ofqual.Common.RegisterFrontend.Extensions;
 @model SearchResultViewModel<QualificationListViewModel>
 
+@inject IConfiguration _config;
+
 @{
     ViewData["Title"] = $"'{Model.Title}' - Search results - Find a regulated qualification";
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
+
+    var csvRecordLimit = _config.GetValue<int?>("CSVRecordLimit", 0);    
+
+    var tooManyResults = Model.List != null && Model.List.Count >= csvRecordLimit;
+
 
     var compareError = TempData["CompareError"] != null ? true : false;
     var csvError = TempData["CSVError"] != null ? true : false;
@@ -24,11 +31,15 @@
     var nationalAccordion = appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any() ? "is-open" : "";
     var glhAccordion = appliedFilters.MinGuidedLearninghours != null || appliedFilters.MaxGuidedLearninghours != null ? "is-open" : "";
     var tqtAccordion = appliedFilters.MinTotalQualificationTime != null || appliedFilters.MaxTotalQualificationTime != null ? "is-open" : "";
+       
 
-    //format to the download csv link from the paging url, as all filters are available in the paging link
-    var csvLink = "";
-    csvLink = Model.Paging.PagingURL!.Remove(0, "qualifications?page=||_page_||".Length);
-    //csvLink = csvLink.Replace("||_page_||&", "");
+    //Determine if result set hits new result limit, if so, we redirect to the static copy, otherwise we move onto the csv generator
+    //failing that, we return a null url which will trigger the csv button disable logic
+    var csvLink = _config.GetValue<string?>("FullCSVExtractUrl");
+    if (!tooManyResults)
+        //format to the download csv link from the paging url, as all filters are available in the paging link
+        csvLink = $"/qualifications/download-csv?{Model.Paging.PagingURL!.Remove(0, "qualifications?page=||_page_||".Length)}";
+    
 }
 
 @section Head {
@@ -40,6 +51,7 @@
         </style>
     </noscript>
 }
+
 <div class="govuk-grid-row">
     <div class="govuk-width-container">
         @if (compareError)
@@ -84,6 +96,7 @@
                 Enable JavaScript to allow you to compare results from different pages.
             </div>
         </noscript>
+
         <div class="app-search govuk-!-margin-bottom-4">
             <form action="qualifications" method="get" novalidate="">
                 <div class="govuk-form-group">
@@ -100,6 +113,14 @@
         </div>
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break">
+
+        @if (csvLink == null)
+        {
+            <div class="govuk-inset-text">
+                Due to technical limitations, generated CSV files can only contain a maximum of @csvRecordLimit records.
+                Please consider further refining your query before using the "Download results as CSV" feature
+            </div>
+        }
 
     </div>
 
@@ -711,16 +732,8 @@
                     </h3>
                     <div class="accordionContent">
                         @{
-                            string minglh = "", maxglh = "";
-                            @if (appliedFilters.MinGuidedLearninghours != null)
-                            {
-                                minglh = appliedFilters.MinGuidedLearninghours?.ToString();
-                            }
-
-                            @if (appliedFilters.MaxGuidedLearninghours != null)
-                            {
-                                maxglh = appliedFilters.MaxGuidedLearninghours?.ToString();
-                            }
+                            string minglh = appliedFilters.MinGuidedLearninghours?.ToString() ?? string.Empty; 
+                            string maxglh = appliedFilters.MaxGuidedLearninghours?.ToString() ?? string.Empty;                       
                         }
 
                         <div class="govuk-form-group">
@@ -756,15 +769,8 @@
                     </h3>
                     <div class="accordionContent">
                         @{
-                            string mintqt = "", maxtqt = "";
-                            @if (appliedFilters.MinTotalQualificationTime != null)
-                            {
-                                mintqt = appliedFilters.MinTotalQualificationTime?.ToString();
-                            }
-                            @if (appliedFilters.MaxTotalQualificationTime != null)
-                            {
-                                maxtqt = appliedFilters.MaxTotalQualificationTime?.ToString();
-                            }
+                            string mintqt = appliedFilters.MinTotalQualificationTime?.ToString() ?? string.Empty;
+                            string maxtqt = appliedFilters.MaxTotalQualificationTime?.ToString() ?? string.Empty;
                         }
 
                         <div class="govuk-form-group">
@@ -793,7 +799,7 @@
 
     <div class="govuk-grid-column-two-thirds">
 
-        @if (Model.List.Results == null || !Model.List.Results.Any())
+        @if (Model.List!.Results == null || !Model.List.Results.Any())
         {
             <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
             <h2 class="govuk-heading-s">No results</h2>
@@ -813,9 +819,23 @@
                         </button>
                     </li>
                     <li class="ofq-action-buttons--item">
-                        <a href="/qualifications/download-csv?@csvLink" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                            Download results as CSV
-                        </a>
+                        @if (csvLink == null)
+                        {
+                            <button type="submit" disabled aria-disabled="true" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                                Download results as CSV
+                            </button>
+
+                        }
+                        else
+                        {                            
+                             string buttonText = tooManyResults 
+                                ? "Download full qualifications list as CSV" 
+                                : "Download results as CSV";
+                            
+                            <a href="@csvLink" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">                            
+                                @buttonText
+                            </a>
+                        }
                     </li>
                 </ul>
                 <input type="hidden" id="csvTitle" name="csvTitle" value="@Model.Title" />

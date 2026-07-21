@@ -241,16 +241,17 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
         {
             var titleName = string.IsNullOrEmpty(title) ? "" : "_" + title;
 
-            string fileName = $"Qualifications{titleName}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
-            byte[] fileBytes = [];
+            var fileName = $"Qualifications{titleName}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
+
+            var limit = _config.GetValue("CSVRecordLimit", 0);
+
             try
             {
-
-                APIResponseList<QualificationCSV> quals;
+                APIResponseList<QualificationCSV> quals = new();
 
                 try
                 {
-                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit: 0, 
+                    quals = await _registerAPIClient.GetFullQualificationsDataSetAsync(title, page: 1, limit, 
                                                                                        assessmentMethods, 
                                                                                        gradingTypes, 
                                                                                        availability, 

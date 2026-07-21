@@ -34,9 +34,11 @@ Use the following in a local.settings.json. The values should not be used in dep
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "FUNCTIONS_EXTENSION_WORKER": "~4",
     "RefDataAPIUrl": "<URL>",
-    "MDDBConnString": "Server=localhost,1433;Initial Catalog=ofqds-dev-md-sql01;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "MDDBConnString": "Server=localhost,1433;Initial Catalog=<SERVER_NAME>;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
     "QualificationsPagingLimit": 10000,
     "APIMgmtURL": "<URL>"
+    "FullCSVExtractURL": "https://downloads.find-a-qualification.services.ofqual.gov.uk/extracts/Qualifications.csv",
+    "CSVRecordLimit": 10000
   }
 }
 
@@ -48,7 +50,8 @@ Use the following in a local.settings.json. The values should not be used in dep
 - `RefdataAPIUrl`: URL for the Ref Data API to fetch filter values for qualifications (qualificationtypes, levels, SSAs and assessment methods)
 - `OrganisationsPagingLimit`: Number of items on the Organisations search results page
 - `QualificationsPagingLimit`: Number of items on the Qualifications search results page
-- `FUNCTIONS_WORKER_RUNTIME` and `FUNCTIONS_EXTENSION_WORKER`: Values used as part of running Azure Functions properly
+- `FullCSVExtractURL`: URL for the full CSV extract of qualifications. this is triggered when the user attempts to download a CSV extract for datasets exceeign the number of rows set in `CSVRecordLimit`
+- `CSVRecordLimit`: Sets a cut-off point for the number of rows to be fetched from the database when generating the full CSV extract. This is to avoid timeouts and memory issues when generating the CSV. The default value is 10,000 records. `FUNCTIONS_WORKER_RUNTIME` and `FUNCTIONS_EXTENSION_WORKER`: Values used as part of running Azure Functions properly
 
 
 ## Assets
@@ -71,6 +74,6 @@ A pipeline (`azure-pipelines.yml`) is set on DevOps to automatically deploy the 
 
 A DownloadsController has been created to download the full Qualifications and Organisations data in CSV format. The CSVs are stored in a storage container on Azure as blobs. The code checks the last time CSVs were modified and fetches new data from the Database if the blobs are older than a day. 
 
-## Qualificaions Sitemap
+## Qualifications Sitemap
 
 As the list of qualifications can be huge (48k at the time of writing), the same methodology as Full Data Download is used to store the qualification titles and names, into a JSON file. This file is updated if the last modified date on the file was older than a week. 
