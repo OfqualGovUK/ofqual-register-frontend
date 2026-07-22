@@ -17,7 +17,6 @@ schedules:
         include:
         - main
  
-
 variables:
   - group: 'Snyk-variables'
   - name: dotnetBuild
@@ -143,11 +142,44 @@ stages:
         failOnIssues: $(snykFailOnIssues)
 
 # PlaywrightTests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Playwright Tests"
+- stage: Run Tests
+  displayName: "Build and run tests"
+  # ❌ Skip during scheduled builds
+  condition: ne(variables['Build.Reason'], 'Schedule')
   jobs:
+    - job: Unit
+    displayName: "Unit tests"
+    dependsOn: []
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET $(dotnetBuild)'
+      inputs:
+        packageType: 'sdk'
+        version: '$(dotnetBuild)'
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--no-restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
+      inputs:
+        command: 'test'
+        projects: '**/*Tests.csproj'
+        arguments: '--no-build --no-restore --filter Category=Unit'
+        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
   - job: Playwright
-    displayName: "Build and run Playwright tests"
+    displayName: "Playwright tests"
     pool:
       vmImage: $(vmImageName)
     steps:
