@@ -147,7 +147,7 @@ stages:
   # ❌ Skip during scheduled builds
   condition: ne(variables['Build.Reason'], 'Schedule')
   jobs:
-    - job: Unit
+  - job: Unit
     displayName: "Unit tests"
     dependsOn: []
     pool:
