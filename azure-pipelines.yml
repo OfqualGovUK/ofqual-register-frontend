@@ -142,7 +142,7 @@ stages:
         failOnIssues: $(snykFailOnIssues)
 
 # PlaywrightTests stage: This stage runs Playwright tests.
-- stage: Run Tests
+- stage: RunTests
   displayName: "Build and run tests"
   # ❌ Skip during scheduled builds
   condition: ne(variables['Build.Reason'], 'Schedule')
