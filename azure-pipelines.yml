@@ -34,7 +34,7 @@ variables:
 stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
-  displayName: "Run Static Analysis"
+  displayName: "Run static analysis"
   jobs:
   - job: Audit
     displayName: 'Audit Dependencies'
@@ -217,12 +217,12 @@ stages:
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
-  displayName: Build Container Image and Run Health Check
+  displayName: Container image health check
   # ❌ Skip during scheduled builds
   condition: ne(variables['Build.Reason'], 'Schedule')
   jobs:
-  - job: Build
-    displayName: Build 
+  - job: HealthCheck
+    displayName: Build and run health check 
     pool:
       vmImage: $(vmImageName)
     steps:

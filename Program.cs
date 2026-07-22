@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 //Add GovUK Frontend assets
 builder.Services.AddGovUkFrontend(options => 
 { 
-    options.Rebrand = true; 
+    
 });
 
 // Add services to the container.
