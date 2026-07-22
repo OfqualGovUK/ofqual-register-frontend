@@ -21,7 +21,7 @@ schedules:
 variables:
   - group: 'Snyk-variables'
   - name: dotnetBuild
-    value: "$(dotnetBuild)"  
+    value: "8.0.x"  
   # Container registry service connection established during pipeline creation
   - name: dockerfilePath
     value: '$(System.DefaultWorkingDirectory)/Dockerfile'
