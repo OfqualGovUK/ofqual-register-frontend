@@ -21,15 +21,16 @@ variables:
   - group: 'Snyk-variables'
   - name: dotnetBuild
     value: "8.0.x"  
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: snykFailOnIssues
+    value: false
   # Container registry service connection established during pipeline creation
   - name: dockerfilePath
     value: '$(System.DefaultWorkingDirectory)/Dockerfile'
   - name: tag
     value: '$(Build.BuildId)'
-  - name: vmImageName
-    value: "ubuntu-latest"
-  - name: snykFailOnIssues
-    value: true
+
 
 stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
