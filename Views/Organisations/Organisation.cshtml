@@ -294,15 +294,21 @@
                     {
                         <h3 id="exclusion-title" class="govuk-heading-s">The following @Model.Name qualifications are not regulated</h3>
                         <ul class="ofq-tree" id="exclusion-tree" role="tree" aria-labelledby="exclusion-title">
-                            <li>
+                            <li role="treeitem">
                                 <details>
-                                    <summary class="govuk-body ofq-tree-parent-node" aria-expanded="false" aria-controls="x-Unregulatedqualifications-list" role="treeitem">
+                                    <summary
+                                        class="govuk-body ofq-tree-parent-node"
+                                        aria-expanded="false"
+                                        aria-controls="x-Unregulatedqualifications-list">
                                         Unregulated qualifications
                                     </summary>
-                                    <ul id="x-Unregulatedqualifications-list">
+
+                                    <ul id="x-Unregulatedqualifications-list" role="group">
                                         @foreach (var qual in Model.RecognitionScope.Exclusions)
                                         {
-                                            <li class="govuk-body"><div role="treeitem">@qual</div></li>
+                                            <li class="govuk-body" role="treeitem">
+                                                @qual
+                                            </li>
                                         }
                                     </ul>
                                 </details>
