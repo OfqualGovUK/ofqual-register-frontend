@@ -34,7 +34,7 @@ Use the following in a local.settings.json. The values should not be used in dep
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "FUNCTIONS_EXTENSION_WORKER": "~4",
     "RefDataAPIUrl": "<URL>",
-    "MDDBConnString": "Server=localhost,1433;Initial Catalog=ofqds-dev-md-sql01;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "MDDBConnString": "Server=localhost,1433;Initial Catalog=<SERVER_NAME>;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
     "QualificationsPagingLimit": 10000,
     "APIMgmtURL": "<URL>"
   }
