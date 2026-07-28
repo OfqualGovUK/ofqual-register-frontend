@@ -9,10 +9,12 @@
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
-    var csvRecordLimit = _config.GetValue<int?>("CSVRecordLimit", 0);    
+    var csvRecordLimit = _config.GetValue<int>("CSVRecordLimit", 0);    
+    var csvLink = _config.GetValue<string?>("FullCSVExtractUrl");
 
-    var tooManyResults = Model.List != null && Model.List.Count >= csvRecordLimit;
-
+    var tooManyResults = csvRecordLimit > 0 
+        && Model.List != null 
+        && Model.List.Count >= csvRecordLimit;          
 
     var compareError = TempData["CompareError"] != null ? true : false;
     var csvError = TempData["CSVError"] != null ? true : false;
@@ -31,15 +33,8 @@
     var nationalAccordion = appliedFilters.NationalAvailability != null && appliedFilters.NationalAvailability.Any() ? "is-open" : "";
     var glhAccordion = appliedFilters.MinGuidedLearninghours != null || appliedFilters.MaxGuidedLearninghours != null ? "is-open" : "";
     var tqtAccordion = appliedFilters.MinTotalQualificationTime != null || appliedFilters.MaxTotalQualificationTime != null ? "is-open" : "";
-       
-
-    //Determine if result set hits new result limit, if so, we redirect to the static copy, otherwise we move onto the csv generator
-    //failing that, we return a null url which will trigger the csv button disable logic
-    var csvLink = _config.GetValue<string?>("FullCSVExtractUrl");
-    if (!tooManyResults)
-        //format to the download csv link from the paging url, as all filters are available in the paging link
-        csvLink = $"/qualifications/download-csv?{Model.Paging.PagingURL!.Remove(0, "qualifications?page=||_page_||".Length)}";
-    
+     
+        
 }
 
 @section Head {
@@ -113,14 +108,6 @@
         </div>
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break">
-
-        @if (csvLink == null)
-        {
-            <div class="govuk-inset-text">
-                Due to technical limitations, generated CSV files can only contain a maximum of @csvRecordLimit records.
-                Please consider further refining your query before using the "Download results as CSV" feature
-            </div>
-        }
 
     </div>
 
@@ -819,21 +806,22 @@
                         </button>
                     </li>
                     <li class="ofq-action-buttons--item">
-                        @if (csvLink == null)
+                        @if (tooManyResults)
                         {
-                            <button type="submit" disabled aria-disabled="true" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                                Download results as CSV
+                            <button type="submit" 
+                                    disabled aria-disabled="true" 
+                                    draggable="false" 
+                                    class="govuk-button govuk-button--secondary" 
+                                    data-module="govuk-button">Download results as CSV
                             </button>
-
                         }
                         else
-                        {                            
-                             string buttonText = tooManyResults 
-                                ? "Download full qualifications list as CSV" 
-                                : "Download results as CSV";
-                            
-                            <a href="@csvLink" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">                            
-                                @buttonText
+                        {       
+                            <a  href=@($"/qualifications/download-csv?{Model.Paging.PagingURL!.Remove(0, "qualifications?page=||_page_||".Length)}")
+                                role="button" 
+                                draggable="false" 
+                                class="govuk-button govuk-button--secondary"
+                                data-module="govuk-button">Download results as CSV
                             </a>
                         }
                     </li>
@@ -843,6 +831,13 @@
                 <div class="govuk-body jsonly" id="selectedStats" style="display:none">
                     <span id="numSelected">0 qualifications selected. </span> <span class="govuk-link govuk-link--no-visited-state" onclick="clearSelection()" style="color: #1d70b8; cursor:pointer">Clear selection</span>
                 </div>
+                @if (!string.IsNullOrWhiteSpace(csvLink) && tooManyResults)
+                {
+                    <div class="govuk-inset-text">                     
+                       CSV download is disabled as there are too many results. 
+                       You can instead <a href=@csvLink>download a CSV file containing all qualifications.</a>                        
+                    </div>
+                }
                 <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
                 @if (compareError)
                 {
