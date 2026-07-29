@@ -46,12 +46,14 @@ Use the following in a local.settings.json. The values should not be used in dep
 
 - `AzureWebJobsStorage`: Connection string for where the web jobs should be stored; can be on dev storage when ran locally, but should have a proper string for when deployed to Azure
 - `MDDBConnString`: The connection string for connecting to the MasterData database.
+- `FUNCTIONS_WORKER_RUNTIME` and `FUNCTIONS_EXTENSION_WORKER`: Values used as part of running Azure Functions properly
 - `APIMgmtURL`: URL for the API Management layer, only really used on deployed environments but should be filled in on local environments
 - `RefdataAPIUrl`: URL for the Ref Data API to fetch filter values for qualifications (qualificationtypes, levels, SSAs and assessment methods)
 - `OrganisationsPagingLimit`: Number of items on the Organisations search results page
 - `QualificationsPagingLimit`: Number of items on the Qualifications search results page
 - `QualificationsFullCSVExtractURL`: URL for the full CSV extract of qualifications. this is triggered when the user attempts to download a CSV extract for datasets exceeign the number of rows set in `QualificationsCSVRecordLimit`
-- `QualificationsCSVRecordLimit`: Sets a cut-off point for the number of rows to be fetched from the database when generating the full CSV extract. This is to avoid timeouts and memory issues when generating the CSV. The default value is 10,000 records. `FUNCTIONS_WORKER_RUNTIME` and `FUNCTIONS_EXTENSION_WORKER`: Values used as part of running Azure Functions properly
+- `QualificationsCSVRecordLimit`: Sets a cut-off point for the number of rows to be fetched from the database when generating the full CSV extract. This is to avoid timeouts and memory issues when generating the CSV. The default value is 10,000 records. 
+
 
 
 ## Assets
