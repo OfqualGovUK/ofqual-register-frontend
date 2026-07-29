@@ -9,13 +9,6 @@ trigger:
 
 resources:
 - repo: self
-
-schedules:
-    - cron: 0 22 * * *
-      displayName: "Nightly test run"
-      branches:
-        include:
-        - main
  
 variables:
   - group: 'Snyk-variables'
@@ -31,18 +24,15 @@ variables:
   - name: tag
     value: '$(Build.BuildId)'
 
-
 stages:
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
-  displayName: "Run static analysis"
+  displayName: "Run static analysis" 
   jobs:
   - job: Audit
     displayName: 'Audit Dependencies'
     pool:
-      vmImage: $(vmImageName)
-    # ❌ Skip during scheduled builds
-    condition: ne(variables['Build.Reason'], 'Schedule')
+      vmImage: $(vmImageName)    
     steps:
       # Restore
       - task: DotNetCoreCLI@2
@@ -72,9 +62,7 @@ stages:
   - job: Snyk
     displayName: "Snyk Analysis"
     pool:
-      vmImage: $(vmImageName)
-    # ✅ Always run (including schedule)
-    condition: always()
+      vmImage: $(vmImageName)       
     steps:
     # Step 1: Set up .NET SDK
     - task: UseDotNet@2
@@ -144,9 +132,7 @@ stages:
 
 # PlaywrightTests stage: This stage runs Playwright tests.
 - stage: RunTests
-  displayName: "Build and run tests"
-  # ❌ Skip during scheduled builds
-  condition: ne(variables['Build.Reason'], 'Schedule')
+  displayName: "Build and run tests"  
   jobs:
   - job: Unit
     displayName: "Unit tests"
@@ -218,9 +204,7 @@ stages:
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
-  displayName: Container image health check
-  # ❌ Skip during scheduled builds
-  condition: ne(variables['Build.Reason'], 'Schedule')
+  displayName: Container image health check  
   jobs:
   - job: HealthCheck
     displayName: Build and run health check 
@@ -276,9 +260,7 @@ stages:
       displayName: Cleanup Container
           
 - stage: Build
-  displayName: Build and push stage
-  # ❌ Skip during scheduled builds
-  condition: ne(variables['Build.Reason'], 'Schedule')
+  displayName: Build and push stage  
   jobs:
   - job: BuildDev
     condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull')))
