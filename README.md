@@ -36,8 +36,8 @@ Use the following in a local.settings.json. The values should not be used in dep
     "RefDataAPIUrl": "<URL>",
     "MDDBConnString": "Server=localhost,1433;Initial Catalog=<SERVER_NAME>;Persist Security Info=False;User ID=<USERNAME>;Password=<PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
     "QualificationsPagingLimit": 10000,
-    "APIMgmtURL": "<URL>"
-    "FullCSVExtractURL": "https://downloads.find-a-qualification.services.ofqual.gov.uk/extracts/Qualifications.csv",
+    "APIMgmtURL": "<URL>",
+    "FullCSVExtractURL": "<PATH_TO_FULL_EXTRACT_URL>",
     "CSVRecordLimit": 10000
   }
 }
