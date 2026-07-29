@@ -9,8 +9,8 @@
     ViewData["HeaderTitle"] = "Find a regulated qualification";
     ViewData["HomePage"] = "find-regulated-qualifications";
 
-    var csvRecordLimit = _config.GetValue<int>("CSVRecordLimit", 0);    
-    var csvLink = _config.GetValue<string?>("FullCSVExtractUrl");
+    var csvRecordLimit = _config.GetValue<int>("QualificationsCSVRecordLimit", 0);    
+    var csvLink = _config.GetValue<string?>("QualificationsFullCSVExtractUrl");
 
     var tooManyResults = csvRecordLimit > 0 
         && Model.List != null 

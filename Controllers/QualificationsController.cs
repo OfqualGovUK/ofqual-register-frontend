@@ -243,7 +243,7 @@ namespace Ofqual.Common.RegisterFrontend.Controllers
 
             var fileName = $"Qualifications{titleName}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss}.csv";
 
-            var limit = _config.GetValue("CSVRecordLimit", 0);
+            var limit = _config.GetValue("QualificationsCSVRecordLimit", 0);
 
             try
             {
