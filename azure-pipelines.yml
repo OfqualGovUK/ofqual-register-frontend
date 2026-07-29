@@ -9,168 +9,172 @@ trigger:
 
 resources:
 - repo: self
-
+ 
 variables:
+  - group: 'Snyk-variables'
+  - name: dotnetBuild
+    value: "8.0.x"  
+  - name: vmImageName
+    value: "ubuntu-latest"
+  - name: snykFailOnIssues
+    value: false
   # Container registry service connection established during pipeline creation
-  dockerfilePath: '$(System.DefaultWorkingDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  - name: dockerfilePath
+    value: '$(System.DefaultWorkingDirectory)/Dockerfile'
+  - name: tag
+    value: '$(Build.BuildId)'
 
 stages:
-
 # Static Analysis stage: This stage runs static code analysis using SonarQube and audits dependencies for vulnerabilities.
 - stage: StaticAnalysis
-  displayName: "Run Static Analysis"
+  displayName: "Run static analysis" 
   jobs:
-    - job: Snyk
-      displayName: "Snyk Analysis"
-      steps:
-      # Step 1: Set up .NET SDK
-      - task: UseDotNet@2
-        displayName: 'Use .NET 8.0'
-        inputs:
-          packageType: 'sdk'
-          version: '8.0.x'
-      # Step 2: Restore NuGet packages to ensure all dependencies are installed
+  - job: Audit
+    displayName: 'Audit Dependencies'
+    pool:
+      vmImage: $(vmImageName)    
+    steps:
+      # Restore
       - task: DotNetCoreCLI@2
-        displayName: 'Restore task'
         inputs:
           command: 'restore'
           projects: '**/*.csproj'
-          feedsToUse: 'select'
-          vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
-      # Step 3: Build
-      - task: DotNetCoreCLI@2
-        displayName: "Build task"
-        inputs:
-          command: "build"
-          projects: "**/*.csproj"
-          arguments: "--no-restore"
-      # Step 4: Install and authenticate Snyk
-      - script: |
-          npm install -g snyk
-          snyk config set endpoint=$(SNYK_ENDPOINT)
-          snyk auth $(SNYK_TOKEN)
-          set +e
-        displayName: 'Snyk Install & Auth'
-      # Step 5: Scan code
-      - task: SnykSecurityScan@1
-        displayName: 'Snyk scanning code'
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'code'
-          codeSeverityThreshold: 'high'
-          failOnIssues: false
-      # Step 6: Scan app
-      - task: SnykSecurityScan@1
-        displayName: 'Snyk scanning app'
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'app'
-          monitorWhen: 'always'
-          severityThreshold: 'high'
-          failOnIssues: false
-          additionalArguments: '--all-projects'
-      # Step 7: Scan docker image     
-      - task: Docker@2
-        displayName: Build Docker Image
-        inputs:
-          command: build
-          repository: $(SNYK_DOCKER_REPOS)
-          dockerfile: '$(dockerfilePath)'
-          tags: 'latest'
-      - script: docker images
-        displayName: List Docker Images
-      - task: SnykSecurityScan@1
-        inputs:
-          serviceConnectionEndpoint: 'snyk-integration-eu'
-          testType: 'container'
-          dockerImageName: '$(SNYK_DOCKER_REPOS):latest'
-          dockerfilePath: './Dockerfile'
-          monitorWhen: 'always'
-          severityThreshold: 'high'
-          failOnIssues: false
+          feedsToUse: "select"
+          vstsFeed: "b8db0229-c220-4583-b1d9-1111e482a1ce"
+        displayName: 'Restore Nuget Packages'
 
-      # Audit job: This job audits dependencies for vulnerabilities.
-    - job: Audit
-      displayName: 'Audit Dependencies'
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: DotNetCoreCLI@2
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-          displayName: 'Restore Nuget Packages'
+      # Check Nuget vulnerabilities
+      - task: Bash@3
+        displayName: Check NuGet vulnerabilities
+        inputs:
+          targetType: 'inline'
+          script: |
+            dotnet list package --vulnerable --include-transitive 2>&1 | tee build.log
+            echo "Analyse dotnet list package command log output..."
+            if grep -q -i "critical\|high" build.log; then
+                echo "Must fix security vulnerabilities found on the log output"
+                exit 1
+            else
+                echo "No critical or high severity vulnerabilities found."
+                exit 0
+            fi
 
-        - task: Bash@3
-          displayName: Check NuGet vulnerabilities
-          inputs:
-            targetType: 'inline'
-            script: |
-              dotnet list package --vulnerable --include-transitive 2>&1 | tee build.log
-              echo "Analyse dotnet list package command log output..."
-              if grep -q -i "critical\|high" build.log; then
-                  echo "Must fix security vulnerabilities found on the log output"
-                  exit 1
-              else
-                  echo "No critical or high severity vulnerabilities found."
-                  exit 0
-              fi
-
-#UnitTests stage: This stage runs unit tests.
-- stage: UnitTests
-  displayName: "Unit Tests"
-  condition: always()
-  jobs:
-    - job: Unit
-      displayName: "Build and run Unit tests"
-      dependsOn: []
-      pool:
-        vmImage: $(vmImageName)
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Use .NET 8.0'
-          inputs:
-            packageType: 'sdk'
-            version: '8.0.x'
-        - task: DotNetCoreCLI@2
-          displayName: Restore
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-            feedsToUse: 'select'
-            verbosityRestore: 'Normal'
-        - task: DotNetCoreCLI@2
-          displayName: Build
-          inputs:
-            command: 'build'
-            projects: '**/*.csproj'
-            arguments: '--no-restore'
-        - task: DotNetCoreCLI@2
-          displayName: 'Run unit tests'
-          inputs:
-            command: 'test'
-            projects: '**/*Tests.csproj'
-            arguments: '--no-build --no-restore --filter Category=Unit'
-            testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+  - job: Snyk
+    displayName: "Snyk Analysis"
+    pool:
+      vmImage: $(vmImageName)       
+    steps:
+    # Step 1: Set up .NET SDK
+    - task: UseDotNet@2
+      displayName: 'Use .NET $(dotnetBuild)'
+      inputs:
+        packageType: 'sdk'
+        version: '$(dotnetBuild)'
+    # Step 2: Restore NuGet packages to ensure all dependencies are installed
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore task'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        vstsFeed: 'b8db0229-c220-4583-b1d9-1111e482a1ce'
+    # Step 3: Build
+    - task: DotNetCoreCLI@2
+      displayName: "Build task"
+      inputs:
+        command: "build"
+        projects: "**/*.csproj"
+        arguments: "--no-restore"
+    # Step 4: Install and authenticate Snyk
+    - script: |
+        npm install -g snyk
+        snyk config set endpoint=$(SNYK_ENDPOINT)
+        snyk auth $(SNYK_TOKEN)
+        set +e
+      displayName: 'Snyk Install & Auth'
+    # Step 5: Scan code
+    - task: SnykSecurityScan@1
+      displayName: 'Snyk scanning code'
+      inputs:
+        serviceConnectionEndpoint: '$(SERVICE_CONNECTION_ENDPOINT)'
+        testType: 'code'
+        codeSeverityThreshold: 'high'
+        failOnIssues: false
+    # Step 6: Scan app
+    - task: SnykSecurityScan@1
+      displayName: 'Snyk scanning app'
+      inputs:
+        serviceConnectionEndpoint: '$(SERVICE_CONNECTION_ENDPOINT)'
+        testType: 'app'
+        monitorWhen: 'always'
+        severityThreshold: 'high'
+        failOnIssues: $(snykFailOnIssues)
+        additionalArguments: '--all-projects'
+    # Step 7: Scan docker image     
+    - task: Docker@2
+      displayName: Build Docker Image
+      inputs:
+        command: build
+        repository: $(SNYK_DOCKER_REPOS)
+        dockerfile: '$(dockerfilePath)'
+        tags: 'latest'
+    - script: docker images
+      displayName: List Docker Images
+    - task: SnykSecurityScan@1
+      inputs:
+        serviceConnectionEndpoint: '$(SERVICE_CONNECTION_ENDPOINT)'
+        testType: 'container'
+        dockerImageName: '$(SNYK_DOCKER_REPOS):latest'
+        dockerfilePath: './Dockerfile'
+        monitorWhen: 'always'
+        severityThreshold: 'high'
+        failOnIssues: $(snykFailOnIssues)
 
 # PlaywrightTests stage: This stage runs Playwright tests.
-- stage: PlaywrightTests
-  displayName: "Playwright Tests"
+- stage: RunTests
+  displayName: "Build and run tests"  
   jobs:
-  - job: Playwright
-    displayName: "Build and run Playwright tests"
+  - job: Unit
+    displayName: "Unit tests"
+    dependsOn: []
     pool:
       vmImage: $(vmImageName)
     steps:
     - task: UseDotNet@2
-      displayName: 'Use .NET Core sdk 8.0'
+      displayName: 'Use .NET $(dotnetBuild)'
       inputs:
         packageType: 'sdk'
-        version: '8.0.x'
+        version: '$(dotnetBuild)'
+    - task: DotNetCoreCLI@2
+      displayName: Restore
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+        feedsToUse: 'select'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: Build
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+        arguments: '--no-restore'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
+      inputs:
+        command: 'test'
+        projects: '**/*Tests.csproj'
+        arguments: '--no-build --no-restore --filter Category=Unit'
+        testRunTitle: 'Register-Frontend-Unit-$(Build.BuildId)'
+  - job: Playwright
+    displayName: "Playwright tests"
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core sdk $(dotnetBuild)'
+      inputs:
+        packageType: 'sdk'
+        version: '$(dotnetBuild)'
     - task: DotNetCoreCLI@2
       displayName: 'Restore'
       inputs:
@@ -200,10 +204,10 @@ stages:
 
 # Build and Publish Docker Image stage: This stage builds, tests, and publishes the Docker image to Azure Container Registry.
 - stage: BuildTestAndPublishDockerImage  
-  displayName: Container Health Check
+  displayName: Container image health check  
   jobs:
-  - job: Build
-    displayName: Build 
+  - job: HealthCheck
+    displayName: Build and run health check 
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -256,7 +260,7 @@ stages:
       displayName: Cleanup Container
           
 - stage: Build
-  displayName: Build and push stage
+  displayName: Build and push stage  
   jobs:
   - job: BuildDev
     condition: and(succeeded(), not(startsWith(variables['build.sourceBranch'], 'refs/pull')))
