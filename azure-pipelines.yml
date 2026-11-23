@@ -15,7 +15,7 @@ variables:
   - name: dotnetBuild
     value: "8.0.x"  
   - name: vmImageName
-    value: "ubuntu-latest"
+    value: 'ubuntu-22.04'
   - name: snykFailOnIssues
     value: false
   # Container registry service connection established during pipeline creation
